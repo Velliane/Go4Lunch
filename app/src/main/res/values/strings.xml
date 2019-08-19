@@ -5,4 +5,8 @@
     <string name="bottom_navigation_menu_mapview">Map View</string>
     <string name="bottom_navigation_menu_listview">List View</string>
     <string name="bottom_navigation_menu_workmates">Workmates</string>
+
+    <!-- Facebook Login -->
+    <string name="facebook_app_id">407175276821193</string>
+    <string name="fb_login_protocol_scheme">fb407175276821193</string>
 </resources>

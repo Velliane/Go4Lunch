@@ -1,6 +1,6 @@
-package com.menard.go4lunch
+package com.menard.go4lunch.controller.activity
 
-import Constants.Companion.RC_SIGN_IN
+import com.menard.go4lunch.Constants.Companion.RC_SIGN_IN
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +13,7 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.menard.go4lunch.R
 import java.util.*
 
 class AuthActivity : AppCompatActivity(), View.OnClickListener {
@@ -50,8 +51,6 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
 
 
     //-- CONFIGURE GOOGLE SIGN IN --
-
-
     private fun googleSignIn(){
         startActivityForResult(getInstance()
                 .createSignInIntentBuilder()
@@ -60,18 +59,13 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
                 .build(), RC_SIGN_IN)
     }
 
-    private fun signOut(){
-        auth.signOut()
-    }
+    //-- CONFIGURE FACEBOOK SIGN IN --
 
+    //-- GET RESPONSE --
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         this.handleResponseAfterSignIn(requestCode, resultCode, data)
 
-    }
-
-    private fun showSnackBar(linearLayout: LinearLayout, message:String){
-        Snackbar.make(linearLayout, message, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun handleResponseAfterSignIn( requestCode: Int, resultCode: Int, data: Intent?){
@@ -80,6 +74,7 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
             val response = IdpResponse.fromResultIntent(data)
             if(resultCode == Activity.RESULT_OK){
                 showSnackBar(layout, "Connection succeed")
+                startMainActivity()
             }else{
                 when {
                     response == null -> showSnackBar(layout, "Authentification canceled")
@@ -89,5 +84,19 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
+    private fun showSnackBar(linearLayout: LinearLayout, message:String){
+        Snackbar.make(linearLayout, message, Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun startMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun signOut(){
+        auth.signOut()
+    }
+
 
 }

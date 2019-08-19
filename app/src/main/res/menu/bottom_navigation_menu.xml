@@ -6,17 +6,19 @@
         android:id="@+id/action_mapview"
         android:enabled="true"
         android:title="@string/bottom_navigation_menu_mapview"
-        android:showAsAction="ifRoom" />
+        android:icon="@drawable/baseline_map_black_36"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_listview"
         android:enabled="true"
         android:title="@string/bottom_navigation_menu_listview"
-        android:showAsAction="ifRoom"/>
+        android:icon="@drawable/baseline_view_list_black_36"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_workmates"
         android:enabled="true"
         android:title="@string/bottom_navigation_menu_workmates"
-        android:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />
 </menu>

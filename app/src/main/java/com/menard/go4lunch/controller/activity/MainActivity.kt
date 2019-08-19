@@ -1,8 +1,9 @@
-package com.menard.go4lunch
+package com.menard.go4lunch.controller.activity
 
 import androidx.appcompat.app.AppCompatActivity
 
 import android.os.Bundle
+import com.menard.go4lunch.R
 
 class MainActivity : AppCompatActivity() {
 

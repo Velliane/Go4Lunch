@@ -9,12 +9,28 @@
     android:id="@+id/auth_activity_layout"
     android:background="@drawable/restaurant_3">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="432dp"
-        android:background="@drawable/icon1"
-        android:contentDescription="Application's icon" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.2"
+        android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/icon1"
+            android:contentDescription="Application's icon" />
+    </LinearLayout>
+
+
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="0dp"
+    android:layout_weight="0.8"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center_vertical">
     <Button
         android:id="@+id/auth_activity_facebook"
         android:layout_width="wrap_content"
@@ -30,4 +46,15 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_gravity="center" />
+
+   <Button
+       android:id="@+id/sign_out"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_gravity="center"
+       android:text="Sign OUT"/>
+
+
+    </LinearLayout>
+
 </LinearLayout>

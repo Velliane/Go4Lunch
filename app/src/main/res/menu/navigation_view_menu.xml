@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_lunch"
+        android:enabled="true"
+        android:title="YOUR LUNCH"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/action_settings"
+        android:enabled="true"
+        android:title="SETTINGS"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/action_logout"
+        android:enabled="true"
+        android:title="LOGOUT"
+        app:showAsAction="ifRoom"
+        />
+
+
+</menu>

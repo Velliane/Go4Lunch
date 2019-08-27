@@ -7,8 +7,11 @@
     <string name="bottom_navigation_menu_workmates">Workmates</string>
 
     <!-- Facebook Login -->
-    <string name="facebook_application_id" translatable="false">2412917432313192</string>
-    <string name="fb_login_protocol_scheme" translatable="false" tools.ignore="UnusedResources">fb2412917432313192</string>
+    <string name="facebook_application_id" translatable="false">552782148595011</string>
+    <string name="fb_login_protocol_scheme" translatable="false" tools.ignore="UnusedResources">fb552782148595011</string>
+    <!-- Twitter Login -->
+    <string name="twitter_consumer_key" translatable="false">eICYoWcPFgvzlm6dnbvAPd9aT</string>
+    <string name="twitter_consumer_secret" translatable="false">3c8cOSEiU53WJ3w5ZGvMOhroSu4rhsm6QtojSNxjVKjuZm5JhM</string>
 
     <!-- Drawer Layout -->
     <string name="open_navigation_drawer">Open navigation drawer</string>

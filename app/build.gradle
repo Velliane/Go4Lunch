@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 
+
 android {
     compileSdkVersion 28
     buildToolsVersion "29.0.1"
@@ -13,6 +14,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+
+        buildConfigField("String", "api_key_google", API_KEY_GOOGLE)
+        buildConfigField("String", "api_key_twitter", API_KEY_TWITTER)
     }
     buildTypes {
         release {
@@ -48,6 +52,8 @@ dependencies {
     implementation 'com.google.android.libraries.places:places:2.0.0'
     // TWITTER
     implementation 'com.twitter.sdk.android:twitter-core:3.0.0'
+    // Circle Image View
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 
 
 }

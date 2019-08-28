@@ -7,23 +7,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import com.facebook.CallbackManager
-import com.facebook.login.widget.LoginButton
 import com.firebase.ui.auth.AuthUI.IdpConfig
 import com.firebase.ui.auth.AuthUI.getInstance
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
 import com.menard.go4lunch.Constants.Companion.RC_SIGN_IN
 import com.menard.go4lunch.R
 
 class AuthActivity : AppCompatActivity(), View.OnClickListener {
 
-    /** Button to connect with Google  */
-    private lateinit var googleConnect: Button
-    /** Button to connect with Facebook  */
-    private lateinit var signOut: Button
+    /** Button to sign in  */
+    private lateinit var signIn: Button
     /** Layout */
     private lateinit var layout: LinearLayout
 
@@ -33,29 +28,26 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
-        googleConnect = findViewById(R.id.auth_activity_connect_btn)
-        googleConnect.setOnClickListener(this)
+        signIn = findViewById(R.id.auth_activity_connect_btn)
+        signIn.setOnClickListener(this)
 
-        signOut = findViewById(R.id.sign_out)
-        signOut.setOnClickListener(this)
         layout = findViewById(R.id.auth_activity_layout)
     }
 
     override fun onClick(v: View?) {
         when(v) {
-            googleConnect -> SignIn()
-            signOut -> signOut()
+            signIn -> SignIn()
         }
     }
 
 
-    //-- CONFIGURE GOOGLE AND FACEBOOK SIGN IN --
+    //-- CONFIGURE GOOGLE, FACEBOOK AND TWITTER SIGN IN --
     private fun SignIn(){
         startActivityForResult(getInstance()
                 .createSignInIntentBuilder()
                 .setTheme(R.style.SignInScreen)
                 .setAvailableProviders(listOf(IdpConfig.GoogleBuilder().build(), IdpConfig.FacebookBuilder().build(), IdpConfig.TwitterBuilder().build()))
-                .setIsSmartLockEnabled(false)
+                .setIsSmartLockEnabled(false, true)
                 .setLogo(R.drawable.icon1)
                 .setTosAndPrivacyPolicyUrls("https://openclassrooms.com/fr/terms-conditions","https://openclassrooms.com/fr/privacy-policy")
                 .build(),
@@ -93,17 +85,6 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
     private fun startMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
-    }
-
-    /**
-     * Sign Out
-     */
-    private fun signOut(){
-        getInstance()
-                .signOut(this)
-                .addOnCompleteListener{
-                    showSnackBar(layout, "Signed out")
-                }
     }
 
 

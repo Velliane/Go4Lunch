@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/workmates_container">
+    android:id="@+id/workmates_container"
+    android:gravity="center">
 
     <TextView
+        android:id="@+id/textview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:text="WorkmatesFragment" />
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

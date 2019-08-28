@@ -16,4 +16,11 @@
     <!-- Drawer Layout -->
     <string name="open_navigation_drawer">Open navigation drawer</string>
     <string name="close_navigation_drawer">Close navigation drawer</string>
+    <string name="header_title">Go4Lunch</string>
+    <string name="header_name">John SMITH</string>
+    <string name="header_email">jsmith.123@gmail.com</string>
+
+    <!-- Auth Activity -->
+    <string name="description_image_view_app_icon">Application\'s logo</string>
+    <string name="sign_in_button">SIGN IN</string>
 </resources>

@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".controller.activity.MainActivity">
 
     <item
         android:id="@+id/action_lunch"
         android:enabled="true"
         android:title="YOUR LUNCH"
-        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_local_dining_white_36"
+        app:showAsAction="ifRoom|withText"
         />
     <item
         android:id="@+id/action_settings"
         android:enabled="true"
         android:title="SETTINGS"
+        android:icon="@drawable/baseline_settings_applications_white_36"
         app:showAsAction="ifRoom"
         />
     <item
         android:id="@+id/action_logout"
         android:enabled="true"
+        android:icon="@drawable/baseline_power_settings_new_white_36"
         android:title="LOGOUT"
         app:showAsAction="ifRoom"
         />

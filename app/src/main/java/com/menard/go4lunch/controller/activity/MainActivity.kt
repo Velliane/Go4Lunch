@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.menard.go4lunch.R
 import com.menard.go4lunch.controller.fragment.ListViewFragment
 import com.menard.go4lunch.controller.fragment.MapviewFragment
@@ -142,6 +143,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnCompleteListener{
+                    startActivity(Intent(this, AuthActivity::class.java))
                 }
     }
 

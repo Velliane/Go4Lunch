@@ -18,10 +18,7 @@ class MapviewFragment: Fragment(), OnMapReadyCallback{
     companion object {
 
         fun newInstance(): MapviewFragment {
-            val mapviewFragment = MapviewFragment()
-            val args = Bundle()
-            mapviewFragment.arguments = args
-            return mapviewFragment
+            return MapviewFragment()
         }
     }
 
@@ -44,8 +41,10 @@ class MapviewFragment: Fragment(), OnMapReadyCallback{
             e.printStackTrace()
         }
 
+
         return view
     }
+
 
 
     override fun onMapReady(googleMap: GoogleMap?) {

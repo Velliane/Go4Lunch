@@ -13,6 +13,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
@@ -65,6 +67,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //-- Bottom Navigation View --
         bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener (onBottomNavigationItemSelectedListener)
+        if(savedInstanceState == null){
+            bottomNavigationView.selectedItemId = R.id.mapview
+        }
         //-- Toolbar --
         toolbar = findViewById(R.id.activity_main_toolbar)
         setSupportActionBar(toolbar)
@@ -107,7 +112,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      */
     private fun addFragment(fragment:Fragment){
         supportFragmentManager.beginTransaction()
-                .replace(R.id.container, fragment, fragment.javaClass.simpleName)
+                .add(R.id.container, fragment, fragment.javaClass.simpleName)
                 .commit()
     }
 

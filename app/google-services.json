@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "928888699461-59b90j2f50h2omh7bk0l3bh0i01m6i2k.apps.googleusercontent.com",
+          "client_id": "928888699461-ld0m5nbtrbe0lon5b0fbpa146g0r4567.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.menard.go4lunch",
-            "certificate_hash": "49b88a64d87f7c8fe39f0c25e96b9b778745230c"
+            "certificate_hash": "a7df3d9151d9e24617017d2704b4b35578296a7d"
           }
         },
         {
@@ -36,7 +36,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "928888699461-l518q3rfeofsuiaghg1r22nqpnr71ofs.apps.googleusercontent.com",
+              "client_id": "928888699461-jirjajt9r8cca0cbu8nq560jtig1h2bh.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -1,16 +1,11 @@
 package com.menard.go4lunch.controller.fragment
 
-import android.content.pm.PackageManager
 import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -18,11 +13,13 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.menard.go4lunch.Constants.Companion.REQUEST_CODE_UPDATE_LOCATION
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.PlacesClient
+import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.R
 import java.util.*
 
-class MapviewFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationButtonClickListener {
+class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationButtonClickListener {
 
     companion object {
 
@@ -37,6 +34,8 @@ class MapviewFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private lateinit var mGoogleMap: GoogleMap
     /** FusedLocation */
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    /** Places Client */
+    private lateinit var placesClient: PlacesClient
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.mapview_fragment, container, false)
@@ -49,14 +48,18 @@ class MapviewFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickL
         //-- Check is fragment is added to MainActivity --
         if (isAdded) {
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
+            //-- Google Places SDK initialization --
+            Places.initialize(this.requireActivity(), BuildConfig.api_key_google)
+            placesClient = Places.createClient(this.requireActivity())
         }
-
         mapView.getMapAsync(this)
         try {
             MapsInitializer.initialize(this.activity)
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+
         return view
     }
 
@@ -98,43 +101,6 @@ class MapviewFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickL
 
             } else {
                 TODO() //Default location and default marker
-            }
-        }
-    }
-
-    /**
-     * Get new location
-     */
-    fun onLocationChanged(location: Location): LatLng {
-        return LatLng(location.latitude, location.longitude)
-    }
-
-    //-- PERMISSIONS FOR ACCESS_FINE_LOCATION --
-    /**
-     * Check permissions
-     */
-    fun checkPermissions(): Boolean {
-        return if (ActivityCompat.checkSelfPermission(this.activity!!, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            true
-        } else {
-            ActivityCompat.requestPermissions(this.activity!!, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE_UPDATE_LOCATION)
-            false
-        }
-    }
-
-    /**
-     * Result after checking the permissions
-     */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when (requestCode) {
-            REQUEST_CODE_UPDATE_LOCATION -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //GPSUpdateLocation()
-                    Log.d("Permission granted", "Permission granted")
-                } else {
-                    Log.d("Permission denied", "Permission denied")
-                }
-                return
             }
         }
     }

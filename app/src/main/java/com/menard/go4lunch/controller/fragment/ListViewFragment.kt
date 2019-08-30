@@ -12,7 +12,7 @@ import com.google.android.libraries.places.api.Places
 import com.menard.go4lunch.R
 import com.menard.go4lunch.adapter.ListViewAdapter
 
-class ListViewFragment: Fragment(){
+class ListViewFragment: BaseFragment(){
 
 
     /** RecyclerView */

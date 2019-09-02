@@ -23,4 +23,6 @@
     <!-- Auth Activity -->
     <string name="description_image_view_app_icon">Application\'s logo</string>
     <string name="sign_in_button">SIGN IN</string>
+
+    <string name="workmates_infos_with_restaurant">%1$ is the user n°%2$</string>
 </resources>

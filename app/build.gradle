@@ -36,12 +36,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    // FIRESTORE
+    implementation 'com.firebaseui:firebase-ui-firestore:4.3.1'
     // Firebase
-    implementation 'com.google.firebase:firebase-core:17.1.0'
-    // FirebaseUI
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
     implementation 'com.google.firebase:firebase-auth:19.0.0'
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.1.0'
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.core:core-ktx:1.0.2"
@@ -49,13 +49,14 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
     // GOOGLE
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+
     implementation 'com.google.android.libraries.places:places:2.0.0'
     // TWITTER
     implementation 'com.twitter.sdk.android:twitter-core:3.0.0'
     // Circle Image View
     implementation 'de.hdodenhof:circleimageview:3.0.0'
-    // GOOGLE LOCATION SERVICES
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
     // GLIDE
     implementation 'com.github.bumptech.glide:glide:4.9.0'
 

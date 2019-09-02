@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI.IdpConfig
 import com.firebase.ui.auth.AuthUI.getInstance
 import com.firebase.ui.auth.ErrorCodes
@@ -14,8 +13,9 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.snackbar.Snackbar
 import com.menard.go4lunch.Constants.Companion.RC_SIGN_IN
 import com.menard.go4lunch.R
+import com.menard.go4lunch.api.UserHelper
 
-class AuthActivity : AppCompatActivity(), View.OnClickListener {
+class AuthActivity : BaseActivity(), View.OnClickListener {
 
     /** Button to sign in  */
     private lateinit var signIn: Button
@@ -36,13 +36,13 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when(v) {
-            signIn -> SignIn()
+            signIn -> signIn()
         }
     }
 
 
     //-- CONFIGURE GOOGLE, FACEBOOK AND TWITTER SIGN IN --
-    private fun SignIn(){
+    private fun signIn(){
         startActivityForResult(getInstance()
                 .createSignInIntentBuilder()
                 .setTheme(R.style.SignInScreen)
@@ -67,6 +67,8 @@ class AuthActivity : AppCompatActivity(), View.OnClickListener {
             val response = IdpResponse.fromResultIntent(data)
             if(resultCode == Activity.RESULT_OK){
                 showSnackBar(layout, "Connection succeed")
+                //-- Add new user to firestore
+                UserHelper.createUser(getCurrentUser().uid, getCurrentUser().displayName!!, getCurrentUser().photoUrl?.toString(), "restaurant").addOnFailureListener(onFailureListener())
                 startMainActivity()
             }else{
                 when {

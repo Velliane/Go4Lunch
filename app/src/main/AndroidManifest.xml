@@ -40,6 +40,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".controller.activity.BaseActivity"/>
+
         <activity android:name=".controller.activity.MainActivity">
         </activity>
 

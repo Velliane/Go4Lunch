@@ -28,12 +28,13 @@ import com.google.firebase.auth.FirebaseUser
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.Constants
 import com.menard.go4lunch.R
+import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.controller.fragment.ListViewFragment
 import com.menard.go4lunch.controller.fragment.MapviewFragment
 import com.menard.go4lunch.controller.fragment.WorkmatesFragment
 import de.hdodenhof.circleimageview.CircleImageView
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     /**Bottom Navigation View */
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -142,13 +143,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      */
     private fun addFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-                .add(R.id.container, fragment, fragment.javaClass.simpleName)
+                .replace(R.id.container, fragment, fragment.javaClass.simpleName)
                 .commit()
     }
 
-    fun getCurrentUser(): FirebaseUser {
-        return FirebaseAuth.getInstance().currentUser!!
-    }
 
 
     //-- CONFIGURATION --

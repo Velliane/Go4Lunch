@@ -8,5 +8,9 @@ class Constants{
         const val REQUEST_CODE_UPDATE_LOCATION = 4
         //-- Request code for autocomplete --
         const val REQUEST_CODE_AUTOCOMPLETE = 1
+
+
+        //-- Collection of Users --
+        const val COLLECTION_USERS = "users"
     }
 }

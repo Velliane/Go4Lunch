@@ -1,4 +1,4 @@
-package com.menard.go4lunch
+package com.menard.go4lunch.utils
 
 class Constants{
     companion object{
@@ -11,6 +11,6 @@ class Constants{
 
 
         //-- Collection of Users --
-        const val COLLECTION_USERS = "users"
+        const val COLLECTION_USERS = "document"
     }
 }

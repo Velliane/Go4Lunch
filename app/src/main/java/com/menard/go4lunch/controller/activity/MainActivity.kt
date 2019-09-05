@@ -8,7 +8,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,12 +22,9 @@ import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.menard.go4lunch.BuildConfig
-import com.menard.go4lunch.Constants
+import com.menard.go4lunch.utils.Constants
 import com.menard.go4lunch.R
-import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.controller.fragment.ListViewFragment
 import com.menard.go4lunch.controller.fragment.MapviewFragment
 import com.menard.go4lunch.controller.fragment.WorkmatesFragment
@@ -106,17 +102,17 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val menuInflater: MenuInflater = getMenuInflater()
+        val menuInflater: MenuInflater = menuInflater
         menuInflater.inflate(R.menu.toolbar_menu, menu)
         return true
     }
 
+    //-- AUTOCOMPLETE --
     /**
      * When click on Search Button of the Toolbar
      */
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            //-- AUTOCOMPLETE --
             R.id.menu_activity_main_search -> {
                         val fields: List<Place.Field> = listOf(Place.Field.NAME, Place.Field.ADDRESS)
                         val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields).setTypeFilter(TypeFilter.ESTABLISHMENT).build(this)

@@ -6,9 +6,12 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.model.LatLng
-import com.menard.go4lunch.Constants
+import com.menard.go4lunch.utils.Constants
 
 open class BaseFragment : Fragment(){
+
+
+
 
     //-- CHECK PERMISSIONS FOR FINE LOCATION --
     /**
@@ -47,5 +50,7 @@ open class BaseFragment : Fragment(){
     open fun onLocationChanged(location: Location): LatLng {
         return LatLng(location.latitude, location.longitude)
     }
+
+
 
 }

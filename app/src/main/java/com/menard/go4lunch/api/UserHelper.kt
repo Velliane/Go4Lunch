@@ -5,7 +5,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.menard.go4lunch.Constants
+import com.menard.go4lunch.utils.Constants
 import com.menard.go4lunch.model.User
 
 class UserHelper {

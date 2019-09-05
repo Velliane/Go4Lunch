@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -37,6 +35,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
     /** Places Client */
     private lateinit var placesClient: PlacesClient
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.mapview_fragment, container, false)
 
@@ -46,12 +45,12 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         mapView.onResume()
 
         //-- Check is fragment is added to MainActivity --
-        if (isAdded) {
+        //if (isAdded) {
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
             //-- Google Places SDK initialization --
             Places.initialize(this.requireActivity(), BuildConfig.api_key_google)
             placesClient = Places.createClient(this.requireActivity())
-        }
+        //}
         mapView.getMapAsync(this)
         try {
             MapsInitializer.initialize(this.activity)
@@ -88,21 +87,29 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         locationRequest.smallestDisplacement = 50F
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-        fusedLocationProviderClient.lastLocation?.addOnSuccessListener { location ->
-            if (location != null) {
-                val lastLocation: LatLng = onLocationChanged(location)
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, object :LocationCallback(){
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                for (location in locationResult.locations) {
 
-                //-- Zoom --
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15F))
-                //-- Add marker --
-                val geocoder = Geocoder(this.activity!!, Locale.getDefault())
-                val address: String = geocoder.getFromLocation(location.latitude, location.longitude, 1)[0].getAddressLine(0)
-                mGoogleMap.addMarker(MarkerOptions().position(lastLocation).title(address).snippet("Click for more information"))
+                    // Update UI with location data
+//                    .addOnSuccessListener { location ->
+//                        if (location != null) {
+//                            val lastLocation: LatLng = onLocationChanged(location)
+//                            //-- Zoom --
+//                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15F))
+//                            //-- Add marker --
+//                            val geocoder = Geocoder(this.activity!!, Locale.getDefault())
+//                            val address: String = geocoder.getFromLocation(location.latitude, location.longitude, 1)[0].getAddressLine(0)
+//                            mGoogleMap.addMarker(MarkerOptions().position(lastLocation).title(address).snippet("Click for more information"))
+//
+//                        } else {
+//                            TODO() //Default location and default marker
+//                        }
+                }
 
-            } else {
-                TODO() //Default location and default marker
             }
-        }
+        }, null)
     }
 
     //-- ACTION WHEN CLICK ON MARKER --
@@ -148,5 +155,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         mapView.onSaveInstanceState(outState)
     }
 }
+
+
 
 

@@ -11,7 +11,7 @@ import com.firebase.ui.auth.AuthUI.getInstance
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.snackbar.Snackbar
-import com.menard.go4lunch.Constants.Companion.RC_SIGN_IN
+import com.menard.go4lunch.utils.Constants.Companion.RC_SIGN_IN
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 

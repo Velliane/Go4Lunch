@@ -8,7 +8,7 @@
 
     <!-- Facebook Login -->
     <string name="facebook_application_id" translatable="false">552782148595011</string>
-    <string name="fb_login_protocol_scheme" translatable="false" tools.ignore="UnusedResources">fb552782148595011</string>
+    <string name="fb_login_protocol_scheme" tools.ignore="UnusedResources" translatable="false">fb552782148595011</string>
     <!-- Twitter Login -->
     <string name="twitter_consumer_key" translatable="false">eICYoWcPFgvzlm6dnbvAPd9aT</string>
     <string name="twitter_consumer_secret" translatable="false">3c8cOSEiU53WJ3w5ZGvMOhroSu4rhsm6QtojSNxjVKjuZm5JhM</string>
@@ -17,12 +17,13 @@
     <string name="open_navigation_drawer">Open navigation drawer</string>
     <string name="close_navigation_drawer">Close navigation drawer</string>
     <string name="header_title">Go4Lunch</string>
-    <string name="header_name">John SMITH</string>
+    <string name="header_name">John SMITH is eating at Restaurant(French)</string>
     <string name="header_email">jsmith.123@gmail.com</string>
 
     <!-- Auth Activity -->
     <string name="description_image_view_app_icon">Application\'s logo</string>
     <string name="sign_in_button">SIGN IN</string>
 
-    <string name="workmates_infos_with_restaurant">%1$ is the user n°%2$</string>
+    <!-- Workmates List -->
+    <string name="workmates_infos_with_restaurant">%1$s is eating %2$s (%3$s)</string>
 </resources>

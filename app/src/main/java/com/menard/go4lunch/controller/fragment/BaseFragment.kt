@@ -6,7 +6,15 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.model.LatLng
+import com.menard.go4lunch.BuildConfig
+import com.menard.go4lunch.model.nearbysearch.NearbySearch
+import com.menard.go4lunch.model.nearbysearch.Result
 import com.menard.go4lunch.utils.Constants
+import com.menard.go4lunch.utils.GooglePlacesAPI
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.create
 
 open class BaseFragment : Fragment(){
 
@@ -50,7 +58,5 @@ open class BaseFragment : Fragment(){
     open fun onLocationChanged(location: Location): LatLng {
         return LatLng(location.latitude, location.longitude)
     }
-
-
 
 }

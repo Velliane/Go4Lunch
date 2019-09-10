@@ -39,7 +39,7 @@ class WorkmatesFragment: BaseFragment(){
         //-- Layout manager --
         val layoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = layoutManager
-        val workmatesAdapter = WorkmatesAdapter(this.requireActivity(),list )
+        val workmatesAdapter = WorkmatesAdapter(requireActivity(),list )
         recyclerView.adapter = workmatesAdapter
 
         return view

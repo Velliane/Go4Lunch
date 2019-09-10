@@ -2,6 +2,10 @@ package com.menard.go4lunch.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.Typeface.DEFAULT
+import android.graphics.Typeface.ITALIC
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,8 +38,18 @@ class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOp
             Glide.with(context).load(R.drawable.user).into(holder.userPhoto)
         }
 
-        val string = context.getString(R.string.workmates_infos_with_restaurant, user.userName, user.userId)
-        holder.userInfos.text = string
+        val restaurantChoosed: String
+        if(user.userRestaurant != null) {
+            restaurantChoosed = context.getString(R.string.workmates_infos_with_restaurant, user.userName, user.userType, user.userRestaurant)
+            holder.userInfos.text = restaurantChoosed
+
+        }else{
+            holder.userInfos.setTextColor(Color.GRAY)
+            holder.userInfos.setTypeface(DEFAULT, ITALIC)
+            restaurantChoosed = user.userName + " hasn't decided yet"
+            holder.userInfos.text = restaurantChoosed
+        }
+
 
 
     }
@@ -43,13 +57,8 @@ class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOp
 
     class WorkmatesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var userPhoto: CircleImageView
-        var userInfos: TextView
+        var userPhoto: CircleImageView = itemView.findViewById(R.id.image_profile)
+        var userInfos: TextView = itemView.findViewById(R.id.workmates_infos)
 
-        init {
-            userPhoto = itemView.findViewById(R.id.image_profile)
-            userInfos = itemView.findViewById(R.id.workmates_infos)
-
-        }
     }
 }

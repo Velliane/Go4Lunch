@@ -17,8 +17,8 @@ class UserHelper {
         }
 
         //-- CREATE USER --
-        fun createUser(userId: String, userName: String, userPhoto: String?, userRestaurant: String?): Task<Void> {
-            val newUser = User(userId, userName, userPhoto, userRestaurant)
+        fun createUser(userId: String, userName: String, userPhoto: String?, userRestaurant: String?,userType: String?): Task<Void> {
+            val newUser = User(userId, userName, userPhoto, userRestaurant, userType)
             return getUsersCollection().document(userId).set(newUser)
         }
 

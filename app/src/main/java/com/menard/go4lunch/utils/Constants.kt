@@ -11,6 +11,6 @@ class Constants{
 
 
         //-- Collection of Users --
-        const val COLLECTION_USERS = "document"
+        const val COLLECTION_USERS = "users"
     }
 }

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -15,6 +16,12 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.R
+import com.menard.go4lunch.model.nearbysearch.NearbySearch
+import com.menard.go4lunch.model.nearbysearch.Result
+import com.menard.go4lunch.utils.GooglePlacesAPI
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationButtonClickListener {
@@ -34,6 +41,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     /** Places Client */
     private lateinit var placesClient: PlacesClient
+    private var call: Call<NearbySearch>? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -45,15 +53,15 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         mapView.onResume()
 
         //-- Check is fragment is added to MainActivity --
-        //if (isAdded) {
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.requireActivity())
+        if (isAdded) {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
             //-- Google Places SDK initialization --
-            Places.initialize(this.requireActivity(), BuildConfig.api_key_google)
-            placesClient = Places.createClient(this.requireActivity())
-        //}
+            Places.initialize(requireActivity(), BuildConfig.api_key_google)
+            placesClient = Places.createClient(requireActivity())
+        }
         mapView.getMapAsync(this)
         try {
-            MapsInitializer.initialize(this.activity)
+            MapsInitializer.initialize(activity)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -73,7 +81,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         }
         mGoogleMap.setOnMarkerClickListener(this)
         mGoogleMap.setOnInfoWindowClickListener(this)
-        mGoogleMap.setOnMyLocationButtonClickListener (this)
+        mGoogleMap.setOnMyLocationButtonClickListener(this)
     }
 
     //-- UPDATE MAP WITH USER'S LOCATION --
@@ -87,13 +95,51 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         locationRequest.smallestDisplacement = 50F
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, object :LocationCallback(){
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, object : LocationCallback() {
+
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
-                for (location in locationResult.locations) {
+                val lastLocation: LatLng = onLocationChanged(locationResult.lastLocation)
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15F))
+                mGoogleMap.addMarker(MarkerOptions().position(lastLocation).title("Coucou").snippet("Click for more information"))
+
+                val retrofit = GooglePlacesAPI.retrofit
+                val googlePlacesAPI = retrofit.create(GooglePlacesAPI::class.java)
+                call = googlePlacesAPI.getNearbySearch(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString(), "2000", "restaurant", BuildConfig.api_key_google).also {
+
+
+                    it.enqueue(object : Callback<NearbySearch> {
+
+                        override fun onResponse(call: Call<NearbySearch>, response: Response<NearbySearch>) {
+                            if (response.isSuccessful) {
+                                val nearbySearch = response.body()
+                                val listResults: List<Result> = nearbySearch!!.results
+
+                                for (result in listResults) {
+
+                                    val latLng = LatLng(result.geometry.location.lat, result.geometry.location.lng)
+                                    val opening: String = if (result.openingHours != null) {
+                                        if (result.openingHours.openNow) {
+                                            "Open"
+                                        } else {
+                                            "Close"
+                                        }
+                                    } else {
+                                        "No opening hours available"
+                                    }
+                                    mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_4373)).title(result.name).snippet(opening))
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<NearbySearch>, t: Throwable) {
+                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                        }
+
+                    })
 
                     // Update UI with location data
-//                    .addOnSuccessListener { location ->
+//                    .addOnSuccessListener { location ->)
 //                        if (location != null) {
 //                            val lastLocation: LatLng = onLocationChanged(location)
 //                            //-- Zoom --
@@ -106,8 +152,9 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
 //                        } else {
 //                            TODO() //Default location and default marker
 //                        }
-                }
 
+
+                }
             }
         }, null)
     }
@@ -123,6 +170,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
     override fun onInfoWindowClick(p0: Marker?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
     //-- ACTION WHEN CLICK ON MY LOCATION BUTTON
     override fun onMyLocationButtonClick(): Boolean {
         return false

@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:textSize="17sp"
+            android:textSize="16sp"
             android:textColor="@android:color/black"
             android:text="Name"/>
 
@@ -33,6 +33,7 @@
             android:layout_margin="5dp"
             android:maxLength="40"
             android:maxLines="1"
+            android:textSize="11dp"
             android:text="Style - Address"/>
 
         <TextView
@@ -60,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:textSize="17sp"
+            android:textSize="16sp"
             android:text="120m" />
 
         <TextView

@@ -88,7 +88,7 @@ class ListViewFragment : BaseFragment() {
                 val retrofit = GooglePlacesAPI.retrofit
                 val googlePlacesAPI = retrofit.create(GooglePlacesAPI::class.java)
                 call?.cancel()
-                call = googlePlacesAPI.getNearbySearch(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString(), "2000", "restaurant", BuildConfig.api_key_google).also {
+                call = googlePlacesAPI.getNearbySearch(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString(), "5000", "restaurant", BuildConfig.api_key_google).also {
 
 
                     it.enqueue(object : Callback<NearbySearch> {

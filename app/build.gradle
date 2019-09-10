@@ -61,9 +61,14 @@ dependencies {
     // RETROFIT
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.retrofit2:retrofit-mock:2.6.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     // GSON
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     implementation 'com.google.code.gson:gson:2.8.5'
+    // RX JAVA
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+
 
 
 }

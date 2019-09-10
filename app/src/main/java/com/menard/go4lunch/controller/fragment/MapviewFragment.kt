@@ -2,6 +2,7 @@ package com.menard.go4lunch.controller.fragment
 
 import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,14 +16,20 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.menard.go4lunch.BuildConfig
+import com.menard.go4lunch.GooglePlacesStreams
 import com.menard.go4lunch.R
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import com.menard.go4lunch.model.nearbysearch.Result
 import com.menard.go4lunch.utils.GooglePlacesAPI
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Observable
+import io.reactivex.observers.DisposableObserver
+import io.reactivex.schedulers.Schedulers
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationButtonClickListener {
 
@@ -105,7 +112,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
 
                 val retrofit = GooglePlacesAPI.retrofit
                 val googlePlacesAPI = retrofit.create(GooglePlacesAPI::class.java)
-                call = googlePlacesAPI.getNearbySearch(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString(), "2000", "restaurant", BuildConfig.api_key_google).also {
+                call = googlePlacesAPI.getNearbySearch(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString(), "5000", "restaurant", BuildConfig.api_key_google).also {
 
 
                     it.enqueue(object : Callback<NearbySearch> {
@@ -127,7 +134,9 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
                                     } else {
                                         "No opening hours available"
                                     }
-                                    mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_4373)).title(result.name).snippet(opening))
+
+
+                                    mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening))
                                 }
                             }
                         }
@@ -138,25 +147,31 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
 
                     })
 
-                    // Update UI with location data
-//                    .addOnSuccessListener { location ->)
-//                        if (location != null) {
-//                            val lastLocation: LatLng = onLocationChanged(location)
-//                            //-- Zoom --
-//                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15F))
-//                            //-- Add marker --
-//                            val geocoder = Geocoder(this.activity!!, Locale.getDefault())
-//                            val address: String = geocoder.getFromLocation(location.latitude, location.longitude, 1)[0].getAddressLine(0)
-//                            mGoogleMap.addMarker(MarkerOptions().position(lastLocation).title(address).snippet("Click for more information"))
-//
-//                        } else {
-//                            TODO() //Default location and default marker
-//                        }
-
-
                 }
             }
         }, null)
+    }
+
+
+    fun getResultwithRXJAVA(){
+        val disposable = GooglePlacesStreams.getListRestaurant("46.6286533%2C5.237505", "5000", "restaurant", BuildConfig.api_key_google).subscribeWith(
+
+                object :DisposableObserver<NearbySearch>(){
+                    override fun onComplete() {
+                        Log.d("OnComplete", "OnComplete")
+                    }
+
+                    override fun onNext(t: NearbySearch) {
+                        Log.d("OnNext", "OnNext")
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.d("OnError", "OnError")
+                    }
+
+                }
+        )
+
     }
 
     //-- ACTION WHEN CLICK ON MARKER --

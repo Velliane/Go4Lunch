@@ -9,9 +9,9 @@
     <LinearLayout
         android:id="@+id/item_description"
         android:layout_width="0dp"
-        android:layout_height="90dp"
+        android:layout_height="95dp"
         android:gravity="center_vertical"
-        app:layout_constraintHorizontal_weight="4"
+        app:layout_constraintHorizontal_weight="3.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/item_infos"
@@ -49,7 +49,7 @@
     <LinearLayout
         android:id="@+id/item_infos"
         android:layout_width="0dp"
-        android:layout_height="90dp"
+        android:layout_height="95dp"
         android:orientation="vertical"
         android:gravity="center_vertical"
         app:layout_constraintHorizontal_weight="1"
@@ -84,16 +84,16 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintHorizontal_weight="3"
         app:layout_constraintLeft_toRightOf="@+id/item_infos"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/item_photo"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="5dp"
+            android:layout_width="100dp"
+            android:layout_height="90dp"
+            android:layout_margin="3dp"
             android:contentDescription="Photo" />
     </LinearLayout>
 

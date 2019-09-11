@@ -48,7 +48,7 @@ class ListViewAdapter(private val list: List<Result>, private val context:Contex
             val photo = "https://www.google.com/maps/contrib/103887203559295854657/photos/" + restaurant.photos[0].photoReference
             Glide.with(context).load(photo).into(holder.photo)
         }else{
-            TODO()
+            Glide.with(context).load(R.drawable.no_image_available_64).into(holder.photo)
         }
 
     }

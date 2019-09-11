@@ -1,6 +1,6 @@
 package com.menard.go4lunch.controller.fragment
 
-import android.location.Geocoder
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,20 +16,12 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.menard.go4lunch.BuildConfig
-import com.menard.go4lunch.GooglePlacesStreams
+import com.menard.go4lunch.utils.GooglePlacesStreams
 import com.menard.go4lunch.R
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import com.menard.go4lunch.model.nearbysearch.Result
-import com.menard.go4lunch.utils.GooglePlacesAPI
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.Observable
-import io.reactivex.observers.DisposableObserver
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.disposables.CompositeDisposable
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationButtonClickListener {
 
@@ -110,68 +102,82 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15F))
                 mGoogleMap.addMarker(MarkerOptions().position(lastLocation).title("Coucou").snippet("Click for more information"))
 
-                val retrofit = GooglePlacesAPI.retrofit
-                val googlePlacesAPI = retrofit.create(GooglePlacesAPI::class.java)
-                call = googlePlacesAPI.getNearbySearch(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString(), "5000", "restaurant", BuildConfig.api_key_google).also {
+//                val retrofit = GooglePlacesAPI.retrofit
+//                val googlePlacesAPI = retrofit.create(GooglePlacesAPI::class.java)
+//                call = googlePlacesAPI.getNearbySearch(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString(), "5000", "restaurant", BuildConfig.api_key_google).also {
+//
+//
+//                    it.enqueue(object : Callback<NearbySearch> {
+//
+//                        override fun onResponse(call: Call<NearbySearch>, response: Response<NearbySearch>) {
+//                            if (response.isSuccessful) {
+//                                val nearbySearch = response.body()
+//                                val listResults: List<Result> = nearbySearch!!.results
+//
+//                                for (result in listResults) {
+//
+//                                    val latLng = LatLng(result.geometry.location.lat, result.geometry.location.lng)
+//                                    val opening: String = if (result.openingHours != null) {
+//                                        if (result.openingHours.openNow) {
+//                                            "Open"
+//                                        } else {
+//                                            "Close"
+//                                        }
+//                                    } else {
+//                                        "No opening hours available"
+//                                    }
+//
+//
+//                                    mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening))
+//                                }
+//                            }
+//                        }
+//
+//                        override fun onFailure(call: Call<NearbySearch>, t: Throwable) {
+//                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//                        }
+//
+//                    })
+//
+//                }
 
-
-                    it.enqueue(object : Callback<NearbySearch> {
-
-                        override fun onResponse(call: Call<NearbySearch>, response: Response<NearbySearch>) {
-                            if (response.isSuccessful) {
-                                val nearbySearch = response.body()
-                                val listResults: List<Result> = nearbySearch!!.results
-
-                                for (result in listResults) {
-
-                                    val latLng = LatLng(result.geometry.location.lat, result.geometry.location.lng)
-                                    val opening: String = if (result.openingHours != null) {
-                                        if (result.openingHours.openNow) {
-                                            "Open"
-                                        } else {
-                                            "Close"
-                                        }
-                                    } else {
-                                        "No opening hours available"
-                                    }
-
-
-                                    mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening))
-                                }
-                            }
-                        }
-
-                        override fun onFailure(call: Call<NearbySearch>, t: Throwable) {
-                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                        }
-
-                    })
-
-                }
+                getResultwithRXJAVA(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString())
             }
         }, null)
     }
 
 
-    fun getResultwithRXJAVA(){
-        val disposable = GooglePlacesStreams.getListRestaurant("46.6286533%2C5.237505", "5000", "restaurant", BuildConfig.api_key_google).subscribeWith(
+    fun getResultwithRXJAVA(location: String){
+        val disable: CompositeDisposable? = CompositeDisposable()
+        disable?.add(GooglePlacesStreams.getListRestaurant(location, "5000", "restaurant", BuildConfig.api_key_google).subscribe(
+        this::handleResponse, this::handleError))
 
-                object :DisposableObserver<NearbySearch>(){
-                    override fun onComplete() {
-                        Log.d("OnComplete", "OnComplete")
-                    }
+    }
 
-                    override fun onNext(t: NearbySearch) {
-                        Log.d("OnNext", "OnNext")
-                    }
+    private fun handleResponse(nearbySearch: NearbySearch){
+        val listResults: List<Result> = nearbySearch.results
 
-                    override fun onError(e: Throwable) {
-                        Log.d("OnError", "OnError")
-                    }
+        for (result in listResults) {
 
+            val latLng = LatLng(result.geometry.location.lat, result.geometry.location.lng)
+            val opening: String = if (result.openingHours != null) {
+                if (result.openingHours.openNow) {
+                    "Open"
+                } else {
+                    "Close"
                 }
-        )
+            } else {
+                "No opening hours available"
+            }
 
+
+            mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening))
+        }
+    }
+
+    private fun handleError(error: Throwable) {
+
+        Log.d(TAG, error.localizedMessage)
     }
 
     //-- ACTION WHEN CLICK ON MARKER --

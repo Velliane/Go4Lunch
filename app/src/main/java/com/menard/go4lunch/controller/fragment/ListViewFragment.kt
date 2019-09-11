@@ -1,5 +1,6 @@
 package com.menard.go4lunch.controller.fragment
 
+import android.content.ContentValues.TAG
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -7,26 +8,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.menard.go4lunch.BuildConfig
+import com.menard.go4lunch.utils.GooglePlacesStreams
 import com.menard.go4lunch.R
 import com.menard.go4lunch.adapter.ListViewAdapter
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import com.menard.go4lunch.model.nearbysearch.Result
-import com.menard.go4lunch.utils.GooglePlacesAPI
+import io.reactivex.disposables.CompositeDisposable
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class ListViewFragment : BaseFragment() {
 
@@ -71,7 +67,7 @@ class ListViewFragment : BaseFragment() {
     }
 
 
-    fun listOfRestaurant() {
+    private fun listOfRestaurant() {
 
         val locationRequest = LocationRequest()
         locationRequest.interval = 10000
@@ -84,46 +80,37 @@ class ListViewFragment : BaseFragment() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
                 val lastLocation: LatLng = onLocationChanged(locationResult.lastLocation)
+                getResultWithRXJAVA(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString())
 
-                val retrofit = GooglePlacesAPI.retrofit
-                val googlePlacesAPI = retrofit.create(GooglePlacesAPI::class.java)
-                call?.cancel()
-                call = googlePlacesAPI.getNearbySearch(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString(), "5000", "restaurant", BuildConfig.api_key_google).also {
-
-
-                    it.enqueue(object : Callback<NearbySearch> {
-
-                        override fun onResponse(call: Call<NearbySearch>, response: Response<NearbySearch>) {
-
-                            if(isAdded) {
-                                progressBar.visibility = View.GONE
-                                if (response.isSuccessful) {
-                                    val nearbySearch = response.body()
-                                    val listResults: List<Result> = nearbySearch!!.results
-                                    val listViewAdapter = ListViewAdapter(listResults, requireActivity())
-                                    recyclerView.adapter = listViewAdapter
-                                }
-                            }else{
-                                it.cancel()
-                            }
-                        }
-
-                        override fun onFailure(call: Call<NearbySearch>, t: Throwable) {
-                            Log.e("Error", "Error")
-                        }
-
-                    })
-                }
             }
         }, null)
     }
 
 
-    override fun onStop() {
-        super.onStop()
-        if(call != null) {
-            call?.cancel()
-        }
+    fun getResultWithRXJAVA(location: String) {
+        val disable: CompositeDisposable? = CompositeDisposable()
+        disable?.add(GooglePlacesStreams.getListRestaurant(location, "5000", "restaurant", BuildConfig.api_key_google).subscribe(
+                this::handleResponse, this::handleError))
     }
+
+    fun handleResponse(nearbySearch: NearbySearch) {
+        progressBar.visibility = View.GONE
+        val listResults: List<Result> = nearbySearch.results
+        val listViewAdapter = ListViewAdapter(listResults, requireActivity())
+        recyclerView.adapter = listViewAdapter
+
+    }
+
+    private fun handleError(error: Throwable) {
+        Log.d(TAG, error.localizedMessage)
+    }
+
+
+//    override fun onStop() {
+//        super.onStop()
+//        if (call != null) {
+//            call?.cancel()
+//        }
+//    }
 
 }

@@ -93,9 +93,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
      */
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when (p0.itemId) {
-            R.id.action_settings -> startActivity(Intent(this, SettingsActivity::class.java))
-            R.id.action_lunch -> startActivity(Intent(this, LunchActivity::class.java))
-            R.id.action_logout -> signOut()
+            R.id.action_settings -> {startActivity(Intent(this, SettingsActivity::class.java))}
+            R.id.action_lunch -> {startActivity(Intent(this, LunchActivity::class.java))}
+            R.id.action_logout -> {signOut()}
+
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true

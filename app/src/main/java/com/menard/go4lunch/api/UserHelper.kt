@@ -12,7 +12,7 @@ class UserHelper {
 
     companion object {
 
-        fun getUsersCollection(): CollectionReference {
+        private fun getUsersCollection(): CollectionReference {
             return FirebaseFirestore.getInstance().collection(Constants.COLLECTION_USERS)
         }
 

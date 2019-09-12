@@ -46,7 +46,7 @@ class AuthActivity : BaseActivity(), View.OnClickListener {
         startActivityForResult(getInstance()
                 .createSignInIntentBuilder()
                 .setTheme(R.style.SignInScreen)
-                .setAvailableProviders(listOf(IdpConfig.GoogleBuilder().build(), IdpConfig.FacebookBuilder().build(), IdpConfig.TwitterBuilder().build()))
+                .setAvailableProviders(listOf(IdpConfig.GoogleBuilder().build(), IdpConfig.FacebookBuilder().build(), IdpConfig.TwitterBuilder().build(), IdpConfig.EmailBuilder().build()))
                 .setIsSmartLockEnabled(false, true)
                 .setLogo(R.drawable.icon1)
                 .setTosAndPrivacyPolicyUrls("https://openclassrooms.com/fr/terms-conditions","https://openclassrooms.com/fr/privacy-policy")

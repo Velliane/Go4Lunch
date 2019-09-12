@@ -4,6 +4,15 @@
     android:layout_height="match_parent">
 
     <include
+        android:id="@+id/toolbar_setting"
         layout="@layout/toolbar"/>
+
+    <TextView
+        android:id="@+id/text_settings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize"
+        android:text= "HELLO"
+        android:gravity="center"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -105,12 +105,4 @@ class ListViewFragment : BaseFragment() {
         Log.d(TAG, error.localizedMessage)
     }
 
-
-//    override fun onStop() {
-//        super.onStop()
-//        if (call != null) {
-//            call?.cancel()
-//        }
-//    }
-
 }

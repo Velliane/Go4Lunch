@@ -29,6 +29,7 @@ class GooglePlacesStreams {
                     .timeout(10, TimeUnit.SECONDS)
         }
 
+
         //-- Chain request --
 //        fun getDetailsOfSelectedRestaurant(location: String, radius: String, restaurant: String, id: String, fields: String, apiKey: String): Observable<DetailsRequest>{
 //            return getListRestaurant(location, radius, restaurant, apiKey)

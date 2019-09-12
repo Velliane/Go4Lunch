@@ -1,17 +1,23 @@
 package com.menard.go4lunch.adapter
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.R
+import com.menard.go4lunch.controller.activity.LunchActivity
 import com.menard.go4lunch.model.nearbysearch.Result
+import com.menard.go4lunch.utils.Constants
 
-class ListViewAdapter(private val list: List<Result>, private val context:Context) : RecyclerView.Adapter<ListViewAdapter.ListViewHolder>() {
+class ListViewAdapter(val list: List<Result>, private val context:Context) : RecyclerView.Adapter<ListViewAdapter.ListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -44,9 +50,9 @@ class ListViewAdapter(private val list: List<Result>, private val context:Contex
 
         holder.distance.text = "200m"
 
-        if (restaurant.photos != null) {
-            val photo = "https://www.google.com/maps/contrib/103887203559295854657/photos/" + restaurant.photos[0].photoReference
-            Glide.with(context).load(photo).into(holder.photo)
+        if(restaurant.photos != null){
+            val reference: String = restaurant.photos[0].photoReference
+            Glide.with(context).load("https://maps.googleapis.com/maps/api/place/photo?maxheight=90&photoreference="+reference+"&key="+ BuildConfig.api_key_google).into(holder.photo)
         }else{
             Glide.with(context).load(R.drawable.no_image_available_64).into(holder.photo)
         }
@@ -54,13 +60,28 @@ class ListViewAdapter(private val list: List<Result>, private val context:Contex
     }
 
 
-    class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
 
         var nameRestaurant: TextView = itemView.findViewById(R.id.item_name_restaurant)
         var styleAndAddress: TextView = itemView.findViewById(R.id.item_address)
         var openingHours: TextView = itemView.findViewById(R.id.item_open_hours)
         var distance: TextView = itemView.findViewById(R.id.item_distance)
         var photo: ImageView = itemView.findViewById(R.id.item_photo)
+
+
+        init {
+            itemView.setOnClickListener { startLunchActivity( ) }
+        }
+
+
+        fun startLunchActivity(){
+            val idRestaurant: String = list[adapterPosition].placeId
+
+            val intent= Intent(context,LunchActivity::class.java)
+            intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, idRestaurant)
+            context.startActivity(intent)
+
+        }
 
     }
 }

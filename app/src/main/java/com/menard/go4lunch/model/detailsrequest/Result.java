@@ -7,6 +7,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Result {
 
+    @SerializedName("formatted_address")
+    @Expose
+    private String formattedAddress;
     @SerializedName("formatted_phone_number")
     @Expose
     private String formattedPhoneNumber;
@@ -28,6 +31,15 @@ public class Result {
     @SerializedName("website")
     @Expose
     private String website;
+
+
+    public String getFormattedAddress() {
+        return formattedAddress;
+    }
+
+    public void setFormattedAddress(String formattedAddress) {
+        this.formattedAddress = formattedAddress;
+    }
 
     public String getFormattedPhoneNumber() {
         return formattedPhoneNumber;

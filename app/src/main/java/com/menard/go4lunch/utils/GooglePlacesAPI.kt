@@ -21,6 +21,8 @@ interface GooglePlacesAPI {
     @GET("maps/api/place/details/json")
     fun getDetails(@Query("placeid")placeId: String, @Query ("fields") fields: String, @Query("key") key:String): Observable<DetailsRequest>
 
+//    @GET("https://maps.googleapis.com/maps/api/place/photo")
+//    fun getPhoto(@Query("maxwidth") maxwidth: String, @Query("photoreference") photoReference: String, @Query("key") key: String): Observable<>
 
  companion object {
      val retrofit = Retrofit.Builder()

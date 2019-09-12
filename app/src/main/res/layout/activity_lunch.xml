@@ -1,9 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".controller.activity.LunchActivity">
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/activity_lunch_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/activity_lunch_restaurant_infos"
+        android:layout_alignRight="@+id/activity_lunch_restaurant_photo"
+        android:layout_marginBottom="-27dp"
+        android:layout_marginEnd="15dp"
+        android:src="@drawable/select_24"/>
+
+    <ImageView
+        android:id="@+id/activity_lunch_restaurant_photo"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
+
+    <!-- Restaurant's infos -->
+    <LinearLayout
+        android:id="@+id/activity_lunch_restaurant_infos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary"
+        android:padding="10dp"
+        android:layout_below="@+id/activity_lunch_restaurant_photo">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/infos_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/colorAccent"
+                android:layout_marginEnd="3dp"
+                android:text="Name" />
+
+            <ImageView
+                android:id="@+id/infos_star"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/baseline_star_black_24"
+                android:visibility="invisible"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/infos_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="10sp"
+            android:text="Address" />
+
+
+    </LinearLayout>
+
+    <!-- Restaurant's contact infos -->
 
     <include
-        layout="@layout/toolbar"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:id="@+id/contact"
+        layout="@layout/contact_infos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_below="@+id/activity_lunch_restaurant_infos" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_lunch_list_workmates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_below="@+id/contact" />
+
+</RelativeLayout>

@@ -41,7 +41,7 @@ class AuthActivity : BaseActivity(), View.OnClickListener {
     }
 
 
-    //-- CONFIGURE GOOGLE, FACEBOOK AND TWITTER SIGN IN --
+    //-- CONFIGURE GOOGLE, FACEBOOK, TWITTER AND EMAIL SIGN IN --
     private fun signIn(){
         startActivityForResult(getInstance()
                 .createSignInIntentBuilder()
@@ -68,7 +68,7 @@ class AuthActivity : BaseActivity(), View.OnClickListener {
             if(resultCode == Activity.RESULT_OK){
                 showSnackBar(layout, "Connection succeed")
                 //-- Add new user to firestore
-                UserHelper.createUser(getCurrentUser().uid, getCurrentUser().displayName!!, getCurrentUser().photoUrl?.toString(), null,null ).addOnFailureListener(onFailureListener())
+                UserHelper.createUser(getCurrentUser().uid, getCurrentUser().displayName!!, getCurrentUser().photoUrl?.toString(), null).addOnFailureListener(onFailureListener())
                 startMainActivity()
             }else{
                 when {

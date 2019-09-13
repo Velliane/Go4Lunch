@@ -1,6 +1,5 @@
 package com.menard.go4lunch.adapter
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.menard.go4lunch.BuildConfig
@@ -17,7 +15,7 @@ import com.menard.go4lunch.controller.activity.LunchActivity
 import com.menard.go4lunch.model.nearbysearch.Result
 import com.menard.go4lunch.utils.Constants
 
-class ListViewAdapter(val list: List<Result>, private val context:Context) : RecyclerView.Adapter<ListViewAdapter.ListViewHolder>() {
+class ListViewAdapter(val list: List<Result>, private val context: Context) : RecyclerView.Adapter<ListViewAdapter.ListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -37,9 +35,9 @@ class ListViewAdapter(val list: List<Result>, private val context:Context) : Rec
         holder.styleAndAddress.text = restaurant.vicinity
 
         val opening: String = if (restaurant.openingHours != null) {
-            if(restaurant.openingHours.openNow){
+            if (restaurant.openingHours.openNow) {
                 "Open"
-            }else{
+            } else {
                 "Close"
             }
         } else {
@@ -50,17 +48,17 @@ class ListViewAdapter(val list: List<Result>, private val context:Context) : Rec
 
         holder.distance.text = "200m"
 
-        if(restaurant.photos != null){
+        if (restaurant.photos != null) {
             val reference: String = restaurant.photos[0].photoReference
-            Glide.with(context).load("https://maps.googleapis.com/maps/api/place/photo?maxheight=90&photoreference="+reference+"&key="+ BuildConfig.api_key_google).into(holder.photo)
-        }else{
+            Glide.with(context).load("https://maps.googleapis.com/maps/api/place/photo?maxheight=200&photoreference=" + reference + "&key=" + BuildConfig.api_key_google).centerCrop().into(holder.photo)
+        } else {
             Glide.with(context).load(R.drawable.no_image_available_64).into(holder.photo)
         }
 
     }
 
 
-    inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var nameRestaurant: TextView = itemView.findViewById(R.id.item_name_restaurant)
         var styleAndAddress: TextView = itemView.findViewById(R.id.item_address)
@@ -70,14 +68,16 @@ class ListViewAdapter(val list: List<Result>, private val context:Context) : Rec
 
 
         init {
-            itemView.setOnClickListener { startLunchActivity( ) }
+            itemView.setOnClickListener { startLunchActivity() }
         }
 
 
-        fun startLunchActivity(){
+        /**
+         * Start LunchActivity to show details on the selected restaurant, according to place_id
+         */
+        private fun startLunchActivity() {
             val idRestaurant: String = list[adapterPosition].placeId
-
-            val intent= Intent(context,LunchActivity::class.java)
+            val intent = Intent(context, LunchActivity::class.java)
             intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, idRestaurant)
             context.startActivity(intent)
 

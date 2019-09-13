@@ -29,7 +29,7 @@ class DispatcherActivity : AppCompatActivity() {
                     startActivity(Intent(this, AuthActivity::class.java))
                 }
             }
-        }, 5000)
+        }, 3000)
 
     }
 }

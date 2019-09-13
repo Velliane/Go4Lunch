@@ -1,10 +1,7 @@
 package com.menard.go4lunch.api
 
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.*
 import com.menard.go4lunch.utils.Constants
 import com.menard.go4lunch.model.User
 
@@ -17,8 +14,8 @@ class UserHelper {
         }
 
         //-- CREATE USER --
-        fun createUser(userId: String, userName: String, userPhoto: String?, userRestaurant: String?,userType: String?): Task<Void> {
-            val newUser = User(userId, userName, userPhoto, userRestaurant, userType)
+        fun createUser(userId: String, userName: String, userPhoto: String?, userRestaurant: String?): Task<Void> {
+            val newUser = User(userId, userName, userPhoto, userRestaurant)
             return getUsersCollection().document(userId).set(newUser)
         }
 
@@ -26,6 +23,9 @@ class UserHelper {
         fun getUser(userId: String): Task<DocumentSnapshot> {
             return getUsersCollection().document(userId).get()
         }
+//        fun getUserName(userId: String): Query {
+//            return getUsersCollection().whereEqualTo("userId", userId)
+//        }
 
         //-- GET ALL USERS --
         fun getAllUser(): Query {
@@ -45,6 +45,7 @@ class UserHelper {
         fun deleteUser(userId: String): Task<Void> {
             return getUsersCollection().document(userId).delete()
         }
+
 
     }
 

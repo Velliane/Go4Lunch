@@ -18,5 +18,9 @@ class Constants{
 
         //-- Extra for Intent --
         const val EXTRA_RESTAURANT_IDENTIFIER = "EXTRA_RESTAURANT_IDENTIFIER"
+
+        //-- Shared Preferences --
+        const val SHARED_PREFERENCES = "SHARED_PREFERENCES"
+        const val PREF_RESTAURANT_SELECTED = "PREF_RESTAURANT_SELECTED"
     }
 }

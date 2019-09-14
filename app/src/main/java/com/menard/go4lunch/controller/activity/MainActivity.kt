@@ -1,13 +1,16 @@
 package com.menard.go4lunch.controller.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -43,6 +46,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     /** FusedLocation */
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
+    /** Shared Preferences */
+    lateinit var sharedPreferences: SharedPreferences
+
 
     //-- BOTTOM NAVIGATION VIEW LISTENER --
     private val onBottomNavigationItemSelectedListener = object : BottomNavigationView.OnNavigationItemSelectedListener {
@@ -72,6 +78,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+
         //-- Bottom Navigation View --
         bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener(onBottomNavigationItemSelectedListener)
@@ -94,7 +102,22 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when (p0.itemId) {
             R.id.action_settings -> {startActivity(Intent(this, SettingsActivity::class.java))}
-            R.id.action_lunch -> {startActivity(Intent(this, LunchActivity::class.java))}
+            R.id.action_lunch -> {
+
+                if(sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, null) != null){
+                    val restaurant: String? = sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, null)
+                    val intent = Intent(this, LunchActivity::class.java)
+                    intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, restaurant)
+                    startActivity(intent)
+                }else{
+                    val builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
+                    builder.setMessage("You don't have any restaurant selected for now")
+                            .setNegativeButton("Ok") { dialog, which ->
+                            }
+                            .create().show()
+                }
+            }
+
             R.id.action_logout -> {signOut()}
 
         }
@@ -176,8 +199,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
         }
     }
 

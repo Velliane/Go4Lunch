@@ -25,7 +25,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.acivity_settings)
 
-        val toolbar: androidx.appcompat.widget.Toolbar= findViewById(R.id.toolbar_setting)
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_setting)
         toolbar.title = "Settings"
         setSupportActionBar(toolbar)
 
@@ -41,26 +41,33 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        when(v?.id){
+        when (v?.id) {
             R.id.activity_settings_button -> {
                 UserHelper.updateName(displayNameEdit.text.toString(), getCurrentUser().uid)
                 Toast.makeText(this, "Your display name have been updated", Toast.LENGTH_SHORT).show()
             }
 
             R.id.activity_settings_button_delete -> {
-                AlertDialog.Builder(this)
-                        .setTitle("Are you sure ?")
+                val builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
+                builder.setTitle("Are you sure ?")
                         .setMessage("Do your really want to delete your account ? This action will be irreversible")
-                        .setPositiveButton("Yes, I'm sure") {
-                            dialog, which ->  UserHelper.deleteUser(getCurrentUser().uid)
-                                            startActivity(Intent(this, AuthActivity::class.java))
+                        .setPositiveButton("Yes, I'm sure") { dialog, which ->
+                            deleteAccount()
                         }
-                        .setNegativeButton("No, I change my mind"){
-                            dialog, which ->  Toast.makeText(this, "Good decision !", Toast.LENGTH_SHORT).show()
+                        .setNegativeButton("No, I change my mind") { dialog, which ->
+                            Toast.makeText(this, "Good decision !", Toast.LENGTH_SHORT).show()
                         }
                         .create().show()
-
             }
         }
+    }
+
+    fun deleteAccount() {
+        //-- Delete from Firestore --
+        UserHelper.deleteUser(getCurrentUser().uid)
+        //-- Delete from Firebase Auth --
+        getCurrentUser().delete()
+        //-- Start AuthActivity --
+        startActivity(Intent(this, AuthActivity::class.java))
     }
 }

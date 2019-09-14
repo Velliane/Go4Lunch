@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Go4Lunch</string>
+    <string name="sign_in_button">CONNEXION</string>
+
+    <!-- Navigation Drawer -->
+    <string name="action_settings">PARAMETRES</string>
+    <string name="action_your_lunch">DEJEUNER</string>
+    <string name="action_logout">DECONNEXION</string>
+
+    <!-- Workmates -->
+    <string name="workmates_infos_with_restaurant">%1$s mange %2$s (%3$s)</string>
+
+
+</resources>

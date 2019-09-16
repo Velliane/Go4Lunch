@@ -105,20 +105,20 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15F))
                 mGoogleMap.addMarker(MarkerOptions().position(lastLocation).title("Coucou").snippet("Click for more information"))
 
-                getResultwithRXJAVA(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString())
+                getResultWithRXJAVA(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString())
             }
         }, null)
     }
 
 
-    fun getResultwithRXJAVA(location: String){
+    fun getResultWithRXJAVA(location: String) {
         val disable: CompositeDisposable? = CompositeDisposable()
         disable?.add(GooglePlacesStreams.getListRestaurant(location, "5000", "restaurant", BuildConfig.api_key_google).subscribe(
-        this::handleResponse, this::handleError))
+                this::handleResponse, this::handleError))
 
     }
 
-    private fun handleResponse(nearbySearch: NearbySearch){
+    private fun handleResponse(nearbySearch: NearbySearch) {
         val listResults: List<Result> = nearbySearch.results
 
         for (result in listResults) {

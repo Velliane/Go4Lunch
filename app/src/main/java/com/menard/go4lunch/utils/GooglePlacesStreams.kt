@@ -4,6 +4,7 @@ import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
@@ -33,7 +34,9 @@ class GooglePlacesStreams {
         //-- Chain request --
 //        fun getDetailsOfSelectedRestaurant(location: String, radius: String, restaurant: String, id: String, fields: String, apiKey: String): Observable<DetailsRequest>{
 //            return getListRestaurant(location, radius, restaurant, apiKey)
-//                    .map(
+//                    .map(Function<NearbySearch, DetailsRequest> {
+//                        return@Function it.results[]
+//                    }.also {  }
 //        }
     }
 

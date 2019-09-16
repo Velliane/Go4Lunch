@@ -20,4 +20,10 @@
     <string name="alert_dialog_settings_good">Bonne décision !</string>
     <string name="settings_button_delete_account">SUPPRIMER LE COMPTE</string>
 
+    <!-- Bottom Navigation View -->
+    <string name="bottom_navigation_menu_mapview">Carte</string>
+    <string name="bottom_navigation_menu_listview">Liste</string>
+    <string name="bottom_navigation_menu_workmates">Collègues</string>
+    <string name="bottom_navigation_menu_chat">Chat</string>
+
 </resources>

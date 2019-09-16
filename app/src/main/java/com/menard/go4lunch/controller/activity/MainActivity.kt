@@ -28,6 +28,7 @@ import com.google.android.material.navigation.NavigationView
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.utils.Constants
 import com.menard.go4lunch.R
+import com.menard.go4lunch.controller.fragment.ChatFragment
 import com.menard.go4lunch.controller.fragment.ListViewFragment
 import com.menard.go4lunch.controller.fragment.MapviewFragment
 import com.menard.go4lunch.controller.fragment.WorkmatesFragment
@@ -52,8 +53,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     //-- BOTTOM NAVIGATION VIEW LISTENER --
     private val onBottomNavigationItemSelectedListener = object : BottomNavigationView.OnNavigationItemSelectedListener {
-        override fun onNavigationItemSelected(p0: MenuItem): Boolean {
-            when (p0.itemId) {
+        override fun onNavigationItemSelected(item: MenuItem): Boolean {
+            when (item.itemId) {
                 R.id.action_mapview -> {
                     val fragment = MapviewFragment.newInstance()
                     addFragment(fragment)
@@ -66,6 +67,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }
                 R.id.action_workmates -> {
                     val fragment = WorkmatesFragment.newInstance()
+                    addFragment(fragment)
+                    return true
+                }
+                R.id.action_chat -> {
+                    val fragment = ChatFragment.newInstance()
                     addFragment(fragment)
                     return true
                 }

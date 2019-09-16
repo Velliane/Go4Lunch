@@ -93,7 +93,7 @@ class ListViewFragment : BaseFragment() {
                 this::handleResponse, this::handleError))
     }
 
-    fun handleResponse(nearbySearch: NearbySearch) {
+    private fun handleResponse(nearbySearch: NearbySearch) {
         progressBar.visibility = View.GONE
         val listResults: List<Result> = nearbySearch.results
         val listViewAdapter = ListViewAdapter(listResults, requireActivity())
@@ -102,7 +102,7 @@ class ListViewFragment : BaseFragment() {
     }
 
     private fun handleError(error: Throwable) {
-        Log.d(TAG, error.localizedMessage)
+        Log.d(TAG, "Error")
     }
 
 }

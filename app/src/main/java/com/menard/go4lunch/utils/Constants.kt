@@ -10,8 +10,9 @@ class Constants{
         const val REQUEST_CODE_AUTOCOMPLETE = 1
 
 
-        //-- Collection of Users --
+        //-- Collection --
         const val COLLECTION_USERS = "users"
+        const val COLLECTION_MESSAGES = "chat"
 
         //-- Request --
         const val FIELD_FOR_DETAILS = "formatted_address,name,rating,permanently_closed,photo,type,formatted_phone_number,opening_hours,website"

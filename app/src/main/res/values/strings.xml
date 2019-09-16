@@ -2,9 +2,10 @@
     <string name="app_name">Go4Lunch</string>
 
     <!-- Bottom Navigation View -->
-    <string name="bottom_navigation_menu_mapview" translatable="false">Map View</string>
-    <string name="bottom_navigation_menu_listview" translatable="false">List View</string>
-    <string name="bottom_navigation_menu_workmates" translatable="false">Workmates</string>
+    <string name="bottom_navigation_menu_mapview">Map View</string>
+    <string name="bottom_navigation_menu_listview">List View</string>
+    <string name="bottom_navigation_menu_workmates">Workmates</string>
+    <string name="bottom_navigation_menu_chat">Chat</string>
 
     <!-- Facebook Login -->
     <string name="facebook_application_id" translatable="false">552782148595011</string>
@@ -40,4 +41,5 @@
     <string name="alert_dialog_settings_no">"No, I change my mind"</string>
     <string name="alert_dialog_settings_good">"Good decision !"</string>
     <string name="settings_button_delete_account">DELETE ACCOUNT</string>
+
 </resources>

@@ -22,4 +22,11 @@
         android:title="@string/bottom_navigation_menu_workmates"
         android:icon="@drawable/baseline_supervisor_account_black_36"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_chat"
+        android:enabled="true"
+        android:title="@string/bottom_navigation_menu_chat"
+        android:icon="@drawable/baseline_chat_black_36"
+        app:showAsAction="ifRoom"/>
 </menu>

@@ -19,6 +19,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/chat_item_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
@@ -28,16 +29,17 @@
                 android:padding="8dp"
                 android:text="Example of message"
                 android:textColor="@color/colorAccent"
-                android:textSize="8sp" />
+                android:textSize="20sp" />
 
             <TextView
+                android:id="@+id/chat_item_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="5dp"
                 android:text="Date"
                 android:textAlignment="textEnd"
-                android:textSize="5sp" />
+                android:textSize="10sp" />
 
 
         </LinearLayout>
@@ -52,8 +54,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/image_profile"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:src="@drawable/user"
                 />
 

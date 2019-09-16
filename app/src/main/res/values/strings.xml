@@ -4,7 +4,7 @@
     <!-- Bottom Navigation View -->
     <string name="bottom_navigation_menu_mapview" translatable="false">Map View</string>
     <string name="bottom_navigation_menu_listview" translatable="false">List View</string>
-    <string name="bottom_navigation_menu_workmates">Workmates</string>
+    <string name="bottom_navigation_menu_workmates" translatable="false">Workmates</string>
 
     <!-- Facebook Login -->
     <string name="facebook_application_id" translatable="false">552782148595011</string>
@@ -28,7 +28,16 @@
     <string name="workmates_infos_with_restaurant">%1$s is eating %2$s (%3$s)</string>
 
     <!-- Navigation Drawer -->
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">SETTINGS</string>
     <string name="action_your_lunch">YOUR LUNCH</string>
     <string name="action_logout">LOGOUT</string>
+
+    <!-- Settings -->
+    <string name="title_settings">Settings</string>
+    <string name="alert_dialog_settings_title">Are you sure ?</string>
+    <string name="alert_dialog_settings_text">"Do your really want to delete your account ? This action will be irreversible"</string>
+    <string name="alert_dialog_settings_ok">"Yes, I'm sure"</string>
+    <string name="alert_dialog_settings_no">"No, I change my mind"</string>
+    <string name="alert_dialog_settings_good">"Good decision !"</string>
+    <string name="settings_button_delete_account">DELETE ACCOUNT</string>
 </resources>

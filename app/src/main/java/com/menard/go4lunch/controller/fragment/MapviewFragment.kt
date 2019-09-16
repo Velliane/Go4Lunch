@@ -1,6 +1,7 @@
 package com.menard.go4lunch.controller.fragment
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,8 +19,10 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.utils.GooglePlacesStreams
 import com.menard.go4lunch.R
+import com.menard.go4lunch.controller.activity.LunchActivity
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import com.menard.go4lunch.model.nearbysearch.Result
+import com.menard.go4lunch.utils.Constants
 import io.reactivex.disposables.CompositeDisposable
 import retrofit2.Call
 
@@ -102,45 +105,6 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15F))
                 mGoogleMap.addMarker(MarkerOptions().position(lastLocation).title("Coucou").snippet("Click for more information"))
 
-//                val retrofit = GooglePlacesAPI.retrofit
-//                val googlePlacesAPI = retrofit.create(GooglePlacesAPI::class.java)
-//                call = googlePlacesAPI.getNearbySearch(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString(), "5000", "restaurant", BuildConfig.api_key_google).also {
-//
-//
-//                    it.enqueue(object : Callback<NearbySearch> {
-//
-//                        override fun onResponse(call: Call<NearbySearch>, response: Response<NearbySearch>) {
-//                            if (response.isSuccessful) {
-//                                val nearbySearch = response.body()
-//                                val listResults: List<Result> = nearbySearch!!.results
-//
-//                                for (result in listResults) {
-//
-//                                    val latLng = LatLng(result.geometry.location.lat, result.geometry.location.lng)
-//                                    val opening: String = if (result.openingHours != null) {
-//                                        if (result.openingHours.openNow) {
-//                                            "Open"
-//                                        } else {
-//                                            "Close"
-//                                        }
-//                                    } else {
-//                                        "No opening hours available"
-//                                    }
-//
-//
-//                                    mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening))
-//                                }
-//                            }
-//                        }
-//
-//                        override fun onFailure(call: Call<NearbySearch>, t: Throwable) {
-//                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//                        }
-//
-//                    })
-//
-//                }
-
                 getResultwithRXJAVA(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString())
             }
         }, null)
@@ -171,7 +135,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
             }
 
 
-            mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening))
+            mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening)).tag = result.placeId
         }
     }
 
@@ -189,7 +153,9 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
 
     //-- ACTION WHEN CLICK IN INFO WINDOW --
     override fun onInfoWindowClick(p0: Marker?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val intent = Intent(requireActivity(), LunchActivity::class.java)
+        intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, p0?.tag.toString())
+        startActivity(intent)
     }
 
     //-- ACTION WHEN CLICK ON MY LOCATION BUTTON

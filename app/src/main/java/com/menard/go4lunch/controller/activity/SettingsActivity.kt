@@ -26,7 +26,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         setContentView(R.layout.acivity_settings)
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_setting)
-        toolbar.title = "Settings"
+        toolbar.title = getString(R.string.title_settings)
         setSupportActionBar(toolbar)
 
 //        val query: Query = UserHelper.getUserName(getCurrentUser().uid)
@@ -49,13 +49,13 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
 
             R.id.activity_settings_button_delete -> {
                 val builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
-                builder.setTitle("Are you sure ?")
-                        .setMessage("Do your really want to delete your account ? This action will be irreversible")
-                        .setPositiveButton("Yes, I'm sure") { dialog, which ->
+                builder.setTitle(R.string.alert_dialog_settings_title)
+                        .setMessage(R.string.alert_dialog_settings_text)
+                        .setPositiveButton(R.string.alert_dialog_settings_ok) { dialog, which ->
                             deleteAccount()
                         }
-                        .setNegativeButton("No, I change my mind") { dialog, which ->
-                            Toast.makeText(this, "Good decision !", Toast.LENGTH_SHORT).show()
+                        .setNegativeButton(R.string.alert_dialog_settings_no) { dialog, which ->
+                            Toast.makeText(this, R.string.alert_dialog_settings_good , Toast.LENGTH_SHORT).show()
                         }
                         .create().show()
             }

@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import com.menard.go4lunch.model.nearbysearch.Result
@@ -20,6 +22,9 @@ open class BaseFragment : Fragment(){
 
 
 
+    open fun getCurrentUser(): FirebaseUser {
+        return FirebaseAuth.getInstance().currentUser!!
+    }
 
     //-- CHECK PERMISSIONS FOR FINE LOCATION --
     /**

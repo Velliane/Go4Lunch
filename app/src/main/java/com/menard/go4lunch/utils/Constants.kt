@@ -15,7 +15,7 @@ class Constants{
         const val COLLECTION_MESSAGES = "chat"
 
         //-- Request --
-        const val FIELD_FOR_DETAILS = "formatted_address,name,rating,permanently_closed,photo,type,formatted_phone_number,opening_hours,website"
+        const val FIELD_FOR_DETAILS = "place_id,geometry,formatted_address,name,rating,permanently_closed,photo,type,formatted_phone_number,opening_hours,website"
 
         //-- Extra for Intent --
         const val EXTRA_RESTAURANT_IDENTIFIER = "EXTRA_RESTAURANT_IDENTIFIER"

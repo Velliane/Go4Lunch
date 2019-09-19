@@ -12,10 +12,12 @@ import com.bumptech.glide.Glide
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.R
 import com.menard.go4lunch.controller.activity.LunchActivity
-import com.menard.go4lunch.model.nearbysearch.Result
+import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.utils.Constants
+import com.menard.go4lunch.utils.getProgressDrawableSpinner
+import com.menard.go4lunch.utils.loadRestaurantPhoto
 
-class ListViewAdapter(val list: List<Result>, private val context: Context) : RecyclerView.Adapter<ListViewAdapter.ListViewHolder>() {
+class ListViewAdapter(val list: List<DetailsRequest>, private val context: Context) : RecyclerView.Adapter<ListViewAdapter.ListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -29,10 +31,11 @@ class ListViewAdapter(val list: List<Result>, private val context: Context) : Re
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
 
-        val restaurant: Result = list[position]
+        val detailResult: DetailsRequest = list[position]
+        val restaurant = detailResult.result
 
         holder.nameRestaurant.text = restaurant.name
-        holder.styleAndAddress.text = restaurant.vicinity
+        holder.styleAndAddress.text = restaurant.formattedAddress
 
         val opening: String = if (restaurant.openingHours != null) {
             if (restaurant.openingHours.openNow) {
@@ -45,12 +48,12 @@ class ListViewAdapter(val list: List<Result>, private val context: Context) : Re
         }
         holder.openingHours.text = opening
 
-
         holder.distance.text = "200m"
 
         if (restaurant.photos != null) {
             val reference: String = restaurant.photos[0].photoReference
-            Glide.with(context).load("https://maps.googleapis.com/maps/api/place/photo?maxheight=200&photoreference=" + reference + "&key=" + BuildConfig.api_key_google).centerCrop().into(holder.photo)
+            val url: String = context.getString(R.string.photos_list_view, reference, BuildConfig.api_key_google)
+            holder.photo.loadRestaurantPhoto(url, getProgressDrawableSpinner(context))
         } else {
             Glide.with(context).load(R.drawable.no_image_available_64).into(holder.photo)
         }
@@ -76,7 +79,7 @@ class ListViewAdapter(val list: List<Result>, private val context: Context) : Re
          * Start LunchActivity to show details on the selected restaurant, according to place_id
          */
         private fun startLunchActivity() {
-            val idRestaurant: String = list[adapterPosition].placeId
+            val idRestaurant: String = list[adapterPosition].result.placeId
             val intent = Intent(context, LunchActivity::class.java)
             intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, idRestaurant)
             context.startActivity(intent)

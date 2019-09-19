@@ -23,9 +23,6 @@ class UserHelper {
         fun getUser(userId: String): Task<DocumentSnapshot> {
             return getUsersCollection().document(userId).get()
         }
-//        fun getUserName(userId: String): Query {
-//            return getUsersCollection().whereEqualTo("userId", userId)
-//        }
 
         //-- GET ALL USERS --
         fun getAllUser(): Query {

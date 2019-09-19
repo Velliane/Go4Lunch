@@ -9,10 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.menard.go4lunch.R
 import com.menard.go4lunch.model.User
 import de.hdodenhof.circleimageview.CircleImageView
@@ -26,24 +28,34 @@ class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOp
     }
 
 
-    @SuppressLint("RestrictedApi")
     override fun onBindViewHolder(holder: WorkmatesViewHolder, position: Int, user: User) {
 
-        if(user.userPhoto != null){
-            Glide.with(context).load(user.userPhoto).circleCrop().into(holder.userPhoto)
-        }else{
-            Glide.with(context).load(R.drawable.user).circleCrop().into(holder.userPhoto)
-        }
+        //-- Hide item if it's current user's information --
+        if(user.userId == FirebaseAuth.getInstance().currentUser!!.uid){
+            val param: RecyclerView.LayoutParams = holder.container.layoutParams as RecyclerView.LayoutParams
+            param.height = 0
+            holder.itemView.visibility = View.VISIBLE
 
-        val restaurantChoosed: String
-        if(user.userRestaurant != null) {
-            restaurantChoosed = context.getString(R.string.workmates_infos_with_restaurant, user.userName, "TODO", user.userRestaurant)
-            holder.userInfos.text = restaurantChoosed
+        //-- Show the other users's information --
         }else{
-            holder.userInfos.setTextColor(Color.GRAY)
-            holder.userInfos.setTypeface(DEFAULT, ITALIC)
-            restaurantChoosed = user.userName + " hasn't decided yet"
-            holder.userInfos.text = restaurantChoosed
+
+            if(user.userPhoto != null){
+                Glide.with(context).load(user.userPhoto).circleCrop().into(holder.userPhoto)
+            }else{
+                Glide.with(context).load(R.drawable.user).circleCrop().into(holder.userPhoto)
+            }
+            val restaurantChoosed: String
+            if(user.userRestaurant != null) {
+                restaurantChoosed = context.getString(R.string.workmates_infos_with_restaurant, user.userName, "TODO", user.userRestaurant)
+                holder.userInfos.text = restaurantChoosed
+                holder.userInfos.setTextColor(Color.BLACK)
+                holder.userInfos.typeface = DEFAULT
+            }else{
+                holder.userInfos.setTextColor(Color.GRAY)
+                holder.userInfos.setTypeface(DEFAULT, ITALIC)
+                restaurantChoosed = user.userName + " hasn't decided yet"
+                holder.userInfos.text = restaurantChoosed
+            }
         }
 
     }
@@ -52,6 +64,7 @@ class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOp
 
         var userPhoto: CircleImageView = itemView.findViewById(R.id.image_profile)
         var userInfos: TextView = itemView.findViewById(R.id.workmates_infos)
+        var container: ConstraintLayout = itemView.findViewById(R.id.workmates_item_container)
 
     }
 

@@ -19,6 +19,7 @@
     <string name="alert_dialog_settings_no">Non, j\'ai changé d\'avis</string>
     <string name="alert_dialog_settings_good">Bonne décision !</string>
     <string name="settings_button_delete_account">SUPPRIMER LE COMPTE</string>
+    <string name="settings_change_name_validation">Ton nom a été modifié</string>
 
     <!-- Bottom Navigation View -->
     <string name="bottom_navigation_menu_mapview">Carte</string>

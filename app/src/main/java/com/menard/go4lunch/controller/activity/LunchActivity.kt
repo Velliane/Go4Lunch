@@ -85,7 +85,7 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
     /**
      * Handle response of the request
      */
-    fun handleResponse(detailsRequest: DetailsRequest) {
+    private fun handleResponse(detailsRequest: DetailsRequest) {
         val result: Result = detailsRequest.result
 
         nameRestaurant.text = result.name
@@ -94,7 +94,8 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
         //-- Use Place Photos to show according to its reference --
         if (result.photos != null) {
             val reference: String = result.photos[0].photoReference
-            Glide.with(this).load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference=" + reference + "&key=" + BuildConfig.api_key_google).centerCrop().into(photo)
+            val url:String = this.getString(R.string.photos_lunch_activity, reference, BuildConfig.api_key_google)
+            Glide.with(this).load(url).centerCrop().into(photo)
         } else {
             Glide.with(this).load(R.drawable.no_image_available_64).centerCrop().into(photo)
         }

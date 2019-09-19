@@ -7,6 +7,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Result {
 
+    @SerializedName("place_id")
+    @Expose
+    private String placeId;
     @SerializedName("formatted_address")
     @Expose
     private String formattedAddress;
@@ -97,4 +100,11 @@ public class Result {
         this.website = website;
     }
 
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
+    }
 }

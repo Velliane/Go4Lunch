@@ -8,6 +8,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import com.google.firebase.auth.FirebaseAuth
 import com.menard.go4lunch.R
+import kotlinx.android.synthetic.main.activity_dispatcher.*
 
 class DispatcherActivity : AppCompatActivity() {
 
@@ -15,9 +16,8 @@ class DispatcherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dispatcher)
 
-        val logo: ImageView = findViewById(R.id.application_icon)
         val animation = AnimationUtils.loadAnimation(this, R.anim.rotate)
-        logo.startAnimation(animation)
+        application_icon.startAnimation(animation)
 
         Handler().postDelayed({
             kotlin.run {

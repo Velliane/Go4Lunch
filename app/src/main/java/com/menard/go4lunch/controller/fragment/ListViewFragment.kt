@@ -19,8 +19,10 @@ import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.utils.GooglePlacesStreams
 import com.menard.go4lunch.R
 import com.menard.go4lunch.adapter.ListViewAdapter
+import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import com.menard.go4lunch.model.nearbysearch.Result
+import com.menard.go4lunch.utils.Constants
 import io.reactivex.disposables.CompositeDisposable
 import retrofit2.Call
 
@@ -68,7 +70,6 @@ class ListViewFragment : BaseFragment() {
 
 
     private fun listOfRestaurant() {
-
         val locationRequest = LocationRequest()
         locationRequest.interval = 10000
         locationRequest.fastestInterval = 2000
@@ -82,21 +83,23 @@ class ListViewFragment : BaseFragment() {
                 val lastLocation: LatLng = onLocationChanged(locationResult.lastLocation)
                 getResultWithRXJAVA(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString())
 
+
             }
         }, null)
     }
 
 
+
     fun getResultWithRXJAVA(location: String) {
         val disable: CompositeDisposable? = CompositeDisposable()
-        disable?.add(GooglePlacesStreams.getListRestaurant(location, "5000", "restaurant", BuildConfig.api_key_google).subscribe(
+        disable?.add(GooglePlacesStreams.getDetailsOfSelectedRestaurant(location, "5000", "restaurant", Constants.FIELD_FOR_DETAILS, BuildConfig.api_key_google).subscribe(
                 this::handleResponse, this::handleError))
     }
 
-    private fun handleResponse(nearbySearch: NearbySearch) {
+    private fun handleResponse(detailsRequestList: List<DetailsRequest>) {
         progressBar.visibility = View.GONE
-        val listResults: List<Result> = nearbySearch.results
-        val listViewAdapter = ListViewAdapter(listResults, requireActivity())
+//        val listResults: List<Result> = nearbySearch.results
+        val listViewAdapter = ListViewAdapter(detailsRequestList, requireActivity())
         recyclerView.adapter = listViewAdapter
 
     }
@@ -104,5 +107,15 @@ class ListViewFragment : BaseFragment() {
     private fun handleError(error: Throwable) {
         Log.d(TAG, "Error")
     }
+
+//    fun getDetailOfRestaurant(location: String){
+//        val disable: CompositeDisposable? = CompositeDisposable()
+//        disable?.add(GooglePlacesStreams.getDetailsOfSelectedRestaurant(location, "5000", "restaurant", Constants.FIELD_FOR_DETAILS, BuildConfig.api_key_google).subscribe(
+//                this::handleResponseDetail, this::handleErrorDetail))
+//    }
+//
+//    fun handleResponseDetail( detailsRequest: DetailsRequest){
+//
+//    }
 
 }

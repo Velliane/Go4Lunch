@@ -36,7 +36,12 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         buttonDeleteAccount = findViewById(R.id.activity_settings_button_delete)
         buttonDeleteAccount.setOnClickListener(this)
         displayNameEdit = findViewById(R.id.activity_settings_display_name)
-        displayNameEdit.setText(getCurrentUser().displayName)
+
+        UserHelper.getUser(getCurrentUser().uid).addOnSuccessListener { documentSnapshot ->
+            val currentUser = documentSnapshot.toObject<User>(User::class.java)
+            val displayName = currentUser!!.userName
+            displayNameEdit.setText(displayName)
+        }
 
     }
 
@@ -44,7 +49,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         when (v?.id) {
             R.id.activity_settings_button -> {
                 UserHelper.updateName(displayNameEdit.text.toString(), getCurrentUser().uid)
-                Toast.makeText(this, "Your display name have been updated", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.settings_change_name_validation, Toast.LENGTH_SHORT).show()
             }
 
             R.id.activity_settings_button_delete -> {

@@ -28,10 +28,12 @@ import com.google.android.material.navigation.NavigationView
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.utils.Constants
 import com.menard.go4lunch.R
+import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.controller.fragment.ChatFragment
 import com.menard.go4lunch.controller.fragment.ListViewFragment
 import com.menard.go4lunch.controller.fragment.MapviewFragment
 import com.menard.go4lunch.controller.fragment.WorkmatesFragment
+import com.menard.go4lunch.model.User
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -194,7 +196,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val email: TextView = view.findViewById(R.id.header_email)
         val photo: CircleImageView = view.findViewById(R.id.image_profile)
 
-        name.text = getCurrentUser().displayName
+        UserHelper.getUser(getCurrentUser().uid).addOnSuccessListener { documentSnapshot ->
+            val currentUser = documentSnapshot.toObject<User>(User::class.java)
+            val displayName = currentUser!!.userName
+            name.text = displayName
+        }
         email.text = getCurrentUser().email
         if (getCurrentUser().photoUrl != null) {
             Glide.with(this).load(getCurrentUser().photoUrl).into(photo)

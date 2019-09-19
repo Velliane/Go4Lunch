@@ -52,7 +52,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         mapView = view.findViewById(R.id.mapview)
         mapView.onCreate(savedInstanceState)
         //-- Display the map immediately--
-        mapView.onResume()
+
 
         //-- Check is fragment is added to MainActivity --
         if (isAdded) {

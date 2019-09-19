@@ -25,7 +25,7 @@ interface GooglePlacesAPI {
 //    fun getPhoto(@Query("maxwidth") maxwidth: String, @Query("photoreference") photoReference: String, @Query("key") key: String): Observable<>
 
  companion object {
-     val retrofit = Retrofit.Builder()
+     val retrofit: Retrofit = Retrofit.Builder()
              .baseUrl("https://maps.googleapis.com/")
              .addConverterFactory(GsonConverterFactory.create())
              .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

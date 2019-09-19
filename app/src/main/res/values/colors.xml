@@ -5,4 +5,6 @@
     <color name="colorAccent">#FFFFFF</color>
 
     <color name="navigation_drawer_background">#E27A57</color>
+
+    <color name="current_user_message_background">#5FAC42</color>
 </resources>

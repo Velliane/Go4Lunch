@@ -19,12 +19,12 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.utils.GooglePlacesStreams
 import com.menard.go4lunch.R
+import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.controller.activity.LunchActivity
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import com.menard.go4lunch.model.nearbysearch.Result
 import com.menard.go4lunch.utils.Constants
 import io.reactivex.disposables.CompositeDisposable
-import retrofit2.Call
 
 class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationButtonClickListener {
 
@@ -43,7 +43,6 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     /** Places Client */
     private lateinit var placesClient: PlacesClient
-    private var call: Call<NearbySearch>? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -51,8 +50,6 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
 
         mapView = view.findViewById(R.id.mapview)
         mapView.onCreate(savedInstanceState)
-        //-- Display the map immediately--
-
 
         //-- Check is fragment is added to MainActivity --
         if (isAdded) {
@@ -90,7 +87,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
     /**
      * Update Map with new location of the user
      */
-    fun GPSUpdateLocation() {
+    private fun GPSUpdateLocation() {
         val locationRequest = LocationRequest()
         locationRequest.interval = 10000
         locationRequest.fastestInterval = 2000
@@ -102,16 +99,20 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
                 val lastLocation: LatLng = onLocationChanged(locationResult.lastLocation)
+                val latitude = lastLocation.latitude.toString()
+                val longitude = lastLocation.longitude.toString()
+
+                UserHelper.updateLocation(getCurrentUser().uid, latitude, longitude)
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15F))
                 mGoogleMap.addMarker(MarkerOptions().position(lastLocation).title("Coucou").snippet("Click for more information"))
 
-                getResultWithRXJAVA(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString())
+                getResult("$latitude,$longitude")
             }
         }, null)
     }
 
 
-    fun getResultWithRXJAVA(location: String) {
+    fun getResult(location: String) {
         val disable: CompositeDisposable? = CompositeDisposable()
         disable?.add(GooglePlacesStreams.getListRestaurant(location, "5000", "restaurant", BuildConfig.api_key_google).subscribe(
                 this::handleResponse, this::handleError))
@@ -122,7 +123,6 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         val listResults: List<Result> = nearbySearch.results
 
         for (result in listResults) {
-
             val latLng = LatLng(result.geometry.location.lat, result.geometry.location.lng)
             val opening: String = if (result.openingHours != null) {
                 if (result.openingHours.openNow) {
@@ -133,8 +133,6 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
             } else {
                 "No opening hours available"
             }
-
-
             mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening)).tag = result.placeId
         }
     }
@@ -163,31 +161,31 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         return false
     }
 
-    //-- FRAGMENT LIFE --
+    //-- FRAGMENT LIFECYCLE --
 
     override fun onResume() {
-        super.onResume()
         mapView.onResume()
+        super.onResume()
     }
 
     override fun onPause() {
-        super.onPause()
         mapView.onPause()
+        super.onPause()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         mapView.onDestroy()
+        super.onDestroy()
     }
 
     override fun onLowMemory() {
-        super.onLowMemory()
         mapView.onLowMemory()
+        super.onLowMemory()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
+        super.onSaveInstanceState(outState)
     }
 }
 

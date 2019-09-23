@@ -26,6 +26,7 @@ open class BaseFragment : Fragment(){
         return FirebaseAuth.getInstance().currentUser!!
     }
 
+
     //-- CHECK PERMISSIONS FOR FINE LOCATION --
     /**
      * Check permissions
@@ -46,7 +47,6 @@ open class BaseFragment : Fragment(){
         when (requestCode) {
             Constants.REQUEST_CODE_UPDATE_LOCATION -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //GPSUpdateLocation()
                     Log.d("Permission granted", "Permission granted")
                 } else {
                     Log.d("Permission denied", "Permission denied")

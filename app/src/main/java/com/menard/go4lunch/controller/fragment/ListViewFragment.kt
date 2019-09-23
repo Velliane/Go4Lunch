@@ -19,6 +19,7 @@ import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.utils.GooglePlacesStreams
 import com.menard.go4lunch.R
 import com.menard.go4lunch.adapter.ListViewAdapter
+import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import com.menard.go4lunch.model.nearbysearch.Result
@@ -36,7 +37,6 @@ class ListViewFragment : BaseFragment() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     /** Places Client */
     private lateinit var placesClient: PlacesClient
-    private var call: Call<NearbySearch>? = null
 
     companion object {
         fun newInstance(): ListViewFragment {
@@ -81,9 +81,11 @@ class ListViewFragment : BaseFragment() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
                 val lastLocation: LatLng = onLocationChanged(locationResult.lastLocation)
-                getResultWithRXJAVA(lastLocation.latitude.toString() + "," + lastLocation.longitude.toString())
+                val latitude = lastLocation.latitude.toString()
+                val longitude = lastLocation.longitude.toString()
 
-
+                UserHelper.updateLocation(getCurrentUser().uid, latitude, longitude)
+                getResultWithRXJAVA("$latitude,$longitude")
             }
         }, null)
     }
@@ -98,7 +100,6 @@ class ListViewFragment : BaseFragment() {
 
     private fun handleResponse(detailsRequestList: List<DetailsRequest>) {
         progressBar.visibility = View.GONE
-//        val listResults: List<Result> = nearbySearch.results
         val listViewAdapter = ListViewAdapter(detailsRequestList, requireActivity())
         recyclerView.adapter = listViewAdapter
 
@@ -108,14 +109,5 @@ class ListViewFragment : BaseFragment() {
         Log.d(TAG, "Error")
     }
 
-//    fun getDetailOfRestaurant(location: String){
-//        val disable: CompositeDisposable? = CompositeDisposable()
-//        disable?.add(GooglePlacesStreams.getDetailsOfSelectedRestaurant(location, "5000", "restaurant", Constants.FIELD_FOR_DETAILS, BuildConfig.api_key_google).subscribe(
-//                this::handleResponseDetail, this::handleErrorDetail))
-//    }
-//
-//    fun handleResponseDetail( detailsRequest: DetailsRequest){
-//
-//    }
 
 }

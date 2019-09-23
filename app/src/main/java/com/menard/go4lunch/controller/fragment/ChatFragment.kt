@@ -62,7 +62,7 @@ class ChatFragment: BaseFragment(), View.OnClickListener {
             R.id.chat_fragment_send_button -> {
                 val message = editMessage.text.toString()
                 if (message != "") {
-                    ChatHelper.addMessage(org.threeten.bp.LocalDateTime.now().toString(), editMessage.text.toString(), getCurrentUser().uid)
+                    ChatHelper.addMessage(org.threeten.bp.LocalDateTime.now().withNano(0).toString(), editMessage.text.toString(), getCurrentUser().uid)
                     editMessage.setText("")
                 }
             }

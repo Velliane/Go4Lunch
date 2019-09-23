@@ -14,7 +14,7 @@ class GooglePlacesStreams {
         //-- Get Nearby Restaurant --
         fun getListRestaurant(location: String, radius: String, restaurant: String, apiKey: String ): Observable<NearbySearch> {
             val retrofit = GooglePlacesAPI.retrofit.create(GooglePlacesAPI::class.java)
-            return  retrofit.getNearbySearchRXJAVA(location, radius, restaurant, apiKey)
+            return  retrofit.getNearbySearch(location, radius, restaurant, apiKey)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .timeout(10, TimeUnit.SECONDS)
@@ -52,29 +52,6 @@ class GooglePlacesStreams {
 
 
         }
-
-        //-- Chain request --
-//        fun getDetailsOfSelectedRestaurant(location: String, radius: String, restaurant: String, fields: String, apiKey: String): Observable<DetailsRequest> {
-//
-//            return getListId(location, radius, restaurant, apiKey)
-//                    .flatMap { list ->
-//                        getDetails(list, fields, apiKey)
-//                    }
-//          }
-
-
-
-
-//                    .flatMap(object : Function<NearbySearch, DetailsRequest> {
-//                        return@Function it.results[]
-//                    }.also {  }
-
-//            return getDetails(id, fields, apiKey)
-//                    .flatMap { t: DetailsRequest ->
-//                        getListRestaurant(location, radius, restaurant, apiKey)
-//                    }
-
-
 
 
 }

@@ -3,7 +3,6 @@ package com.menard.go4lunch.utils
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import io.reactivex.Observable
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,11 +11,11 @@ import retrofit2.http.Query
 
 interface GooglePlacesAPI {
 
-    @GET("maps/api/place/nearbysearch/json")
-    fun getNearbySearch(@Query("location") location: String, @Query("radius") radius: String, @Query("type") type: String, @Query("key") key: String): Call<NearbySearch>
+//    @GET("maps/api/place/nearbysearch/json")
+//    fun getNearbySearch(@Query("location") location: String, @Query("radius") radius: String, @Query("type") type: String, @Query("key") key: String): Call<NearbySearch>
 
     @GET("maps/api/place/nearbysearch/json")
-    fun getNearbySearchRXJAVA(@Query("location") location: String, @Query("radius") radius: String, @Query("type") type: String, @Query("key") key: String): Observable<NearbySearch>
+    fun getNearbySearch(@Query("location") location: String, @Query("radius") radius: String, @Query("type") type: String, @Query("key") key: String): Observable<NearbySearch>
 
     @GET("maps/api/place/details/json")
     fun getDetails(@Query("placeid")placeId: String, @Query ("fields") fields: String, @Query("key") key:String): Observable<DetailsRequest>

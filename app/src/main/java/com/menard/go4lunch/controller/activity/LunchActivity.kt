@@ -17,7 +17,7 @@ import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
-import com.menard.go4lunch.model.detailsrequest.Result
+import com.menard.go4lunch.model.detailsrequest.ResultDetails
 import com.menard.go4lunch.utils.Constants
 import com.menard.go4lunch.utils.GooglePlacesStreams
 import io.reactivex.disposables.CompositeDisposable
@@ -86,7 +86,7 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
      * Handle response of the request
      */
     private fun handleResponse(detailsRequest: DetailsRequest) {
-        val result: Result = detailsRequest.result
+        val result: ResultDetails = detailsRequest.result
 
         nameRestaurant.text = result.name
         addressRestaurant.text = result.formattedAddress

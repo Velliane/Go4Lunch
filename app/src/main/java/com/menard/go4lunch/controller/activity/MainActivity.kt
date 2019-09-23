@@ -101,9 +101,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //-- Configuration --
         configureDrawerLayout()
         configureNavigationView()
+
+        //-- Set default selected tab --
+        bottomNavigationView.selectedItemId = R.id.action_mapview
     }
 
-    //-- TOOLBAR  AND DRAWER --
+    //-- DRAWER --
     /**
      * Drawer Navigation View
      */
@@ -120,7 +123,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }else{
                     val builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
                     builder.setMessage("You don't have any restaurant selected for now")
-                            .setNegativeButton("Ok") { dialog, which ->
+                            .setNegativeButton("Ok"){ dialog, which ->  
+                                
                             }
                             .create().show()
                 }
@@ -133,11 +137,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val menuInflater: MenuInflater = menuInflater
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
-        return true
-    }
 
     //-- AUTOCOMPLETE --
     /**
@@ -154,16 +153,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == Constants.REQUEST_CODE_AUTOCOMPLETE) {
-            if (resultCode == Activity.RESULT_OK) {
-                val place = Autocomplete.getPlaceFromIntent(data!!)
-                TODO()
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                TODO()
-            }
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        if (requestCode == Constants.REQUEST_CODE_AUTOCOMPLETE) {
+//            if (resultCode == Activity.RESULT_OK) {
+//                TODO("val place = Autocomplete.getPlaceFromIntent(data!!)")
+//
+//            } else if (resultCode == Activity.RESULT_CANCELED) {
+//                TODO()
+//            }
+//        }
+//    }
 
     //-- FRAGMENT --
     /**
@@ -205,6 +204,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if (getCurrentUser().photoUrl != null) {
             Glide.with(this).load(getCurrentUser().photoUrl).into(photo)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val menuInflater: MenuInflater = menuInflater
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
     }
 
     //-- CLOSING THE NAVIGATION DRAWER --

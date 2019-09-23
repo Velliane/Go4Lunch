@@ -4,6 +4,8 @@ data class User(
         val userId: String = "",
         val userName: String = "",
         val userPhoto: String? = "",
-        val userRestaurant: String? = ""
+        val userRestaurant: String? = "",
+        val userLocationLatitude: String? = "",
+        val userLocationLongitude: String? = ""
 )
 

@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.menard.go4lunch.R
-import com.menard.go4lunch.adapter.ListViewAdapter
 import com.menard.go4lunch.adapter.WorkmatesAdapter
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.User

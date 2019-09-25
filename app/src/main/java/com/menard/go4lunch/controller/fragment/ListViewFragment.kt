@@ -16,16 +16,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.menard.go4lunch.BuildConfig
-import com.menard.go4lunch.utils.GooglePlacesStreams
 import com.menard.go4lunch.R
 import com.menard.go4lunch.adapter.ListViewAdapter
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
-import com.menard.go4lunch.model.nearbysearch.NearbySearch
-import com.menard.go4lunch.model.nearbysearch.Result
 import com.menard.go4lunch.utils.Constants
+import com.menard.go4lunch.utils.GooglePlacesStreams
 import io.reactivex.disposables.CompositeDisposable
-import retrofit2.Call
 
 class ListViewFragment : BaseFragment() {
 

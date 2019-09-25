@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.R
@@ -22,6 +21,10 @@ import com.menard.go4lunch.utils.distanceToUser
 import com.menard.go4lunch.utils.getProgressDrawableSpinner
 import com.menard.go4lunch.utils.loadRestaurantPhoto
 
+/**
+ * Adapter for the RecyclerView that's show the detailed list of nearby restaurants
+ */
+
 class ListViewAdapter(val list: List<DetailsRequest>, private val context: Context) : RecyclerView.Adapter<ListViewAdapter.ListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
@@ -30,21 +33,19 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
         return ListViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    override fun getItemCount(): Int = list.size
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
 
         val detailResult: DetailsRequest = list[position]
         val restaurant = detailResult.result
 
-        holder.nameRestaurant.text = restaurant.name
+        holder.nameRestaurant.text = restaurant!!.name
         holder.styleAndAddress.text = restaurant.formattedAddress
 
         //-- Set opening hours --
         val opening: String = if (restaurant.openingHours != null) {
-            if (restaurant.openingHours.openNow) {
+            if (restaurant.openingHours!!.openNow!!) {
                 "Open"
             } else {
                 "Close"
@@ -56,8 +57,8 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
 
         //-- Set distance according to user --
         val location = Location("")
-        location.latitude = restaurant.geometry.location.lat
-        location.longitude = restaurant.geometry.location.lng
+        location.latitude = restaurant.geometry!!.location!!.lat!!
+        location.longitude = restaurant.geometry!!.location!!.lng!!
 
         UserHelper.getUser(FirebaseAuth.getInstance().currentUser!!.uid).addOnSuccessListener { documentSnapshot ->
             val currentUser = documentSnapshot.toObject<User>(User::class.java)
@@ -72,7 +73,7 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
 
         //-- Set restaurant's photo --
         if (restaurant.photos != null) {
-            val reference: String = restaurant.photos[0].photoReference
+            val reference: String? = restaurant.photos!![0].photoReference
             val url: String = context.getString(R.string.photos_list_view, reference, BuildConfig.api_key_google)
             holder.photo.loadRestaurantPhoto(url, null, getProgressDrawableSpinner(context))
         } else {
@@ -103,11 +104,10 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
          * Start LunchActivity to show details on the selected restaurant, according to place_id
          */
         private fun startLunchActivity() {
-            val idRestaurant: String = list[adapterPosition].result.placeId
+            val idRestaurant: String? = list[adapterPosition].result!!.placeId
             val intent = Intent(context, LunchActivity::class.java)
             intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, idRestaurant)
             context.startActivity(intent)
-
         }
 
     }

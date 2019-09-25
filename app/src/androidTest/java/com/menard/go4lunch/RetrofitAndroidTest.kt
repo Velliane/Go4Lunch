@@ -15,7 +15,7 @@ import retrofit2.mock.NetworkBehavior
 
 class RetrofitRxJavaAndroidTest {
 
-    lateinit var mockRetrofit: MockRetrofit
+    private lateinit var mockRetrofit: MockRetrofit
     var testSuscriberNearbySearch: TestSubscriber<NearbySearch> = TestSubscriber.create()
     var testSubscriberDetails: TestSubscriber<DetailsRequest> = TestSubscriber.create()
 

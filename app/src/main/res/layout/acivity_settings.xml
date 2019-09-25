@@ -44,7 +44,7 @@
             android:background="@color/navigation_drawer_background"
             android:textColor="@color/colorAccent"
             android:layout_below="@+id/settings_title_display_name"
-            android:layout_toRightOf="@+id/activity_settings_display_name"/>
+            android:layout_toEndOf="@+id/activity_settings_display_name"/>
 
 
     </RelativeLayout>

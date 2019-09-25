@@ -30,7 +30,7 @@ class NotificationsService: FirebaseMessagingService() {
         }
     }
 
-    fun sendVisualNotification(messageBody: String){
+    private fun sendVisualNotification(messageBody: String){
 
         // Intent shown on click on the notification
         val intent = Intent(this, MainActivity::class.java)

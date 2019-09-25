@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/lunch_activity_container"
     tools:context=".controller.activity.LunchActivity">
 
 
@@ -11,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/activity_lunch_restaurant_infos"
-        android:layout_alignRight="@+id/activity_lunch_restaurant_photo"
+        android:layout_alignEnd="@+id/activity_lunch_restaurant_photo"
         android:layout_marginBottom="-27dp"
         android:layout_marginEnd="15dp"
         android:src="@drawable/select_24"/>
@@ -19,7 +20,8 @@
     <ImageView
         android:id="@+id/activity_lunch_restaurant_photo"
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
+        android:layout_height="200dp"
+        android:contentDescription="restaurant's photo" />
 
 
     <!-- Restaurant's infos -->

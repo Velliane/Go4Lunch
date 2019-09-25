@@ -1,11 +1,10 @@
 package com.menard.go4lunch.controller.activity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.menard.go4lunch.R
 import kotlinx.android.synthetic.main.activity_dispatcher.*

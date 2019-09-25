@@ -6,6 +6,8 @@ class Constants{
         const val RC_SIGN_IN = 240
         //-- Request code for permission for fine location --
         const val REQUEST_CODE_UPDATE_LOCATION = 4
+        //-- Request code for call phone --
+        const val REQUEST_CODE_CALL_PHONE = 3
         //-- Request code for autocomplete --
         const val REQUEST_CODE_AUTOCOMPLETE = 1
 
@@ -13,6 +15,8 @@ class Constants{
         //-- Collection --
         const val COLLECTION_USERS = "users"
         const val COLLECTION_MESSAGES = "chat"
+        const val COLLECTION_FAVORITES_RESTAURANTS = "favorites"
+        const val COLLECTION_RESTAURANTS = "retaurants"
 
         //-- Request --
         const val FIELD_FOR_DETAILS = "place_id,geometry,formatted_address,name,rating,permanently_closed,photo,type,formatted_phone_number,opening_hours,website"

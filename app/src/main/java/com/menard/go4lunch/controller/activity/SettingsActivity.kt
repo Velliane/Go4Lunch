@@ -5,11 +5,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.firestore.Query
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.User
@@ -17,9 +14,9 @@ import com.menard.go4lunch.model.User
 class SettingsActivity : BaseActivity(), View.OnClickListener {
 
 
-    lateinit var buttonChangeName: Button
-    lateinit var buttonDeleteAccount: Button
-    lateinit var displayNameEdit: EditText
+    private lateinit var buttonChangeName: Button
+    private lateinit var buttonDeleteAccount: Button
+    private lateinit var displayNameEdit: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,8 +25,6 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_setting)
         toolbar.title = getString(R.string.title_settings)
         setSupportActionBar(toolbar)
-
-//        val query: Query = UserHelper.getUserName(getCurrentUser().uid)
 
         buttonChangeName = findViewById(R.id.activity_settings_button)
         buttonChangeName.setOnClickListener(this)
@@ -67,7 +62,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
-    fun deleteAccount() {
+    private fun deleteAccount() {
         //-- Delete from Firestore --
         UserHelper.deleteUser(getCurrentUser().uid)
         //-- Delete from Firebase Auth --

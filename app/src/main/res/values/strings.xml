@@ -26,7 +26,8 @@
     <string name="sign_in_button">SIGN IN</string>
 
     <!-- Workmates List -->
-    <string name="workmates_infos_with_restaurant">%1$s is eating %2$s (%3$s)</string>
+    <string name="workmates_infos_with_restaurant">%1$s is eating at %2$s</string>
+    <string name="workmates_infos_not_yet">%1$s hasn\'t decided yet</string>
 
     <!-- Navigation Drawer -->
     <string name="action_settings">SETTINGS</string>
@@ -46,5 +47,10 @@
     <!-- Photos Api -->
     <string name="photos_list_view" translatable="false">https://maps.googleapis.com/maps/api/place/photo?maxheight=200&amp;photoreference=%1$s&amp;key=%2$s</string>
     <string name="photos_lunch_activity" translatable="false">https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&amp;photoreference=%1$s&amp;key=%2$s</string>
+
+   <!-- Lunch Activity -->
+    <string name="contact_infos_call">CALL</string>
+    <string name="contact_infos_like">LIKE</string>
+    <string name="contact_infos_website">WEBSITE</string>
 
 </resources>

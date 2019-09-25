@@ -9,7 +9,9 @@
     <string name="action_logout">DECONNEXION</string>
 
     <!-- Workmates -->
-    <string name="workmates_infos_with_restaurant">%1$s mange %2$s (%3$s)</string>
+    <string name="workmates_infos_with_restaurant">%1$s mange à %2$s</string>
+    <string name="workmates_infos_not_yet">%1$s n\'a pas encore fait son choix</string>
+
 
     <!-- Settings -->
     <string name="title_settings">Paramètres</string>
@@ -26,5 +28,10 @@
     <string name="bottom_navigation_menu_listview">Liste</string>
     <string name="bottom_navigation_menu_workmates">Collègues</string>
     <string name="bottom_navigation_menu_chat">Chat</string>
+
+    <!-- Lunch Activity -->
+    <string name="contact_infos_call">APPEL</string>
+    <string name="contact_infos_like">AIME</string>
+    <string name="contact_infos_website">SITE WEB</string>
 
 </resources>

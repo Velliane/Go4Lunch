@@ -1,6 +1,5 @@
 package com.menard.go4lunch.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface.DEFAULT
@@ -11,13 +10,19 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.menard.go4lunch.R
 import com.menard.go4lunch.model.User
+import com.menard.go4lunch.utils.getProgressDrawableSpinner
+import com.menard.go4lunch.utils.loadImageProfile
 import de.hdodenhof.circleimageview.CircleImageView
+
+/**
+ * Adapter for the RecyclerView that's show the list of workmates and the restaurant there're choosed,
+ * using FirestoreRecyclerAdapter and FirestoreRecyclerOptions
+ */
 
 class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOptions<User>) : FirestoreRecyclerAdapter<User, WorkmatesAdapter.WorkmatesViewHolder>(options) {
 
@@ -38,22 +43,23 @@ class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOp
 
         //-- Show the other users's information --
         }else{
-
+            //-- Profile's photo --
             if(user.userPhoto != null){
-                Glide.with(context).load(user.userPhoto).circleCrop().into(holder.userPhoto)
+                holder.userPhoto.loadImageProfile(user.userPhoto, null, getProgressDrawableSpinner(context))
             }else{
-                Glide.with(context).load(R.drawable.user).circleCrop().into(holder.userPhoto)
+                holder.userPhoto.loadImageProfile(null, R.drawable.user, getProgressDrawableSpinner(context))
             }
+            //-- Restaurant's selected --
             val restaurantChoosed: String
             if(user.userRestaurant != null) {
-                restaurantChoosed = context.getString(R.string.workmates_infos_with_restaurant, user.userName, "TODO", user.userRestaurant)
+                restaurantChoosed = context.getString(R.string.workmates_infos_with_restaurant, user.userName, user.userRestaurant)
                 holder.userInfos.text = restaurantChoosed
                 holder.userInfos.setTextColor(Color.BLACK)
                 holder.userInfos.typeface = DEFAULT
             }else{
                 holder.userInfos.setTextColor(Color.GRAY)
                 holder.userInfos.setTypeface(DEFAULT, ITALIC)
-                restaurantChoosed = user.userName + " hasn't decided yet"
+                restaurantChoosed = context.getString(R.string.workmates_infos_not_yet, user.userName)
                 holder.userInfos.text = restaurantChoosed
             }
         }

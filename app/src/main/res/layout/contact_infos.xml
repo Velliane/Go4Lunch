@@ -19,13 +19,14 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/baseline_local_phone_black_24"/>
+            android:background="@drawable/baseline_local_phone_black_24"
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CALL"
+            android:text="@string/contact_infos_call"
             android:textColor="@color/colorPrimary"
-            android:textSize="20dp"/>
+            android:textSize="20sp"/>
 
     </LinearLayout>
 
@@ -46,9 +47,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LIKE"
+            android:text="@string/contact_infos_like"
             android:textColor="@color/colorPrimary"
-            android:textSize="20dp"/>
+            android:textSize="20sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -69,8 +70,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="WEBSITE"
+            android:text="@string/contact_infos_website"
             android:textColor="@color/colorPrimary"
-            android:textSize="20dp" />
+            android:textSize="20sp" />
     </LinearLayout>
 </LinearLayout>

@@ -2,7 +2,6 @@ package com.menard.go4lunch.api
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.menard.go4lunch.model.Message

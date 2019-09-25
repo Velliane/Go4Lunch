@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -17,19 +16,19 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.menard.go4lunch.BuildConfig
-import com.menard.go4lunch.utils.GooglePlacesStreams
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.controller.activity.LunchActivity
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import com.menard.go4lunch.model.nearbysearch.Result
 import com.menard.go4lunch.utils.Constants
+import com.menard.go4lunch.utils.GooglePlacesStreams
+import com.menard.go4lunch.utils.setMarker
 import io.reactivex.disposables.CompositeDisposable
 
 class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationButtonClickListener {
 
     companion object {
-
         fun newInstance(): MapviewFragment {
             return MapviewFragment()
         }
@@ -64,7 +63,6 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
 
         return view
     }
@@ -104,47 +102,45 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
 
                 UserHelper.updateLocation(getCurrentUser().uid, latitude, longitude)
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15F))
-                mGoogleMap.addMarker(MarkerOptions().position(lastLocation).title("Coucou").snippet("Click for more information"))
-
                 getResult("$latitude,$longitude")
             }
         }, null)
     }
 
-
+    /**
+     * Get result of NearbySearch
+     * @param location the user's location
+     */
     fun getResult(location: String) {
         val disable: CompositeDisposable? = CompositeDisposable()
         disable?.add(GooglePlacesStreams.getListRestaurant(location, "5000", "restaurant", BuildConfig.api_key_google).subscribe(
                 this::handleResponse, this::handleError))
-
     }
 
+    /**
+     * Add markers to results
+     */
     private fun handleResponse(nearbySearch: NearbySearch) {
         val listResults: List<Result> = nearbySearch.results
 
         for (result in listResults) {
             val latLng = LatLng(result.geometry.location.lat, result.geometry.location.lng)
             val opening: String = if (result.openingHours != null) {
-                if (result.openingHours.openNow) {
-                    "Open"
-                } else {
-                    "Close"
-                }
+                if (result.openingHours.openNow) { "Open" } else { "Close" }
             } else {
                 "No opening hours available"
             }
-            mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening)).tag = result.placeId
+            setMarker(result.placeId, opening, mGoogleMap, latLng, result.name)
+            //mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening)).tag = result.placeId
         }
     }
 
     private fun handleError(error: Throwable) {
-
         Log.d(TAG, error.localizedMessage)
     }
 
     //-- ACTION WHEN CLICK ON MARKER --
     override fun onMarkerClick(p0: Marker?): Boolean {
-        Toast.makeText(this.context, p0?.title, Toast.LENGTH_LONG).show()
         //-- Return false to centered and open the marker's info window
         return false
     }

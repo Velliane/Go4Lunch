@@ -1,6 +1,5 @@
 package com.menard.go4lunch.controller.activity
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -26,7 +25,6 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.menard.go4lunch.BuildConfig
-import com.menard.go4lunch.utils.Constants
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.controller.fragment.ChatFragment
@@ -34,6 +32,7 @@ import com.menard.go4lunch.controller.fragment.ListViewFragment
 import com.menard.go4lunch.controller.fragment.MapviewFragment
 import com.menard.go4lunch.controller.fragment.WorkmatesFragment
 import com.menard.go4lunch.model.User
+import com.menard.go4lunch.utils.Constants
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -50,7 +49,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     /** Shared Preferences */
-    lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferences: SharedPreferences
 
 
     //-- BOTTOM NAVIGATION VIEW LISTENER --

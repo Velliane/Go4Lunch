@@ -71,6 +71,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         mGoogleMap = googleMap!!
         mGoogleMap.uiSettings.isZoomControlsEnabled
         mGoogleMap.isMyLocationEnabled
+
         //-- Check Permissions for ACCESS_FINE_LOCATION
         if (checkPermissions()) {
             mGoogleMap.isMyLocationEnabled = true
@@ -154,6 +155,7 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
 
     //-- ACTION WHEN CLICK ON MY LOCATION BUTTON
     override fun onMyLocationButtonClick(): Boolean {
+        mGoogleMap.setMinZoomPreference(15f)
         return false
     }
 

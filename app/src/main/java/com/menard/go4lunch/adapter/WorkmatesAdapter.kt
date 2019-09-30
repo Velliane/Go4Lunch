@@ -51,8 +51,8 @@ class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOp
             }
             //-- Restaurant's selected --
             val restaurantChoosed: String
-            if(user.userRestaurant != null) {
-                restaurantChoosed = context.getString(R.string.workmates_infos_with_restaurant, user.userName, user.userRestaurant)
+            if(user.userRestaurantName != null) {
+                restaurantChoosed = context.getString(R.string.workmates_infos_with_restaurant, user.userName, user.userRestaurantName)
                 holder.userInfos.text = restaurantChoosed
                 holder.userInfos.setTextColor(Color.BLACK)
                 holder.userInfos.typeface = DEFAULT

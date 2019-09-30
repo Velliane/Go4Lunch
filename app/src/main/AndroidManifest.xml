@@ -72,11 +72,8 @@
             tools:replace="android:value" />
 
         <!-- Notification service -->
-        <service android:name=".utils.NotificationsService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
+        <receiver android:name=".utils.NotificationService"
+            android:exported="true"/>
 
     </application>
 

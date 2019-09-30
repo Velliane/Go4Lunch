@@ -1,5 +1,7 @@
 package com.menard.go4lunch.controller.activity
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -16,6 +18,7 @@ import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Data
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -24,13 +27,13 @@ import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.detailsrequest.ResultDetails
-import com.menard.go4lunch.utils.Constants
-import com.menard.go4lunch.utils.GooglePlacesStreams
-import com.menard.go4lunch.utils.getProgressDrawableSpinner
-import com.menard.go4lunch.utils.loadRestaurantPhoto
+import com.menard.go4lunch.utils.*
 import io.reactivex.disposables.CompositeDisposable
+import org.joda.time.DateTime
+import org.joda.time.Duration
 import saschpe.android.customtabs.CustomTabsHelper
 import saschpe.android.customtabs.WebViewFallback
+import java.util.*
 
 class LunchActivity : BaseActivity(), View.OnClickListener {
 
@@ -51,6 +54,8 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
     private lateinit var idRestaurant: String
     /** Shared Preferences */
     private lateinit var sharedPreferences: SharedPreferences
+
+    lateinit var pendingIntent: PendingIntent
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,6 +126,8 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
         website.tag = result.website
         call.tag = result.formattedPhoneNumber
         like.tag = result.placeId
+
+        getListOfWorkmates(result.name.toString())
     }
 
     /**
@@ -145,20 +152,53 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
      */
     private fun saveRestaurantInSharedPreferences() {
         if (sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, null) != idRestaurant) {
-            UserHelper.updateRestaurant(getCurrentUser().uid, nameRestaurant.text.toString())
+            UserHelper.updateRestaurant(getCurrentUser().uid, nameRestaurant.text.toString(), idRestaurant)
             sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, idRestaurant).apply()
             //-- Update FloatingButton --
             Glide.with(this).load(R.drawable.selected_24).into(selectingButton)
             Toast.makeText(this, "Restaurant selected", Toast.LENGTH_SHORT).show()
+            //-- Notifications --
+            val data = Data.Builder()
+                    .putString("UserName", getCurrentUser().displayName)
+                    .putString("restaurantName", "Le Léone")
+                    .putString("vicinity", "rue du coin")
+                    .putString("list", "Ralph, Lucy").build()
+            NotificationWorker.scheduleReminder(data, setNotificationsTime())
         } else {
-            UserHelper.updateRestaurant(getCurrentUser().uid, null)
+            UserHelper.updateRestaurant(getCurrentUser().uid, null, null)
             sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, null).apply()
             //-- Update FloatingButton --
             Glide.with(this).load(R.drawable.select_24).into(selectingButton)
             Toast.makeText(this, "Restaurant unselected", Toast.LENGTH_SHORT).show()
+            //-- Notifications --
+            NotificationWorker.cancelReminder()
         }
     }
 
+//    fun setNotification(){
+//        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//        val calendar = Calendar.getInstance()
+//        calendar.timeInMillis = System.currentTimeMillis()
+//        calendar.set(Calendar.HOUR, 14)
+//        calendar.set(Calendar.MINUTE, 40)
+//
+//        alarmManager.setExact(AlarmManager.RTC, calendar.timeInMillis, pendingIntent)
+//    }
+//
+//    fun cancelNotification(){
+//        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//        alarmManager.cancel(pendingIntent)
+//    }
+
+
+    fun setNotificationsTime(): Long {
+        val reminderDelay = 16
+        return if(DateTime.now().hourOfDay < reminderDelay){
+            Duration(DateTime.now(), DateTime.now().withTimeAtStartOfDay().plusHours(reminderDelay)).standardMinutes
+        }else{
+            Duration(DateTime.now(), DateTime.now().withTimeAtStartOfDay().plusDays(1).plusHours(reminderDelay)).standardMinutes
+        }
+    }
     /**
      * Open Custom Tabs with restaurant's website
      */
@@ -199,4 +239,9 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
             false
         }
     }
+
+//    private fun configureAlarmManager(){
+//        val intent = Intent(this, NotificationService::class.java)
+//        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//    }
 }

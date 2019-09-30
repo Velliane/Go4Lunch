@@ -29,19 +29,6 @@ class GooglePlacesStreams {
                     .timeout(10, TimeUnit.SECONDS)
         }
 
-//        fun getListId(location: String, radius: String, restaurant: String, apiKey: String): Observable<List<String>>{
-//            return getListRestaurant(location, radius, restaurant, apiKey)
-//                    .map { t: NearbySearch ->
-//
-//                        val listId: ArrayList<String> = ArrayList()
-//                        if(t.results.size != 0){
-//                            for(result in t.results){
-//                                listId.add(result.placeId)
-//                            }
-//                        }
-//                        return@map listId
-//                    }
-//        }
 
         fun getDetailsOfSelectedRestaurant(location: String, radius: String, restaurant: String, fields: String, apiKey: String): Observable<List<DetailsRequest>>{
             return getListRestaurant(location, radius, restaurant, apiKey)

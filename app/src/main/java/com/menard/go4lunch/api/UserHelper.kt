@@ -15,8 +15,8 @@ class UserHelper {
         }
 
         //-- CREATE USER --
-        fun createUser(userId: String, userName: String, userPhoto: String?, userRestaurant: String?, userLocationLatitude: String?, userLocationLongitude: String?): Task<Void> {
-            val newUser = User(userId, userName, userPhoto, userRestaurant, userLocationLatitude, userLocationLongitude)
+        fun createUser(userId: String, userName: String, userPhoto: String?, userRestaurantName: String?, userRestaurantId: String?, userLocationLatitude: String?, userLocationLongitude: String?): Task<Void> {
+            val newUser = User(userId, userName, userPhoto, userRestaurantName, userRestaurantId, userLocationLatitude, userLocationLongitude)
             return getUsersCollection().document(userId).set(newUser)
         }
 
@@ -41,8 +41,8 @@ class UserHelper {
             return getUsersCollection().document(userId).update("userName", userName)
         }
 
-        fun updateRestaurant(userId: String, userRestaurant: String?): Task<Void> {
-            return getUsersCollection().document(userId).update("userRestaurant", userRestaurant)
+        fun updateRestaurant(userId: String, userRestaurantName: String?, userRestaurantId: String? ): Task<Void> {
+            return getUsersCollection().document(userId).update("userRestaurantName", userRestaurantName, "userRestaurantId", userRestaurantId)
         }
 
         fun updateLocation(userId: String, userLocationLatitude: String?, userLocationLongitude: String?): Task<Void>{

@@ -26,16 +26,18 @@ class UserHelper {
             return getUsersCollection().document(userId).collection(Constants.COLLECTION_FAVORITES_RESTAURANTS).document(placeId).set(favorite)
         }
 
-        //-- GET USER --
+        //-- GET --
         fun getUser(userId: String): Task<DocumentSnapshot> {
             return getUsersCollection().document(userId).get()
         }
 
-        //-- GET ALL USERS --
         fun getAllUser(): Query {
             return getUsersCollection().orderBy("userName")
         }
 
+        fun getUserAccordingToRestaurant(placeId: String): Query{
+            return getUsersCollection().whereEqualTo("userRestaurantId", placeId)
+        }
         //-- UPDATE --
         fun updateName(userName: String, userId: String): Task<Void> {
             return getUsersCollection().document(userId).update("userName", userName)

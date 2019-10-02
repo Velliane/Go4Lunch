@@ -1,7 +1,5 @@
 package com.menard.go4lunch.controller.activity
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -14,26 +12,30 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
 import com.bumptech.glide.Glide
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.Query
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.R
+import com.menard.go4lunch.adapter.WorkmatesAdapter
 import com.menard.go4lunch.api.UserHelper
+import com.menard.go4lunch.model.User
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.detailsrequest.ResultDetails
 import com.menard.go4lunch.utils.*
 import io.reactivex.disposables.CompositeDisposable
-import org.joda.time.DateTime
-import org.joda.time.Duration
+import org.threeten.bp.Duration
+import org.threeten.bp.LocalDateTime
 import saschpe.android.customtabs.CustomTabsHelper
 import saschpe.android.customtabs.WebViewFallback
-import java.util.*
 
 class LunchActivity : BaseActivity(), View.OnClickListener {
 
@@ -55,38 +57,40 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
     /** Shared Preferences */
     private lateinit var sharedPreferences: SharedPreferences
 
-    lateinit var pendingIntent: PendingIntent
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lunch)
+        AndroidThreeTen.init(this)
 
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
+        //-- Views --
         selectingButton = findViewById(R.id.activity_lunch_button)
         selectingButton.setOnClickListener(this)
-        //-- Contact --
         call = findViewById(R.id.contact_phone)
         call.setOnClickListener(this)
         like = findViewById(R.id.contact_like)
         like.setOnClickListener(this)
         website = findViewById(R.id.contact_website)
         website.setOnClickListener(this)
-        //-- Infos --
         nameRestaurant = findViewById(R.id.infos_name)
         addressRestaurant = findViewById(R.id.infos_address)
         photo = findViewById(R.id.activity_lunch_restaurant_photo)
-        //-- Recycler view --
-        listWorkmates = findViewById(R.id.activity_lunch_list_workmates)
 
         //-- Get restaurant's infos --
         idRestaurant = intent.getStringExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER)
         findRestaurantInfos(idRestaurant)
 
+        //-- Recycler view --
+        listWorkmates = findViewById(R.id.activity_lunch_list_workmates)
+        val layoutManager = LinearLayoutManager(this)
+        listWorkmates.layoutManager = layoutManager
     }
 
-    //-- REQUEST FOR THE DETAILS --
+    //-----------------------------//
+    //-- REQUEST FOR THE DETAILS --//
+    //-----------------------------//
     /**
      * Make request to get details of the selected restaurant, according to his place_id
      * @param id place_id
@@ -122,12 +126,17 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
             Glide.with(this).load(R.drawable.select_24).into(selectingButton)
         }
 
-        // Set tags to button
+        //-- Set tags to button --
         website.tag = result.website
         call.tag = result.formattedPhoneNumber
         like.tag = result.placeId
 
-        getListOfWorkmates(result.name.toString())
+        //-- Get List of workmates --
+        val query: Query = UserHelper.getUserAccordingToRestaurant(result.placeId.toString())
+        val list = FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
+                .setLifecycleOwner(this).build()
+        val workmatesAdapter = WorkmatesAdapter(this, list,false)
+        listWorkmates.adapter = workmatesAdapter
     }
 
     /**
@@ -137,68 +146,18 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
         Log.d(ContentValues.TAG, error.localizedMessage)
     }
 
-    // -- CLICK ON THE CONTACT INFOS --
+    //---------------------------------//
+    // -- CLICK ON THE CONTACT INFOS --//
+    //---------------------------------//
     override fun onClick(v: View?) {
         when (v) {
-            call -> if (call.tag != null) startCall(call.tag.toString()) else showSnackBar("No phone number available")
+            call -> if (call.tag != null) startCall(call.tag.toString()) else showSnackBar(getString(R.string.no_website))
             like -> UserHelper.addFavorites(getCurrentUser().uid, like.tag.toString())
-            website -> if(website.tag != null)  openCustomTabs() else showSnackBar("No website available")
-            selectingButton -> saveRestaurantInSharedPreferences()
+            website -> if(website.tag != null)  openCustomTabs() else showSnackBar(getString(R.string.no_phone))
+            selectingButton -> updateSharedPreferencesAndFirestore()
         }
     }
 
-    /**
-     * Save the restaurant selected in Shared Preferences or delete it
-     */
-    private fun saveRestaurantInSharedPreferences() {
-        if (sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, null) != idRestaurant) {
-            UserHelper.updateRestaurant(getCurrentUser().uid, nameRestaurant.text.toString(), idRestaurant)
-            sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, idRestaurant).apply()
-            //-- Update FloatingButton --
-            Glide.with(this).load(R.drawable.selected_24).into(selectingButton)
-            Toast.makeText(this, "Restaurant selected", Toast.LENGTH_SHORT).show()
-            //-- Notifications --
-            val data = Data.Builder()
-                    .putString("UserName", getCurrentUser().displayName)
-                    .putString("restaurantName", "Le Léone")
-                    .putString("vicinity", "rue du coin")
-                    .putString("list", "Ralph, Lucy").build()
-            NotificationWorker.scheduleReminder(data, setNotificationsTime())
-        } else {
-            UserHelper.updateRestaurant(getCurrentUser().uid, null, null)
-            sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, null).apply()
-            //-- Update FloatingButton --
-            Glide.with(this).load(R.drawable.select_24).into(selectingButton)
-            Toast.makeText(this, "Restaurant unselected", Toast.LENGTH_SHORT).show()
-            //-- Notifications --
-            NotificationWorker.cancelReminder()
-        }
-    }
-
-//    fun setNotification(){
-//        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//        val calendar = Calendar.getInstance()
-//        calendar.timeInMillis = System.currentTimeMillis()
-//        calendar.set(Calendar.HOUR, 14)
-//        calendar.set(Calendar.MINUTE, 40)
-//
-//        alarmManager.setExact(AlarmManager.RTC, calendar.timeInMillis, pendingIntent)
-//    }
-//
-//    fun cancelNotification(){
-//        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//        alarmManager.cancel(pendingIntent)
-//    }
-
-
-    fun setNotificationsTime(): Long {
-        val reminderDelay = 16
-        return if(DateTime.now().hourOfDay < reminderDelay){
-            Duration(DateTime.now(), DateTime.now().withTimeAtStartOfDay().plusHours(reminderDelay)).standardMinutes
-        }else{
-            Duration(DateTime.now(), DateTime.now().withTimeAtStartOfDay().plusDays(1).plusHours(reminderDelay)).standardMinutes
-        }
-    }
     /**
      * Open Custom Tabs with restaurant's website
      */
@@ -211,13 +170,68 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
         CustomTabsHelper.openCustomTab(this, customTabsIntent, Uri.parse(website.tag.toString()), WebViewFallback())
     }
 
+
+    //--------------------------------------//
+    //-- SHARED PREFERENCES AND FIRESTORE --//
+    //--------------------------------------//
     /**
-     * Show a SnackBar
+     * Save the restaurant selected in Shared Preferences or delete it
      */
+    private fun updateSharedPreferencesAndFirestore() {
+        if (sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, null) != idRestaurant) {
+            selected()
+            //-- Activate Notification --
+            val data = Data.Builder()
+                    .putString(Constants.DATA_USER, getCurrentUser().displayName)
+                    .putString(Constants.DATA_RESTAURANT_NAME, "Le Léone")
+                    .putString(Constants.DATA_RESTAURANT_ADDRESS, "rue du coin")
+                    .putString(Constants.DATA_LIST_WORKMATES, "Ralph, Lucy").build()
+            NotificationWorker.scheduleReminder(data, setNotificationsTime())
+        } else {
+            unselected()
+            //-- Cancel Notification --
+            NotificationWorker.cancelReminder()
+        }
+    }
+
+    /**
+     * When the restaurant is selected
+     */
+    private fun selected(){
+        UserHelper.updateRestaurant(getCurrentUser().uid, nameRestaurant.text.toString(), idRestaurant)
+        sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, idRestaurant).apply()
+        //-- Update FloatingButton --
+        Glide.with(this).load(R.drawable.selected_24).into(selectingButton)
+        showSnackBar(getString(R.string.selected))
+    }
+
+    /**
+     * When the restaurant is unselected
+     */
+    private fun unselected(){
+        UserHelper.updateRestaurant(getCurrentUser().uid, null, null)
+        sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, null).apply()
+        //-- Update FloatingButton --
+        Glide.with(this).load(R.drawable.select_24).into(selectingButton)
+        showSnackBar(getString(R.string.unselected))
+    }
+
     private fun showSnackBar(message:String){
         Snackbar.make(findViewById(R.id.lunch_activity_container), message, Snackbar.LENGTH_SHORT).show()
     }
 
+    //-------------------------//
+    //-- NOTIFICATIONS DELAY --//
+    //-------------------------//
+    private fun setNotificationsTime() : Long{
+        val desiredDate = LocalDateTime.now().withHour(10).withMinute(20).withSecond(0)
+        return Duration.between(LocalDateTime.now(), desiredDate).toMinutes()
+    }
+
+
+    //----------------//
+    //-- PHONE CALL --//
+    //----------------//
     /**
      * Start a call phone after checking for permissions
      */
@@ -231,17 +245,12 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
     /**
      * Check permissions for Phone Call
      */
-    private fun checkPermissionForCall(): Boolean{
-        return if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+    private fun checkPermissionForCall(): Boolean {
+        return if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
             true
-        }else{
+        } else {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CALL_PHONE), Constants.REQUEST_CODE_CALL_PHONE)
             false
         }
     }
-
-//    private fun configureAlarmManager(){
-//        val intent = Intent(this, NotificationService::class.java)
-//        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-//    }
 }

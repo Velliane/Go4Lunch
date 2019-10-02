@@ -3,10 +3,17 @@
     <string name="app_name">Go4Lunch</string>
     <string name="sign_in_button">CONNEXION</string>
 
+    <!-- Auth Activity -->
+    <string name="connection_succeed">Connexion réussie</string>
+    <string name="authentication_canceled">Authentification annulée</string>
+    <string name="no_internet">Vous n\'êtes pas connecté à internet</string>
+    <string name="unkown_error_occurs">Une erreur inconnue s\'est produite</string>
+
     <!-- Navigation Drawer -->
     <string name="action_settings">PARAMETRES</string>
     <string name="action_your_lunch">DEJEUNER</string>
     <string name="action_logout">DECONNEXION</string>
+    <string name="drawer_no_restaurant_selected">Vous n\'avez pas encore sélectionné de restaurant</string>
 
     <!-- Workmates -->
     <string name="workmates_infos_with_restaurant">%1$s mange à %2$s</string>
@@ -22,6 +29,9 @@
     <string name="alert_dialog_settings_good">Bonne décision !</string>
     <string name="settings_button_delete_account">SUPPRIMER LE COMPTE</string>
     <string name="settings_change_name_validation">Ton nom a été modifié</string>
+    <string name="display_name">Identifiant</string>
+    <string name="actual_display_name">Identifiant actuel</string>
+    <string name="change">Valider</string>
 
     <!-- Bottom Navigation View -->
     <string name="bottom_navigation_menu_mapview">Carte</string>
@@ -33,5 +43,10 @@
     <string name="contact_infos_call">APPEL</string>
     <string name="contact_infos_like">AIME</string>
     <string name="contact_infos_website">SITE WEB</string>
+    <string name="selected">Restaurant sélectionné</string>
+    <string name="unselected">Sélection annulée</string>
+    <string name="no_website">Pas de site internet disponible</string>
+    <string name="no_phone">Aucun numéro de téléphone n\'a été renseigné</string>
+
 
 </resources>

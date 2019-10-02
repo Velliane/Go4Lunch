@@ -29,7 +29,7 @@ class GooglePlacesStreams {
                     .timeout(10, TimeUnit.SECONDS)
         }
 
-
+        //-- Get List of Details --
         fun getDetailsOfSelectedRestaurant(location: String, radius: String, restaurant: String, fields: String, apiKey: String): Observable<List<DetailsRequest>>{
             return getListRestaurant(location, radius, restaurant, apiKey)
                     .concatMapIterable { result -> result.results }

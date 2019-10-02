@@ -9,16 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.controller.activity.LunchActivity
+import com.menard.go4lunch.model.User
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import com.menard.go4lunch.model.nearbysearch.Result
 import com.menard.go4lunch.utils.Constants
@@ -26,7 +26,8 @@ import com.menard.go4lunch.utils.GooglePlacesStreams
 import com.menard.go4lunch.utils.setMarker
 import io.reactivex.disposables.CompositeDisposable
 
-class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationButtonClickListener {
+class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, View.OnClickListener, GoogleMap.OnCameraMoveListener {
+
 
     companion object {
         fun newInstance(): MapviewFragment {
@@ -42,6 +43,8 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     /** Places Client */
     private lateinit var placesClient: PlacesClient
+    /** Floating Action Button */
+    private lateinit var centerLocalisation: FloatingActionButton
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -49,6 +52,8 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
 
         mapView = view.findViewById(R.id.mapview)
         mapView.onCreate(savedInstanceState)
+        centerLocalisation = view.findViewById(R.id.center_gps)
+        centerLocalisation.setOnClickListener(this)
 
         //-- Check is fragment is added to MainActivity --
         if (isAdded) {
@@ -79,20 +84,32 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         }
         mGoogleMap.setOnMarkerClickListener(this)
         mGoogleMap.setOnInfoWindowClickListener(this)
-        mGoogleMap.setOnMyLocationButtonClickListener(this)
+        mGoogleMap.setOnCameraMoveListener (this)
     }
 
-    //-- UPDATE MAP WITH USER'S LOCATION --
+    /**
+     * When click on Floating Action Button
+     */
+    override fun onClick(v: View?) {
+        when(v!!.id){
+            R.id.center_gps ->{
+                UserHelper.getUser(getCurrentUser().uid).addOnSuccessListener { documentSnapshot ->
+                    val currentUser = documentSnapshot.toObject<User>(User::class.java)
+                    val location = LatLng(currentUser!!.userLocationLatitude!!.toDouble(), currentUser.userLocationLongitude!!.toDouble())
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 14F))
+                }
+            }
+        }
+    }
+
+    //-------------------------------------//
+    //-- UPDATE MAP WITH USER'S LOCATION --//
+    //-------------------------------------//
     /**
      * Update Map with new location of the user
      */
     private fun GPSUpdateLocation() {
-        val locationRequest = LocationRequest()
-        locationRequest.interval = 10000
-        locationRequest.fastestInterval = 2000
-        locationRequest.smallestDisplacement = 50F
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-
+        val locationRequest = setLocationRequest()
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, object : LocationCallback() {
 
             override fun onLocationResult(locationResult: LocationResult?) {
@@ -102,24 +119,32 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
                 val longitude = lastLocation.longitude.toString()
 
                 UserHelper.updateLocation(getCurrentUser().uid, latitude, longitude)
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 15F))
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 14F))
                 getResult("$latitude,$longitude")
             }
         }, null)
     }
 
+    override fun onCameraMove() {
+        val centerMap: LatLng = mGoogleMap.cameraPosition.target
+        getResult("${centerMap.latitude},${centerMap.longitude}")
+    }
+
+    //------------------------------//
+    //-- REQUEST ON NEARBY SEARCH --//
+    //------------------------------//
     /**
      * Get result of NearbySearch
      * @param location the user's location
      */
     fun getResult(location: String) {
         val disable: CompositeDisposable? = CompositeDisposable()
-        disable?.add(GooglePlacesStreams.getListRestaurant(location, "5000", "restaurant", BuildConfig.api_key_google).subscribe(
+        disable?.add(GooglePlacesStreams.getListRestaurant(location, "6000", "restaurant", BuildConfig.api_key_google).subscribe(
                 this::handleResponse, this::handleError))
     }
 
     /**
-     * Add markers to results
+     * Add markers according to result of request
      */
     private fun handleResponse(nearbySearch: NearbySearch) {
         val listResults: List<Result> = nearbySearch.results
@@ -132,7 +157,6 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
                 "No opening hours available"
             }
             setMarker(result.placeId, opening, mGoogleMap, latLng, result.name)
-            //mGoogleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(result.name).snippet(opening)).tag = result.placeId
         }
     }
 
@@ -140,26 +164,27 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         Log.d(TAG, error.localizedMessage)
     }
 
-    //-- ACTION WHEN CLICK ON MARKER --
+    //---------------------------------//
+    //-- ACTION WHEN CLICK ON MARKER --//
+    //---------------------------------//
     override fun onMarkerClick(p0: Marker?): Boolean {
         //-- Return false to centered and open the marker's info window
         return false
     }
 
-    //-- ACTION WHEN CLICK IN INFO WINDOW --
+    //--------------------------------------//
+    //-- ACTION WHEN CLICK IN INFO WINDOW --//
+    //--------------------------------------//
     override fun onInfoWindowClick(p0: Marker?) {
         val intent = Intent(requireActivity(), LunchActivity::class.java)
         intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, p0?.tag.toString())
         startActivity(intent)
     }
 
-    //-- ACTION WHEN CLICK ON MY LOCATION BUTTON
-    override fun onMyLocationButtonClick(): Boolean {
-        mGoogleMap.setMinZoomPreference(15f)
-        return false
-    }
 
-    //-- FRAGMENT LIFECYCLE --
+    //------------------------//
+    //-- FRAGMENT LIFECYCLE --//
+    //------------------------//
 
     override fun onResume() {
         mapView.onResume()

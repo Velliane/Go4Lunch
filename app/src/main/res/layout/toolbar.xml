@@ -10,4 +10,5 @@
     android:background="@color/colorPrimary"
     app:titleTextColor="@color/colorAccent"
     android:theme= "@style/AppTheme"
-    tools:ignore="Overdraw" />
+    tools:ignore="Overdraw"
+    app:menu="@menu/toolbar_menu"/>

@@ -5,6 +5,7 @@ import android.location.Location
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -18,8 +19,9 @@ open class BaseFragment : Fragment(){
         return FirebaseAuth.getInstance().currentUser!!
     }
 
-
-    //-- CHECK PERMISSIONS FOR FINE LOCATION --
+    //-----------------------------------------//
+    //-- CHECK PERMISSIONS FOR FINE LOCATION --//
+    //-----------------------------------------//
     /**
      * Check permissions
      */
@@ -48,7 +50,9 @@ open class BaseFragment : Fragment(){
         }
     }
 
-    //-- GET NEW LOCATION OF USER --
+    //------------------------------//
+    //-- GET NEW LOCATION OF USER --//
+    //------------------------------//
     /**
      * Get new location
      */
@@ -56,4 +60,15 @@ open class BaseFragment : Fragment(){
         return LatLng(location.latitude, location.longitude)
     }
 
+    //--------------------------//
+    //-- SET LOCATION REQUEST --//
+    //--------------------------//
+    open fun setLocationRequest(): LocationRequest {
+        val locationRequest = LocationRequest()
+        locationRequest.interval = 10000
+        locationRequest.fastestInterval = 10000
+        locationRequest.smallestDisplacement = 50F
+        locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        return locationRequest
+    }
 }

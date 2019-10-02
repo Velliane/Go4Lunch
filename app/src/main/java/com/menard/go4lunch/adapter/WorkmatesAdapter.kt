@@ -24,7 +24,7 @@ import de.hdodenhof.circleimageview.CircleImageView
  * using FirestoreRecyclerAdapter and FirestoreRecyclerOptions
  */
 
-class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOptions<User>) : FirestoreRecyclerAdapter<User, WorkmatesAdapter.WorkmatesViewHolder>(options) {
+class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOptions<User>, private val allUser:Boolean) : FirestoreRecyclerAdapter<User, WorkmatesAdapter.WorkmatesViewHolder>(options) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkmatesViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -39,10 +39,11 @@ class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOp
         if(user.userId == FirebaseAuth.getInstance().currentUser!!.uid){
             val param: RecyclerView.LayoutParams = holder.container.layoutParams as RecyclerView.LayoutParams
             param.height = 0
-            holder.itemView.visibility = View.VISIBLE
 
         //-- Show the other users's information --
         }else{
+            val param: RecyclerView.LayoutParams = holder.container.layoutParams as RecyclerView.LayoutParams
+            param.height = RecyclerView.LayoutParams.WRAP_CONTENT
             //-- Profile's photo --
             if(user.userPhoto != null){
                 holder.userPhoto.loadImageProfile(user.userPhoto, null, getProgressDrawableSpinner(context))
@@ -50,18 +51,24 @@ class WorkmatesAdapter(private val context:Context, options: FirestoreRecyclerOp
                 holder.userPhoto.loadImageProfile(null, R.drawable.user, getProgressDrawableSpinner(context))
             }
             //-- Restaurant's selected --
-            val restaurantChoosed: String
-            if(user.userRestaurantName != null) {
-                restaurantChoosed = context.getString(R.string.workmates_infos_with_restaurant, user.userName, user.userRestaurantName)
-                holder.userInfos.text = restaurantChoosed
-                holder.userInfos.setTextColor(Color.BLACK)
-                holder.userInfos.typeface = DEFAULT
+            if (allUser) {
+                val restaurantChoosed: String
+                if (user.userRestaurantName != null) {
+                    restaurantChoosed = context.getString(R.string.workmates_infos_with_restaurant, user.userName, user.userRestaurantName)
+                    holder.userInfos.text = restaurantChoosed
+                    holder.userInfos.setTextColor(Color.BLACK)
+                    holder.userInfos.typeface = DEFAULT
+                } else {
+                    holder.userInfos.setTextColor(Color.GRAY)
+                    holder.userInfos.setTypeface(DEFAULT, ITALIC)
+                    restaurantChoosed = context.getString(R.string.workmates_infos_not_yet, user.userName)
+                    holder.userInfos.text = restaurantChoosed
+                }
             }else{
-                holder.userInfos.setTextColor(Color.GRAY)
-                holder.userInfos.setTypeface(DEFAULT, ITALIC)
-                restaurantChoosed = context.getString(R.string.workmates_infos_not_yet, user.userName)
-                holder.userInfos.text = restaurantChoosed
+                holder.userInfos.text = "${user.userName} is joining"
             }
+
+
         }
 
     }

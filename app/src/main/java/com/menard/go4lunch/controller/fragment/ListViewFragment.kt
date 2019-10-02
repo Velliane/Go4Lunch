@@ -29,6 +29,7 @@ class ListViewFragment : BaseFragment() {
 
     /** RecyclerView */
     private lateinit var recyclerView: RecyclerView
+    /** Progress Bar */
     private lateinit var progressBar: ProgressBar
     /** FusedLocation */
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -60,19 +61,12 @@ class ListViewFragment : BaseFragment() {
         recyclerView.layoutManager = layoutManager
         listOfRestaurant()
 
-
-
         return view
     }
 
 
     private fun listOfRestaurant() {
-        val locationRequest = LocationRequest()
-        locationRequest.interval = 10000
-        locationRequest.fastestInterval = 2000
-        locationRequest.smallestDisplacement = 50F
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-
+        val locationRequest = setLocationRequest()
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, object : LocationCallback() {
 
             override fun onLocationResult(locationResult: LocationResult?) {
@@ -91,7 +85,7 @@ class ListViewFragment : BaseFragment() {
 
     fun getResultWithRXJAVA(location: String) {
         val disable: CompositeDisposable? = CompositeDisposable()
-        disable?.add(GooglePlacesStreams.getDetailsOfSelectedRestaurant(location, "5000", "restaurant", Constants.FIELD_FOR_DETAILS, BuildConfig.api_key_google).subscribe(
+        disable?.add(GooglePlacesStreams.getDetailsOfSelectedRestaurant(location, "10000", "restaurant", Constants.FIELD_FOR_DETAILS, BuildConfig.api_key_google).subscribe(
                 this::handleResponse, this::handleError))
     }
 

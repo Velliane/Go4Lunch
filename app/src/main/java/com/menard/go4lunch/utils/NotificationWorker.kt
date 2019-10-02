@@ -9,9 +9,9 @@ import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.*
+import com.google.firebase.auth.FirebaseAuth
+import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.controller.activity.MainActivity
-import org.threeten.bp.LocalTime
-import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 open class NotificationWorker(context: Context, parameters: WorkerParameters) : Worker(context, parameters) {
@@ -24,7 +24,6 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
         fun scheduleReminder(data: Data, time: Long) {
             val notificationWork = OneTimeWorkRequest.Builder(NotificationWorker::class.java)
                     .setInitialDelay(time, TimeUnit.MINUTES)
-                    .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                     .setInputData(data).build()
 
             val instance = WorkManager.getInstance()
@@ -42,10 +41,10 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
     override fun doWork(): Result {
 
         //-- Get Date --
-        val user = inputData.getString("UserName")
-        val restaurantName = inputData.getString("restaurantName")
-        val restaurantVicinity= inputData.getString("vicinity")
-        val listWorker = inputData.getStringArray("list")
+        val user = inputData.getString(Constants.DATA_USER)
+        val restaurantName = inputData.getString(Constants.DATA_RESTAURANT_NAME)
+        val restaurantVicinity= inputData.getString(Constants.DATA_RESTAURANT_ADDRESS)
+        val listWorker = inputData.getStringArray(Constants.DATA_LIST_WORKMATES)
 
         sendNotification(user, restaurantName, restaurantVicinity, listWorker)
 
@@ -85,6 +84,11 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
 
         // Show notification
         notificationManager.notify(NOTIFICATION_TAG, NOTIFICATION_ID, notificationBuilder.build())
+
+        // Reset Restaurant in Firestore and in SharedPreferences
+        UserHelper.updateRestaurant(FirebaseAuth.getInstance().currentUser!!.uid, null, null)
+        val sharedPreferences = applicationContext.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, null).apply()
 
     }
 }

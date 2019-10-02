@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
 
+    <!-- Auth Activity -->
+    <string name="connection_succeed">Connection succeed</string>
+    <string name="authentication_canceled">Authentication canceled</string>
+    <string name="no_internet">You\'re not connected to internet</string>
+    <string name="unkown_error_occurs">An unknown error occurs</string>
+
+    <!-- Privacy/Policy -->
+    <string name="term_condition" translatable="false">https://openclassrooms.com/fr/terms-conditions</string>
+    <string name="privacy_policy" translatable="false">https://openclassrooms.com/fr/privacy-policy</string>
+
     <!-- Bottom Navigation View -->
     <string name="bottom_navigation_menu_mapview">Map View</string>
     <string name="bottom_navigation_menu_listview">List View</string>
@@ -20,6 +30,7 @@
     <string name="header_title" translatable="false">Go4Lunch</string>
     <string name="header_name" translatable="false">John SMITH is eating at Restaurant(French)</string>
     <string name="header_email" translatable="false">jsmith.123@gmail.com</string>
+    <string name="drawer_no_restaurant_selected">You don\'t have any restaurant selected for now</string>
 
     <!-- Auth Activity -->
     <string name="description_image_view_app_icon" translatable="false">Application\'s logo</string>
@@ -43,14 +54,25 @@
     <string name="alert_dialog_settings_good">"Good decision !"</string>
     <string name="settings_button_delete_account">DELETE ACCOUNT</string>
     <string name="settings_change_name_validation">Your display name have been updated</string>
+    <string name="display_name">Display Name</string>
+    <string name="actual_display_name">Actual display name</string>
+    <string name="change">Validate</string>
 
     <!-- Photos Api -->
     <string name="photos_list_view" translatable="false">https://maps.googleapis.com/maps/api/place/photo?maxheight=200&amp;photoreference=%1$s&amp;key=%2$s</string>
     <string name="photos_lunch_activity" translatable="false">https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&amp;photoreference=%1$s&amp;key=%2$s</string>
 
    <!-- Lunch Activity -->
+    <string name="lunch_activity_title" translatable="false">Restaurant</string>
     <string name="contact_infos_call">CALL</string>
     <string name="contact_infos_like">LIKE</string>
     <string name="contact_infos_website">WEBSITE</string>
+    <string name="restaurant_s_photo" translatable="false">restaurant\'s photo</string>
+    <string name="name" translatable="false">Name</string>
+    <string name="address" translatable="false">Address</string>
+    <string name="selected">Restaurant selected</string>
+    <string name="unselected">Restaurant unselected</string>
+    <string name="no_website">No website available</string>
+    <string name="no_phone">No phone number available</string>
 
 </resources>

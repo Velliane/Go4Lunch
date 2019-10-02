@@ -11,18 +11,14 @@ import retrofit2.http.Query
 
 interface GooglePlacesAPI {
 
-//    @GET("maps/api/place/nearbysearch/json")
-//    fun getNearbySearch(@Query("location") location: String, @Query("radius") radius: String, @Query("type") type: String, @Query("key") key: String): Call<NearbySearch>
-
     @GET("maps/api/place/nearbysearch/json")
     fun getNearbySearch(@Query("location") location: String, @Query("radius") radius: String, @Query("type") type: String, @Query("key") key: String): Observable<NearbySearch>
 
     @GET("maps/api/place/details/json")
     fun getDetails(@Query("placeid")placeId: String, @Query ("fields") fields: String, @Query("key") key:String): Observable<DetailsRequest>
 
-//    @GET("https://maps.googleapis.com/maps/api/place/photo")
-//    fun getPhoto(@Query("maxwidth") maxwidth: String, @Query("photoreference") photoReference: String, @Query("key") key: String): Observable<>
-
+//    @GET("maps/api/place/autocomplete/json")
+//    fun getAutocompleteSearch(@Query("input")input: String, @Query("type")type: String, @Query("location") location: String, @Query("radius") radius: String): Observable<>
  companion object {
      val retrofit: Retrofit = Retrofit.Builder()
              .baseUrl("https://maps.googleapis.com/")

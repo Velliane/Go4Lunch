@@ -83,7 +83,7 @@ dependencies {
     implementation 'saschpe.android:customtabs:2.0.0'
     implementation 'com.android.support:customtabs:28.0.0'
 
-    implementation 'net.danlew:android.joda:2.10.3'
+    implementation 'com.github.mukeshsolanki:Google-Places-AutoComplete-EditText:0.0.6'
 
 
 }

@@ -16,10 +16,7 @@ import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.controller.activity.LunchActivity
 import com.menard.go4lunch.model.User
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
-import com.menard.go4lunch.utils.Constants
-import com.menard.go4lunch.utils.distanceToUser
-import com.menard.go4lunch.utils.getProgressDrawableSpinner
-import com.menard.go4lunch.utils.loadRestaurantPhoto
+import com.menard.go4lunch.utils.*
 
 /**
  * Adapter for the RecyclerView that's show the detailed list of nearby restaurants
@@ -80,6 +77,13 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
             holder.photo.loadRestaurantPhoto(null, R.drawable.no_image_available_64, getProgressDrawableSpinner(context))
         }
 
+        if(restaurant.rating != null) {
+            val rating = setRating(restaurant.rating!!.toDouble())
+            setStarVisibility(rating, holder)
+        }else{
+            holder.noRating.visibility = View.VISIBLE
+        }
+
     }
 
 
@@ -93,6 +97,10 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
         var openingHours: TextView = itemView.findViewById(R.id.item_open_hours)
         var distance: TextView = itemView.findViewById(R.id.item_distance)
         var photo: ImageView = itemView.findViewById(R.id.item_photo)
+        var starOne: ImageView = itemView.findViewById(R.id.star_one)
+        var starTwo: ImageView = itemView.findViewById(R.id.star_two)
+        var starThree: ImageView = itemView.findViewById(R.id.star_three)
+        var noRating: TextView = itemView.findViewById(R.id.star_null)
 
 
         init {
@@ -109,6 +117,29 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
             intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, idRestaurant)
             context.startActivity(intent)
         }
+    }
 
+
+    /**
+     * Set the visibility of the stars for rating
+     */
+    private fun setStarVisibility(rating: Int, holder: ListViewHolder) {
+        when (rating) {
+            1 -> holder.starOne.visibility = View.VISIBLE
+            2 -> {
+                holder.starOne.visibility = View.VISIBLE
+                holder.starTwo.visibility = View.VISIBLE
+            }
+            0 -> {
+                holder.starOne.visibility = View.VISIBLE
+                holder.starTwo.visibility = View.VISIBLE
+                holder.starThree.visibility = View.VISIBLE
+            }
+            else -> {
+                holder.starOne.visibility = View.INVISIBLE
+                holder.starTwo.visibility = View.INVISIBLE
+                holder.starThree.visibility = View.INVISIBLE
+            }
+        }
     }
 }

@@ -4,37 +4,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/chat_item_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_bias="0"
         android:layout_marginTop="6dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="3dp"
         android:background="@drawable/chat_current_user_message_background"
+        android:maxLines="4"
         android:padding="8dp"
         android:text="Example of message"
         android:textColor="@color/colorAccent"
-        android:maxLines="3"
-        app:layout_constraintTop_toTopOf="parent"
+        android:maxWidth="280dp"
+        android:textSize="18sp"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintLeft_toRightOf="@id/image_profile"
         app:layout_constraintRight_toRightOf="parent"
-        android:textSize="18sp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/chat_item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:layout_marginEnd="5dp"
         android:text="Date"
         android:textAlignment="textEnd"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="@+id/chat_item_message"
         app:layout_constraintLeft_toRightOf="@id/image_profile"
-        app:layout_constraintTop_toBottomOf="@id/chat_item_message"
-        android:textSize="10sp" />
+        app:layout_constraintTop_toBottomOf="@id/chat_item_message" />
 
 
     <de.hdodenhof.circleimageview.CircleImageView

@@ -27,6 +27,7 @@ fun parseMessageDateToHoursOnly(date: String): String{
     return dateTime.format(hoursOnlyDateTimeFormatter)
 }
 
+
 /**
  * Get the number of the Day
  */

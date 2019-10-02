@@ -10,10 +10,9 @@ import com.firebase.ui.auth.AuthUI.IdpConfig
 import com.firebase.ui.auth.AuthUI.getInstance
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
-import com.google.android.material.snackbar.Snackbar
-import com.menard.go4lunch.utils.Constants.Companion.RC_SIGN_IN
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
+import com.menard.go4lunch.utils.Constants.Companion.REQUEST_CODE_SIGN_IN
 
 class AuthActivity : BaseActivity(), View.OnClickListener {
 
@@ -40,8 +39,9 @@ class AuthActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
-
-    //-- CONFIGURE GOOGLE, FACEBOOK, TWITTER AND EMAIL SIGN IN --
+    //-----------------------------------------------------------//
+    //-- CONFIGURE GOOGLE, FACEBOOK, TWITTER AND EMAIL SIGN IN --//
+    //-----------------------------------------------------------//
     private fun signIn(){
         startActivityForResult(getInstance()
                 .createSignInIntentBuilder()
@@ -49,12 +49,14 @@ class AuthActivity : BaseActivity(), View.OnClickListener {
                 .setAvailableProviders(listOf(IdpConfig.GoogleBuilder().build(), IdpConfig.FacebookBuilder().build(), IdpConfig.TwitterBuilder().build(), IdpConfig.EmailBuilder().build()))
                 .setIsSmartLockEnabled(false, true)
                 .setLogo(R.drawable.icon1)
-                .setTosAndPrivacyPolicyUrls("https://openclassrooms.com/fr/terms-conditions","https://openclassrooms.com/fr/privacy-policy")
+                .setTosAndPrivacyPolicyUrls(getString(R.string.term_condition),getString(R.string.privacy_policy))
                 .build(),
-                RC_SIGN_IN)
+                REQUEST_CODE_SIGN_IN)
     }
 
-    //-- GET RESPONSE --
+    //------------------//
+    //-- GET RESPONSE --//
+    //------------------//
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         this.handleResponseAfterSignIn(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
@@ -63,25 +65,21 @@ class AuthActivity : BaseActivity(), View.OnClickListener {
 
     private fun handleResponseAfterSignIn( requestCode: Int, resultCode: Int, data: Intent?){
 
-        if(requestCode == RC_SIGN_IN){
+        if(requestCode == REQUEST_CODE_SIGN_IN){
             val response = IdpResponse.fromResultIntent(data)
             if(resultCode == Activity.RESULT_OK){
-                showSnackBar(layout, "Connection succeed")
+                showSnackBar(layout, getString(R.string.connection_succeed))
                 //-- Add new user to firestore
                 UserHelper.createUser(getCurrentUser().uid, getCurrentUser().displayName!!, getCurrentUser().photoUrl?.toString(), null, null, null, null).addOnFailureListener(onFailureListener())
                 startMainActivity()
             }else{
                 when {
-                    response == null -> showSnackBar(layout, "Authentification canceled")
-                    response.error!!.errorCode == ErrorCodes.NO_NETWORK -> showSnackBar(layout, "No internet")
-                    response.error!!.errorCode == ErrorCodes.UNKNOWN_ERROR -> showSnackBar(layout, "Unknown error")
+                    response == null -> showSnackBar(layout, getString(R.string.authentication_canceled))
+                    response.error!!.errorCode == ErrorCodes.NO_NETWORK -> showSnackBar(layout, getString(R.string.no_internet))
+                    response.error!!.errorCode == ErrorCodes.UNKNOWN_ERROR -> showSnackBar(layout, getString(R.string.unkown_error_occurs))
                 }
             }
         }
-    }
-
-    private fun showSnackBar(linearLayout: LinearLayout, message:String){
-        Snackbar.make(linearLayout, message, Snackbar.LENGTH_SHORT).show()
     }
 
     private fun startMainActivity() {

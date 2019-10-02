@@ -52,7 +52,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var sharedPreferences: SharedPreferences
 
 
-    //-- BOTTOM NAVIGATION VIEW LISTENER --
+    //-------------------------------------//
+    //-- BOTTOM NAVIGATION VIEW LISTENER --//
+    //-------------------------------------//
     private val onBottomNavigationItemSelectedListener = object : BottomNavigationView.OnNavigationItemSelectedListener {
         override fun onNavigationItemSelected(item: MenuItem): Boolean {
             when (item.itemId) {
@@ -81,6 +83,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -100,12 +103,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //-- Configuration --
         configureDrawerLayout()
         configureNavigationView()
-
         //-- Set default selected tab --
         bottomNavigationView.selectedItemId = R.id.action_mapview
     }
 
-    //-- DRAWER --
+    //------------//
+    //-- DRAWER --//
+    //------------//
     /**
      * Drawer Navigation View
      */
@@ -121,7 +125,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     startActivity(intent)
                 }else{
                     val builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
-                    builder.setMessage("You don't have any restaurant selected for now")
+                    builder.setMessage(getString(R.string.drawer_no_restaurant_selected))
                             .setNegativeButton("Ok"){ dialog, which ->  
                                 
                             }
@@ -136,8 +140,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-
-    //-- AUTOCOMPLETE --
+    //------------------//
+    //-- AUTOCOMPLETE --//
+    //------------------//
     /**
      * When click on Search Button of the Toolbar
      */
@@ -163,7 +168,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 //        }
 //    }
 
-    //-- FRAGMENT --
+    //--------------//
+    //-- FRAGMENT --//
+    //--------------//
     /**
      * Add fragment to Main Activity
      */
@@ -173,9 +180,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 .commit()
     }
 
-
-
-    //-- CONFIGURATION --
+    //-------------------//
+    //-- CONFIGURATION --//
+    //-------------------//
     private fun configureDrawerLayout() {
         drawerLayout = findViewById(R.id.activity_main_drawer_layout)
         val toogle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_navigation_drawer, R.string.close_navigation_drawer)
@@ -211,14 +218,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-    //-- CLOSING THE NAVIGATION DRAWER --
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         }
     }
 
-    //-- SIGN OUT --
+    //--------------//
+    //-- SIGN OUT --//
+    //--------------//
     private fun signOut() {
         AuthUI.getInstance()
                 .signOut(this)

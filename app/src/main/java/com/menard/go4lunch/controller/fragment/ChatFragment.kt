@@ -15,6 +15,7 @@ import com.menard.go4lunch.R
 import com.menard.go4lunch.adapter.ChatAdapter
 import com.menard.go4lunch.api.ChatHelper
 import com.menard.go4lunch.model.Message
+import org.threeten.bp.LocalDateTime
 
 class ChatFragment: BaseFragment(), View.OnClickListener {
 
@@ -46,14 +47,14 @@ class ChatFragment: BaseFragment(), View.OnClickListener {
         val list = FirestoreRecyclerOptions.Builder<Message>().setQuery(query, Message::class.java)
                 .setLifecycleOwner(this).build()
 
-        //-- Layout manager --
+        //-- Recycler View --
         val layoutManager = LinearLayoutManager(context)
         layoutManager.stackFromEnd
         recyclerView.layoutManager = layoutManager
         val workmatesAdapter = ChatAdapter(requireActivity(),list)
         recyclerView.adapter = workmatesAdapter
 
-        return  view
+        return view
     }
 
 
@@ -62,7 +63,7 @@ class ChatFragment: BaseFragment(), View.OnClickListener {
             R.id.chat_fragment_send_button -> {
                 val message = editMessage.text.toString()
                 if (message != "") {
-                    ChatHelper.addMessage(org.threeten.bp.LocalDateTime.now().withNano(0).toString(), editMessage.text.toString(), getCurrentUser().uid)
+                    ChatHelper.addMessage(LocalDateTime.now().withNano(0).toString(), editMessage.text.toString(), getCurrentUser().uid)
                     editMessage.setText("")
                 }
             }

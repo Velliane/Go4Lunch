@@ -1,101 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="5dp"
     android:orientation="horizontal">
 
-    <LinearLayout
-        android:id="@+id/item_description"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:gravity="center_vertical"
-        app:layout_constraintHorizontal_weight="3.6"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/item_infos"
-        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/item_name_restaurant"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:text="Name"/>
+    <ImageView
+        android:id="@+id/person"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:src="@drawable/baseline_person_outline_black_18"
+        app:layout_constraintEnd_toStartOf="@id/person_number"
+        app:layout_constraintTop_toBottomOf="@id/item_distance" />
 
-        <TextView
-            android:id="@+id/item_address"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:maxLength="40"
-            android:maxLines="1"
-            android:textSize="12sp"
-            android:text="Style - Address"/>
+    <ImageView
+        android:id="@+id/star_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/one_star_18"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/item_photo"
+        app:layout_constraintTop_toBottomOf="@id/person_number" />
 
-        <TextView
-            android:id="@+id/item_open_hours"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:textSize="11sp"
-            android:textStyle="italic"
-            android:text="hours" />
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/star_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/one_star_18"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/star_one"
+        app:layout_constraintTop_toBottomOf="@id/person_number" />
 
-    <LinearLayout
-        android:id="@+id/item_infos"
-        android:layout_width="0dp"
-        android:layout_height="95dp"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintLeft_toRightOf="@+id/item_description"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/item_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:textSize="15sp"
-            android:maxLength="8"
-            android:text="120m" />
+    <ImageView
+        android:id="@+id/star_three"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/one_star_18"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/star_two"
+        app:layout_constraintTop_toBottomOf="@id/person_number" />
 
-        <TextView
-            android:id="@+id/item_nbr_workmates"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="number"/>
 
-        <TextView
-            android:id="@+id/item_stars"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="stars" />
+    <ImageView
+        android:id="@+id/item_photo"
+        android:layout_width="100dp"
+        android:layout_height="90dp"
+        android:layout_margin="5dp"
+        android:layout_marginStart="10dp"
+        android:contentDescription="Photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/item_name_restaurant"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Name"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        app:layout_constraintHorizontal_weight="3"
-        app:layout_constraintLeft_toRightOf="@+id/item_infos"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/item_photo"
-            android:layout_width="100dp"
-            android:layout_height="90dp"
-            android:layout_margin="3dp"
-            android:contentDescription="Photo" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/item_address"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:maxLength="40"
+        android:maxLines="1"
+        android:text="Style - Address"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_name_restaurant" />
+
+    <TextView
+        android:id="@+id/item_open_hours"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="hours"
+        android:textSize="11sp"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_address" />
+
+    <TextView
+        android:id="@+id/item_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:maxLength="8"
+        android:text="120m"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/item_photo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/person_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="0"
+        app:layout_constraintEnd_toStartOf="@id/item_photo"
+        app:layout_constraintTop_toBottomOf="@id/item_distance" />
+
+
+    <TextView
+        android:id="@+id/star_null"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="No rating"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/item_photo"
+        app:layout_constraintTop_toBottomOf="@+id/person" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

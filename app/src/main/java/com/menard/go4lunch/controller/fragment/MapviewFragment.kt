@@ -26,7 +26,7 @@ import com.menard.go4lunch.utils.GooglePlacesStreams
 import com.menard.go4lunch.utils.setMarker
 import io.reactivex.disposables.CompositeDisposable
 
-class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, View.OnClickListener, GoogleMap.OnCameraMoveListener {
+class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraMoveListener {
 
 
     companion object {
@@ -43,8 +43,8 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     /** Places Client */
     private lateinit var placesClient: PlacesClient
-    /** Floating Action Button */
-    private lateinit var centerLocalisation: FloatingActionButton
+//    /** Floating Action Button */
+//    private lateinit var centerLocalisation: FloatingActionButton
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -52,8 +52,8 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
 
         mapView = view.findViewById(R.id.mapview)
         mapView.onCreate(savedInstanceState)
-        centerLocalisation = view.findViewById(R.id.center_gps)
-        centerLocalisation.setOnClickListener(this)
+//        centerLocalisation = view.findViewById(R.id.center_gps)
+//        centerLocalisation.setOnClickListener(this)
 
         //-- Check is fragment is added to MainActivity --
         if (isAdded) {
@@ -87,20 +87,20 @@ class MapviewFragment : BaseFragment(), OnMapReadyCallback, GoogleMap.OnMarkerCl
         mGoogleMap.setOnCameraMoveListener (this)
     }
 
-    /**
-     * When click on Floating Action Button
-     */
-    override fun onClick(v: View?) {
-        when(v!!.id){
-            R.id.center_gps ->{
-                UserHelper.getUser(getCurrentUser().uid).addOnSuccessListener { documentSnapshot ->
-                    val currentUser = documentSnapshot.toObject<User>(User::class.java)
-                    val location = LatLng(currentUser!!.userLocationLatitude!!.toDouble(), currentUser.userLocationLongitude!!.toDouble())
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 14F))
-                }
-            }
-        }
-    }
+//    /**
+//     * When click on Floating Action Button
+//     */
+//    override fun onClick(v: View?) {
+//        when(v!!.id){
+//            R.id.center_gps ->{
+//                UserHelper.getUser(getCurrentUser().uid).addOnSuccessListener { documentSnapshot ->
+//                    val currentUser = documentSnapshot.toObject<User>(User::class.java)
+//                    val location = LatLng(currentUser!!.userLocationLatitude!!.toDouble(), currentUser.userLocationLongitude!!.toDouble())
+//                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 14F))
+//                }
+//            }
+//        }
+//    }
 
     //-------------------------------------//
     //-- UPDATE MAP WITH USER'S LOCATION --//

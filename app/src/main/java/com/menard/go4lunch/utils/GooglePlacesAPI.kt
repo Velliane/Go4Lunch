@@ -1,5 +1,6 @@
 package com.menard.go4lunch.utils
 
+import com.menard.go4lunch.model.autocomplete.Autocomplete
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import io.reactivex.Observable
@@ -17,8 +18,10 @@ interface GooglePlacesAPI {
     @GET("maps/api/place/details/json")
     fun getDetails(@Query("placeid")placeId: String, @Query ("fields") fields: String, @Query("key") key:String): Observable<DetailsRequest>
 
-//    @GET("maps/api/place/autocomplete/json")
-//    fun getAutocompleteSearch(@Query("input")input: String, @Query("type")type: String, @Query("location") location: String, @Query("radius") radius: String): Observable<>
+    @GET("maps/api/place/autocomplete/json?strictbounds&types=establishment")
+    fun getAutocompleteSearch(@Query("input")input: String, @Query("location") location: String, @Query("radius") radius: String, @Query("key") key: String): Observable<Autocomplete>
+
+
  companion object {
      val retrofit: Retrofit = Retrofit.Builder()
              .baseUrl("https://maps.googleapis.com/")

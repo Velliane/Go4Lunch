@@ -14,6 +14,7 @@
         android:background="@drawable/chat_current_user_message_background"
         android:maxLines="4"
         android:padding="8dp"
+        android:layout_marginStart="3dp"
         android:text="Example of message"
         android:textColor="@color/colorAccent"
         android:maxWidth="280dp"

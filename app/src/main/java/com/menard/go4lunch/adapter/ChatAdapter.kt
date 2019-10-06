@@ -51,7 +51,7 @@ class ChatAdapter (private val context: Context, options: FirestoreRecyclerOptio
         holder.message.text = message.message
 
         //-- Date parsed --
-        val today: String = parseMessageDateToDateOnly(LocalDateTime.now().withNano(0).toString())
+        val today: String = parseMessageDateToDateOnly(LocalDateTime.now().withSecond(2).withNano(0).toString())
         val dateMessage: String = parseMessageDateToDateOnly(message.date)
         if(today != dateMessage){
             holder.date.text = dateMessage

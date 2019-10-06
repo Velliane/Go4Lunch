@@ -31,6 +31,10 @@ class UserHelper {
             return getUsersCollection().document(userId).get()
         }
 
+        fun getFavorites(userId: String): Task<QuerySnapshot> {
+            return getUsersCollection().document(userId).collection(Constants.COLLECTION_FAVORITES_RESTAURANTS).get()
+        }
+
         fun getAllUser(): Query {
             return getUsersCollection().orderBy("userName")
         }

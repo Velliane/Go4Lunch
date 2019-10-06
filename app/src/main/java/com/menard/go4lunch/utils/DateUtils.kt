@@ -2,13 +2,17 @@ package com.menard.go4lunch.utils
 
 import com.menard.go4lunch.model.detailsrequest.ResultDetails
 import org.threeten.bp.DayOfWeek
+import org.threeten.bp.Duration
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
+import java.lang.StringBuilder
 
 
 val messageDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 val dateOnlyDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yy")
 val hoursOnlyDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+val periodDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HHmm")
+val hoursHumanDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 
 /**
@@ -26,6 +30,32 @@ fun parseMessageDateToHoursOnly(date: String): String{
     val dateTime: LocalDateTime = LocalDateTime.parse(date, messageDateTimeFormatter)
     return dateTime.format(hoursOnlyDateTimeFormatter)
 }
+
+fun parseTodayHoursToPeriodHours(date: String): String{
+    val dateTime: LocalDateTime = LocalDateTime.parse(date, messageDateTimeFormatter)
+    return dateTime.format(periodDateTimeFormatter)
+}
+
+fun parsePeriodHoursToHours(date: String): String{
+    val stringBuilder = StringBuilder()
+    val int = date.length
+
+    stringBuilder.append(date)
+    stringBuilder.insert(int-2, ":")
+    return  stringBuilder.toString()
+}
+
+fun setNotificationsTime(today: LocalDateTime, hour: Int, minute:Int, second:Int) : Long{
+    val desiredDate = today.withHour(hour).withMinute(minute).withSecond(second)
+    val duration = Duration.between(today, desiredDate).toMinutes()
+
+    return if(duration < 0){
+        duration + 1440
+    }else{
+        duration
+    }
+}
+
 
 
 /**
@@ -49,30 +79,7 @@ fun checkIfOpen(isOpen: Boolean): String{
 }
 
 
-/**
- * Get hours of closing according to the number of day
- */
-fun getClosingTimeOfDay(day: Int, result:ResultDetails, isOpen: Boolean): List<String> {
-    val listPeriod = result.openingHours!!.periods
-    val list = ArrayList<String>()
 
-    // If actually open, get closing hours of day
-    if(isOpen) {
-        for (period in listPeriod!!) {
-            if (period.close!!.day == day) {
-                list.add(period.close!!.time!!)
-            }
-        }
-    // Else get opening hours of day+1
-    }else{
-//        for (period in listPeriod) {
-//            if (period.open.day == day+1) {
-//                list.add(period.open.time)
-//            }
-//        }
-    }
-    return  list
-}
 
 fun getFormattedOpeningHoursInfos(isOpen: Boolean): String{
     return checkIfOpen(isOpen)

@@ -34,6 +34,7 @@ class Constants{
         const val DATA_RESTAURANT_NAME = "DATA_RESTAURANT_NAME"
         const val DATA_RESTAURANT_ADDRESS = "DATA_RESTAURANT_ADDRESS"
         const val DATA_LIST_WORKMATES = "DATA_LIST_WORKMATES"
+        const val DATA_RESTAURANT_ID = "DATA_RESTAURANT_ID"
 
     }
 }

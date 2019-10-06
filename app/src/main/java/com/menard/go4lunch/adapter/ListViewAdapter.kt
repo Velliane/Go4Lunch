@@ -53,18 +53,11 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
         holder.openingHours.text = opening
 
         //-- Set distance according to user --
-        val location = Location("")
-        location.latitude = restaurant.geometry!!.location!!.lat!!
-        location.longitude = restaurant.geometry!!.location!!.lng!!
-
+        val restaurantLocation = setLocation(restaurant.geometry!!.location!!.lat!!,restaurant.geometry!!.location!!.lng!! )
         UserHelper.getUser(FirebaseAuth.getInstance().currentUser!!.uid).addOnSuccessListener { documentSnapshot ->
             val currentUser = documentSnapshot.toObject<User>(User::class.java)
-            val latitude = currentUser?.userLocationLatitude!!.toDouble()
-            val longitude = currentUser.userLocationLongitude!!.toDouble()
-            val userLocation = Location("")
-            userLocation.latitude = latitude
-            userLocation.longitude = longitude
-            holder.distance.text = distanceToUser(location, userLocation)
+            val userLocation = setLocation(currentUser?.userLocationLatitude!!.toDouble(), currentUser.userLocationLongitude!!.toDouble())
+            holder.distance.text = distanceToUser(restaurantLocation, userLocation)
         }
 
 
@@ -80,6 +73,7 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
         if(restaurant.rating != null) {
             val rating = setRating(restaurant.rating!!.toDouble())
             setStarVisibility(rating, holder)
+            holder.noRating.visibility = View.INVISIBLE
         }else{
             holder.noRating.visibility = View.VISIBLE
         }
@@ -125,21 +119,33 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
      */
     private fun setStarVisibility(rating: Int, holder: ListViewHolder) {
         when (rating) {
-            1 -> holder.starOne.visibility = View.VISIBLE
+            1 -> {
+                holder.starOne.visibility = View.VISIBLE
+                holder.starTwo.visibility = View.GONE
+                holder.starThree.visibility = View.GONE
+            }
             2 -> {
                 holder.starOne.visibility = View.VISIBLE
                 holder.starTwo.visibility = View.VISIBLE
+                holder.starThree.visibility = View.GONE
             }
-            0 -> {
+            3 -> {
                 holder.starOne.visibility = View.VISIBLE
                 holder.starTwo.visibility = View.VISIBLE
                 holder.starThree.visibility = View.VISIBLE
             }
             else -> {
-                holder.starOne.visibility = View.INVISIBLE
-                holder.starTwo.visibility = View.INVISIBLE
-                holder.starThree.visibility = View.INVISIBLE
+                holder.starOne.visibility = View.GONE
+                holder.starTwo.visibility = View.GONE
+                holder.starThree.visibility = View.GONE
             }
         }
+    }
+
+    private fun setLocation(latitude:Double, longitude:Double): Location{
+        val location = Location("")
+        location.latitude = latitude
+        location.longitude = longitude
+        return location
     }
 }

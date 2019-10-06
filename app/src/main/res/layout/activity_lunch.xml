@@ -52,7 +52,8 @@
                 android:id="@+id/infos_star"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/baseline_star_black_24"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/one_star_18"
                 android:visibility="invisible"/>
         </LinearLayout>
 

@@ -8,6 +8,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.User
+import com.menard.go4lunch.model.detailsrequest.Period
+import com.menard.go4lunch.model.detailsrequest.ResultDetails
+import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -53,16 +56,51 @@ fun setMarker(placeId: String, opening:String, googleMap:GoogleMap, latLng:LatLn
 
 }
 
-fun getListOfWorkmates(placeId: String): ArrayList<String> {
+fun getListOfWorkmates(placeId: String): String {
     val list: ArrayList<String> = ArrayList()
+    val stringBuilder = StringBuilder()
     UserHelper.getUsersCollection().get().addOnSuccessListener { result ->
         for(userId in result){
             val user = userId.toObject(User::class.java)
-            if ("${user.userRestaurantId}" == placeId) {
+            if (user.userRestaurantId == placeId) {
                 list.add(user.userName)
+                stringBuilder.append(user.userName+",")
             }
         }
     }
-    return list
+
+    return stringBuilder.toString()
+}
+
+/**
+ * Get hours of closing according to the number of day
+ */
+fun getClosingTimeOfDay(isOpen: Boolean, today: Int, periods: List<Period>, hours: String): String {
+    val closingTime = StringBuilder()
+    // Iterate in list of Period
+    for (period in periods) {
+
+        // If closed
+        if (!isOpen) {
+            if(period.open?.day == today) {
+                val time = period.open!!.time!!.toInt()
+                if(time > hours.toInt()) {
+                    var date = "today"
+                    val timeParsed = parsePeriodHoursToHours(period.open!!.time!!)
+                    closingTime.append("Closed, will open $date at $timeParsed")
+                }
+            }
+            // If open
+        } else {
+            if(period.close!!.day == today) {
+                val time = period.close!!.time!!.toInt()
+                if(time > hours.toInt()) {
+                    val timeParsed = parsePeriodHoursToHours(period.close!!.time!!)
+                    closingTime.append("Open, will close at $timeParsed")
+                }
+            }
+        }
+    }
+    return closingTime.toString()
 }
 

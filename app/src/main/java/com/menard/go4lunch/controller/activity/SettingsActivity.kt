@@ -85,7 +85,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         val hour = calendar.get(Calendar.HOUR)
         val minutes = calendar.get(Calendar.MINUTE)
        val timePicker = TimePickerDialog(this, R.style.MyDialogTheme, TimePickerDialog.OnTimeSetListener( function = { view, hourOfDay, minute ->
-            timePicker.setText("$hourOfDay:$minute")
+           timePicker.text = "$hourOfDay:$minute"
         }), hour, minutes, false)
         timePicker.show()
 

@@ -7,10 +7,14 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
+import android.widget.AutoCompleteTextView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -18,10 +22,6 @@ import com.bumptech.glide.Glide
 import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.model.TypeFilter
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.menard.go4lunch.BuildConfig
@@ -50,6 +50,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     /** Shared Preferences */
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var autocomplete: RelativeLayout
 
 
     //-------------------------------------//
@@ -89,6 +90,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setContentView(R.layout.activity_main)
 
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        autocomplete = findViewById(R.id.autocomplete_layout)
 
         //-- Bottom Navigation View --
         bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation)
@@ -149,9 +151,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_activity_main_search -> {
-                        val fields: List<Place.Field> = listOf(Place.Field.NAME, Place.Field.ADDRESS)
-                        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields).setTypeFilter(TypeFilter.ESTABLISHMENT).build(this)
-                        startActivityForResult(intent, Constants.REQUEST_CODE_AUTOCOMPLETE)
+                        autocomplete.visibility = View.VISIBLE
                 }
         }
         return true
@@ -166,6 +166,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 //                TODO()
 //            }
 //        }
+//        val fields: List<Place.Field> = listOf(Place.Field.NAME, Place.Field.ADDRESS)
+//                        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields).setTypeFilter(TypeFilter.ESTABLISHMENT).build(this)
+//                        startActivityForResult(intent, Constants.REQUEST_CODE_AUTOCOMPLETE)
 //    }
 
     //--------------//

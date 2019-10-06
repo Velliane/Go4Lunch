@@ -27,6 +27,7 @@ import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.R
 import com.menard.go4lunch.adapter.WorkmatesAdapter
 import com.menard.go4lunch.api.UserHelper
+import com.menard.go4lunch.model.Restaurant
 import com.menard.go4lunch.model.User
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.detailsrequest.ResultDetails
@@ -56,6 +57,7 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
     private lateinit var idRestaurant: String
     /** Shared Preferences */
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var stars: ImageView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +79,7 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
         nameRestaurant = findViewById(R.id.infos_name)
         addressRestaurant = findViewById(R.id.infos_address)
         photo = findViewById(R.id.activity_lunch_restaurant_photo)
+        stars = findViewById(R.id.infos_star)
 
         //-- Get restaurant's infos --
         idRestaurant = intent.getStringExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER)
@@ -137,6 +140,8 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
                 .setLifecycleOwner(this).build()
         val workmatesAdapter = WorkmatesAdapter(this, list,false)
         listWorkmates.adapter = workmatesAdapter
+
+        setFavorites()
     }
 
     /**
@@ -152,7 +157,10 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             call -> if (call.tag != null) startCall(call.tag.toString()) else showSnackBar(getString(R.string.no_website))
-            like -> UserHelper.addFavorites(getCurrentUser().uid, like.tag.toString())
+            like -> {
+                UserHelper.addFavorites(getCurrentUser().uid, like.tag.toString())
+                stars.visibility = View.VISIBLE
+            }
             website -> if(website.tag != null)  openCustomTabs() else showSnackBar(getString(R.string.no_phone))
             selectingButton -> updateSharedPreferencesAndFirestore()
         }
@@ -182,17 +190,17 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
             selected()
             //-- Activate Notification --
             val data = Data.Builder()
+                    .putString(Constants.DATA_RESTAURANT_ID, idRestaurant)
                     .putString(Constants.DATA_USER, getCurrentUser().displayName)
-                    .putString(Constants.DATA_RESTAURANT_NAME, "Le Léone")
-                    .putString(Constants.DATA_RESTAURANT_ADDRESS, "rue du coin")
-                    .putString(Constants.DATA_LIST_WORKMATES, "Ralph, Lucy").build()
-            NotificationWorker.scheduleReminder(data, setNotificationsTime())
+                    .putString(Constants.DATA_RESTAURANT_NAME, nameRestaurant.text.toString())
+                    .putString(Constants.DATA_RESTAURANT_ADDRESS, addressRestaurant.text.toString())
+                    .putString(Constants.DATA_LIST_WORKMATES, getListOfWorkmates(idRestaurant)).build()
+            NotificationWorker.scheduleReminder(data, setNotificationsTime(LocalDateTime.now(), 16,55,0))
         } else {
             unselected()
             //-- Cancel Notification --
             NotificationWorker.cancelReminder()
-        }
-    }
+        }    }
 
     /**
      * When the restaurant is selected
@@ -223,11 +231,19 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
     //-------------------------//
     //-- NOTIFICATIONS DELAY --//
     //-------------------------//
-    private fun setNotificationsTime() : Long{
-        val desiredDate = LocalDateTime.now().withHour(10).withMinute(20).withSecond(0)
-        return Duration.between(LocalDateTime.now(), desiredDate).toMinutes()
-    }
 
+    private fun setFavorites() {
+        UserHelper.getFavorites(getCurrentUser().uid).addOnSuccessListener { querySnapshot ->
+            if(!querySnapshot.isEmpty){
+                val docs = querySnapshot.documents
+                for(doc in docs){
+                    if(doc.get("placeId") == like.tag){
+                        stars.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+    }
 
     //----------------//
     //-- PHONE CALL --//

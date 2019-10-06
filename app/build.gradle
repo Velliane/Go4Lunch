@@ -24,7 +24,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
+
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -84,6 +91,14 @@ dependencies {
     implementation 'com.android.support:customtabs:28.0.0'
 
     implementation 'com.github.mukeshsolanki:Google-Places-AutoComplete-EditText:0.0.6'
+
+    testImplementation('org.threeten:threetenbp:1.3.8') {
+        exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
+    }
+    testImplementation('org.robolectric:robolectric:3.1.2') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
 
 
 }

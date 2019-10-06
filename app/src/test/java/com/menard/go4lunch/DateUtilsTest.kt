@@ -43,5 +43,9 @@ class DateUtilsTest {
         assertEquals("Close", checkIfOpen(false))
     }
 
+    @Test
+    fun testParsePeriodHours(){
+        assertEquals("09:00", parsePeriodHoursToHours("0900"))
+    }
 
 }

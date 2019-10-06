@@ -3,7 +3,8 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/mapview_container">
+    android:id="@+id/mapview_container"
+    android:layout_marginTop="?actionBarSize">
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapview"
@@ -12,14 +13,14 @@
         android:apiKey="@string/google_api_key"
         />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/center_gps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="1"
-        android:layout_margin="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:src="@drawable/baseline_gps_fixed_black_24"/>
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/center_gps"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintVertical_bias="1"-->
+<!--        android:layout_margin="20dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        android:src="@drawable/baseline_gps_fixed_black_24"/>-->
     </androidx.constraintlayout.widget.ConstraintLayout>

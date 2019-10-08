@@ -15,10 +15,12 @@ class ChatHelper {
             return FirebaseFirestore.getInstance().collection(Constants.COLLECTION_MESSAGES)
         }
 
+        @JvmStatic
         fun getAllMessageForChat(): Query{
             return  getChatCollection().orderBy("date").limit(100)
         }
 
+        @JvmStatic
         fun addMessage(date: String, message: String, userId: String): Task<Void> {
             val newMessage = Message(date, message, userId)
             return getChatCollection().document("$date-$userId").set(newMessage)

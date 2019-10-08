@@ -8,14 +8,6 @@
     android:visibility="visible">
 
     <!-- Search ImageView-->
-    <ImageView
-        android:id="@+id/autocomplete_restaurant_search_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"
-        android:src="@drawable/baseline_search_white_36" />
 
     <!-- Autocomplete editText-->
     <AutoCompleteTextView
@@ -24,7 +16,6 @@
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:maxLines="1"
-        android:layout_toEndOf="@id/autocomplete_restaurant_search_image"
         android:background="@null"
         android:hint="restaurant"
         android:imeOptions="actionSearch"
@@ -32,12 +23,12 @@
         android:textSize="15sp" />
 
     <!--Micro ImageVIew -->
-    <ImageView
-        android:id="@+id/autocomplete_restaurant_micro_image"
+    <ImageButton
+        android:id="@+id/autocomplete_restaurant_btn_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_margin="10dp"
-        android:src="@drawable/baseline_search_white_36" />
+        android:src="@drawable/baseline_gps_fixed_black_24" />
 </RelativeLayout>

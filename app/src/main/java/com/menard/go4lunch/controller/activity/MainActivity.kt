@@ -8,9 +8,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.AutoCompleteTextView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
@@ -35,7 +33,7 @@ import com.menard.go4lunch.model.User
 import com.menard.go4lunch.utils.Constants
 import de.hdodenhof.circleimageview.CircleImageView
 
-class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
 
     /**Bottom Navigation View */
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -51,6 +49,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     /** Shared Preferences */
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var autocomplete: RelativeLayout
+    private lateinit var editAutoComplete: AutoCompleteTextView
+    private lateinit var btnCloseAutocomplete: ImageButton
 
 
     //-------------------------------------//
@@ -98,6 +98,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //-- Toolbar --
         toolbar = findViewById(R.id.activity_main_toolbar)
         setSupportActionBar(toolbar)
+        //-- Autocomplete --
+        editAutoComplete = findViewById(R.id.autocomplete_restaurant_search)
+        btnCloseAutocomplete = findViewById(R.id.autocomplete_restaurant_btn_back)
+        btnCloseAutocomplete.setOnClickListener(this)
 
         Places.initialize(applicationContext, BuildConfig.api_key_google)
 //        val placesClient = Places.createClient(applicationContext)
@@ -128,9 +132,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }else{
                     val builder = AlertDialog.Builder(this, R.style.MyDialogTheme)
                     builder.setMessage(getString(R.string.drawer_no_restaurant_selected))
-                            .setNegativeButton("Ok"){ dialog, which ->  
-                                
-                            }
+                            .setNegativeButton("Ok"){ dialog, which -> }
                             .create().show()
                 }
             }
@@ -151,10 +153,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_activity_main_search -> {
+                        toolbar.visibility = View.GONE
                         autocomplete.visibility = View.VISIBLE
                 }
         }
         return true
+    }
+
+    override fun onClick(v: View?) {
+        when(v){
+            btnCloseAutocomplete -> {
+                toolbar.visibility = View.VISIBLE
+                autocomplete.visibility = View.GONE
+            }
+        }
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -208,7 +220,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             val currentUser = documentSnapshot.toObject<User>(User::class.java)
             val displayName = currentUser!!.userName
             name.text = displayName
-        }
+        }.addOnFailureListener { onFailureListener() }
         email.text = getCurrentUser().email
         if (getCurrentUser().photoUrl != null) {
             Glide.with(this).load(getCurrentUser().photoUrl).into(photo)

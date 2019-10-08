@@ -4,6 +4,7 @@ import com.menard.go4lunch.utils.*
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.threeten.bp.DayOfWeek
+import org.threeten.bp.LocalDateTime
 
 class DateUtilsTest {
 
@@ -38,14 +39,15 @@ class DateUtilsTest {
     }
 
     @Test
-    fun testShowIfOpenOrNot(){
-        assertEquals("Open", checkIfOpen(true))
-        assertEquals("Close", checkIfOpen(false))
+    fun testParsePeriodHours(){
+        assertEquals("09:00", parsePeriodHoursToHours("0900"))
+        assertEquals("14:00", parsePeriodHoursToHours("1400"))
     }
 
     @Test
-    fun testParsePeriodHours(){
-        assertEquals("09:00", parsePeriodHoursToHours("0900"))
+    fun testSetNotificationTime(){
+        val date: LocalDateTime = LocalDateTime.now().withHour(10).withMinute(12).withSecond(0)
+        assertEquals(108L, setNotificationsTime(date, 12, 0,0))
     }
 
 }

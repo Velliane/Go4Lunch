@@ -27,13 +27,11 @@ import com.menard.go4lunch.BuildConfig
 import com.menard.go4lunch.R
 import com.menard.go4lunch.adapter.WorkmatesAdapter
 import com.menard.go4lunch.api.UserHelper
-import com.menard.go4lunch.model.Restaurant
 import com.menard.go4lunch.model.User
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.detailsrequest.ResultDetails
 import com.menard.go4lunch.utils.*
 import io.reactivex.disposables.CompositeDisposable
-import org.threeten.bp.Duration
 import org.threeten.bp.LocalDateTime
 import saschpe.android.customtabs.CustomTabsHelper
 import saschpe.android.customtabs.WebViewFallback
@@ -149,6 +147,12 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
      */
     private fun handleError(error: Throwable) {
         Log.d(ContentValues.TAG, error.localizedMessage)
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this, R.style.MyDialogTheme)
+        builder.setMessage("An error occurs, please check your network connection and retry")
+                .setNegativeButton("Ok"){ dialog, which ->
+                    onResume()
+                }
+                .create().show()
     }
 
     //---------------------------------//
@@ -158,7 +162,7 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
         when (v) {
             call -> if (call.tag != null) startCall(call.tag.toString()) else showSnackBar(getString(R.string.no_website))
             like -> {
-                UserHelper.addFavorites(getCurrentUser().uid, like.tag.toString())
+                UserHelper.addFavorites(getCurrentUser().uid, like.tag.toString()).addOnFailureListener { onFailureListener() }
                 stars.visibility = View.VISIBLE
             }
             website -> if(website.tag != null)  openCustomTabs() else showSnackBar(getString(R.string.no_phone))
@@ -195,18 +199,23 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
                     .putString(Constants.DATA_RESTAURANT_NAME, nameRestaurant.text.toString())
                     .putString(Constants.DATA_RESTAURANT_ADDRESS, addressRestaurant.text.toString())
                     .putString(Constants.DATA_LIST_WORKMATES, getListOfWorkmates(idRestaurant)).build()
-            NotificationWorker.scheduleReminder(data, setNotificationsTime(LocalDateTime.now(), 16,55,0))
+
+            val hours = sharedPreferences.getInt(Constants.PREF_NOTIFICATIONS_HOURS, 12)
+            val minute = sharedPreferences.getInt(Constants.PREF_NOTIFICATIONS_MINUTES, 0)
+            NotificationWorker.scheduleReminder(data, setNotificationsTime(LocalDateTime.now(), hours,minute,0))
+
         } else {
             unselected()
             //-- Cancel Notification --
             NotificationWorker.cancelReminder()
-        }    }
+        }
+    }
 
     /**
      * When the restaurant is selected
      */
     private fun selected(){
-        UserHelper.updateRestaurant(getCurrentUser().uid, nameRestaurant.text.toString(), idRestaurant)
+        UserHelper.updateRestaurant(getCurrentUser().uid, nameRestaurant.text.toString(), idRestaurant).addOnFailureListener { onFailureListener() }
         sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, idRestaurant).apply()
         //-- Update FloatingButton --
         Glide.with(this).load(R.drawable.selected_24).into(selectingButton)
@@ -217,7 +226,7 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
      * When the restaurant is unselected
      */
     private fun unselected(){
-        UserHelper.updateRestaurant(getCurrentUser().uid, null, null)
+        UserHelper.updateRestaurant(getCurrentUser().uid, null, null).addOnFailureListener { onFailureListener() }
         sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, null).apply()
         //-- Update FloatingButton --
         Glide.with(this).load(R.drawable.select_24).into(selectingButton)
@@ -242,7 +251,7 @@ class LunchActivity : BaseActivity(), View.OnClickListener {
                     }
                 }
             }
-        }
+        }.addOnFailureListener { onFailureListener() }
     }
 
     //----------------//

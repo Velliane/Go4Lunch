@@ -57,6 +57,7 @@
     <string name="display_name">Display Name</string>
     <string name="actual_display_name">Actual display name</string>
     <string name="change">Validate</string>
+    <string name="time_picker">%1$i:%2$i</string>
 
     <!-- Photos Api -->
     <string name="photos_list_view" translatable="false">https://maps.googleapis.com/maps/api/place/photo?maxheight=200&amp;photoreference=%1$s&amp;key=%2$s</string>
@@ -75,4 +76,12 @@
     <string name="no_website">No website available</string>
     <string name="no_phone">No phone number available</string>
 
+    <!-- Restaurant -->
+    <string name="restaurant_open">Open</string>
+    <string name="restaurant_closed">Closed</string>
+    <string name="restaurant_no_opening_available">No opening hours available</string>
+
+    <!-- Error -->
+    <string name="error_no_internet">An error occurs, please check your network connection and refresh.</string>
+    <string name="error_firestore">An error occurs, please check your network connection and retry</string>
 </resources>

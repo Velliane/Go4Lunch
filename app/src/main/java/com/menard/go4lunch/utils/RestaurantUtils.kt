@@ -85,7 +85,7 @@ fun getClosingTimeOfDay(isOpen: Boolean, today: Int, periods: List<Period>, hour
             if(period.open?.day == today) {
                 val time = period.open!!.time!!.toInt()
                 if(time > hours.toInt()) {
-                    var date = "today"
+                    val date = "today"
                     val timeParsed = parsePeriodHoursToHours(period.open!!.time!!)
                     closingTime.append("Closed, will open $date at $timeParsed")
                 }

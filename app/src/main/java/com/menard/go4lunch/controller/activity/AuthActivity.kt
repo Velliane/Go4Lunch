@@ -12,7 +12,7 @@ import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
-import com.menard.go4lunch.utils.Constants.Companion.REQUEST_CODE_SIGN_IN
+import com.menard.go4lunch.utils.Constants.REQUEST_CODE_SIGN_IN
 
 class AuthActivity : BaseActivity(), View.OnClickListener {
 

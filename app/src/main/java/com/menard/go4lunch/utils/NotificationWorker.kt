@@ -64,7 +64,7 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
         // Channel
         val channelId = "id"
         // Notification object
-        val text = if(list == null){
+        val text = if(list == ""){
             "Hello $user, the restaurant you choose is $restaurantName at $restaurantVicinity."
         }else{
             "Hello $user, the restaurant you choose is $restaurantName with $list at $restaurantVicinity."

@@ -1,7 +1,9 @@
 package com.menard.go4lunch.controller.activity
 
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -13,6 +15,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.User
+import com.menard.go4lunch.utils.Constants
 import java.util.*
 
 class SettingsActivity : BaseActivity(), View.OnClickListener {
@@ -25,6 +28,8 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
     private lateinit var displayNameEdit: EditText
     /** TimePickerDialog */
     private lateinit var timePicker: TextView
+    /** Shared Preferences */
+    private lateinit var sharedPreferences: SharedPreferences
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +40,8 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_setting)
         toolbar.title = getString(R.string.title_settings)
         setSupportActionBar(toolbar)
+
+        sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
         buttonChangeName = findViewById(R.id.activity_settings_button)
         buttonChangeName.setOnClickListener(this)
@@ -56,7 +63,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.activity_settings_button -> {
-                UserHelper.updateName(displayNameEdit.text.toString(), getCurrentUser().uid)
+                UserHelper.updateName(displayNameEdit.text.toString(), getCurrentUser().uid).addOnFailureListener { onFailureListener() }
                 Toast.makeText(this, R.string.settings_change_name_validation, Toast.LENGTH_SHORT).show()
             }
 
@@ -85,7 +92,9 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
         val hour = calendar.get(Calendar.HOUR)
         val minutes = calendar.get(Calendar.MINUTE)
        val timePicker = TimePickerDialog(this, R.style.MyDialogTheme, TimePickerDialog.OnTimeSetListener( function = { view, hourOfDay, minute ->
-           timePicker.text = "$hourOfDay:$minute"
+           timePicker.text = getString(R.string.time_picker, hourOfDay, minute)
+           sharedPreferences.edit().putInt(Constants.PREF_NOTIFICATIONS_HOURS, hourOfDay).apply()
+           sharedPreferences.edit().putInt(Constants.PREF_NOTIFICATIONS_MINUTES, minute).apply()
         }), hour, minutes, false)
         timePicker.show()
 
@@ -96,7 +105,7 @@ class SettingsActivity : BaseActivity(), View.OnClickListener {
      */
     private fun deleteAccount() {
         //-- Delete from Firestore --
-        UserHelper.deleteUser(getCurrentUser().uid)
+        UserHelper.deleteUser(getCurrentUser().uid).addOnFailureListener { onFailureListener() }
         //-- Delete from Firebase Auth --
         getCurrentUser().delete()
         //-- Start AuthActivity --

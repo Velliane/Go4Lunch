@@ -1,6 +1,5 @@
 package com.menard.go4lunch.utils
 
-import com.menard.go4lunch.model.detailsrequest.ResultDetails
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDateTime
@@ -11,8 +10,6 @@ import java.lang.StringBuilder
 val messageDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 val dateOnlyDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yy")
 val hoursOnlyDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-val periodDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HHmm")
-val hoursHumanDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 
 /**
@@ -22,7 +19,6 @@ fun parseMessageDateToDateOnly(date: String): String{
     val dateTime: LocalDateTime = LocalDateTime.parse(date, messageDateTimeFormatter)
     return dateTime.format(dateOnlyDateTimeFormatter)
 }
-
 /**
  * Parse saved DateTime of message to time only
  */
@@ -31,11 +27,9 @@ fun parseMessageDateToHoursOnly(date: String): String{
     return dateTime.format(hoursOnlyDateTimeFormatter)
 }
 
-fun parseTodayHoursToPeriodHours(date: String): String{
-    val dateTime: LocalDateTime = LocalDateTime.parse(date, messageDateTimeFormatter)
-    return dateTime.format(periodDateTimeFormatter)
-}
-
+/**
+ * Add : in date to get HH:mm format
+ */
 fun parsePeriodHoursToHours(date: String): String{
     val stringBuilder = StringBuilder()
     val int = date.length
@@ -45,6 +39,9 @@ fun parsePeriodHoursToHours(date: String): String{
     return  stringBuilder.toString()
 }
 
+/**
+ * Set delay between actual hours and notification's time
+ */
 fun setNotificationsTime(today: LocalDateTime, hour: Int, minute:Int, second:Int) : Long{
     val desiredDate = today.withHour(hour).withMinute(minute).withSecond(second)
     val duration = Duration.between(today, desiredDate).toMinutes()
@@ -55,8 +52,6 @@ fun setNotificationsTime(today: LocalDateTime, hour: Int, minute:Int, second:Int
         duration
     }
 }
-
-
 
 /**
  * Get the number of the Day
@@ -74,14 +69,4 @@ fun getNumberOfDay(dayOfWeek: DayOfWeek): Int{
 }
 
 
-fun checkIfOpen(isOpen: Boolean): String{
-    return if(isOpen) "Open" else "Close"
-}
-
-
-
-
-fun getFormattedOpeningHoursInfos(isOpen: Boolean): String{
-    return checkIfOpen(isOpen)
-}
 

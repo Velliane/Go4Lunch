@@ -21,6 +21,7 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
         const val NOTIFICATION_ID = 10
 
 
+        @JvmStatic
         fun scheduleReminder(data: Data, time: Long) {
             val notificationWork = OneTimeWorkRequest.Builder(NotificationWorker::class.java)
                     .setInitialDelay(time, TimeUnit.MINUTES)
@@ -31,6 +32,7 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
             instance.enqueueUniqueWork("EATING_TIME", ExistingWorkPolicy.REPLACE,notificationWork)
         }
 
+        @JvmStatic
          fun cancelReminder() {
             val instance = WorkManager.getInstance()
             instance.cancelAllWork()

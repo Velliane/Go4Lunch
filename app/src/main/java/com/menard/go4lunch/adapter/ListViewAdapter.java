@@ -1,81 +1,113 @@
-package com.menard.go4lunch.adapter
+package com.menard.go4lunch.adapter;
 
-import android.content.Context
-import android.content.Intent
-import android.location.Location
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
-import com.menard.go4lunch.BuildConfig
-import com.menard.go4lunch.R
-import com.menard.go4lunch.api.UserHelper
-import com.menard.go4lunch.controller.activity.LunchActivity
-import com.menard.go4lunch.model.User
-import com.menard.go4lunch.model.detailsrequest.DetailsRequest
-import com.menard.go4lunch.utils.*
+import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.menard.go4lunch.BuildConfig;
+import com.menard.go4lunch.R;
+import com.menard.go4lunch.api.UserHelper;
+import com.menard.go4lunch.controller.activity.LunchActivity;
+import com.menard.go4lunch.model.User;
+import com.menard.go4lunch.model.detailsrequest.DetailsRequest;
+import com.menard.go4lunch.model.detailsrequest.ResultDetails;
+import com.menard.go4lunch.utils.*;
+
+import java.util.List;
+
+import static com.menard.go4lunch.utils.PhotoUtilsKt.getProgressDrawableSpinner;
+import static com.menard.go4lunch.utils.PhotoUtilsKt.loadRestaurantPhoto;
+import static com.menard.go4lunch.utils.RestaurantUtilsKt.distanceToUser;
+import static com.menard.go4lunch.utils.RestaurantUtilsKt.setRating;
 
 /**
  * Adapter for the RecyclerView that's show the detailed list of nearby restaurants
  */
 
-class ListViewAdapter(val list: List<DetailsRequest>, private val context: Context) : RecyclerView.Adapter<ListViewAdapter.ListViewHolder>() {
+public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListViewHolder>{
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.listview_item, parent, false)
-        return ListViewHolder(view)
+    private Context mContext;
+    private List<DetailsRequest> mList;
+    public ListViewAdapter(List<DetailsRequest> list, Context context) {
+        mContext = context;
+        mList = list;
     }
 
-    override fun getItemCount(): Int = list.size
 
-    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
+    @NonNull
+    @Override
+    public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View view = inflater.inflate(R.layout.listview_item, parent, false);
+        return new ListViewHolder(view);
+    }
 
-        val detailResult: DetailsRequest = list[position]
-        val restaurant = detailResult.result
+    @Override
+    public int getItemCount() {
+        return mList.size();
+    }
 
-        holder.nameRestaurant.text = restaurant!!.name
-        holder.styleAndAddress.text = restaurant.formattedAddress
+
+
+    @Override
+    public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
+        DetailsRequest detailResult = mList.get(position);
+        ResultDetails restaurant = detailResult.getResult();
+
+        holder.nameRestaurant.setText(restaurant.getName());
+        holder.styleAndAddress.setText(restaurant.getFormattedAddress());
 
         //-- Set opening hours --
-        val opening: String = if (restaurant.openingHours != null) {
-            if (restaurant.openingHours!!.openNow!!) {
-                "Open"
+        String opening;
+        if (restaurant.getOpeningHours() != null) {
+            if (restaurant.getOpeningHours().getOpenNow()) {
+               opening = "Open";
             } else {
-                "Close"
+                opening = "Close";
             }
         } else {
-            "No opening hours available"
+            opening = "No opening hours available";
         }
-        holder.openingHours.text = opening
+        holder.openingHours.setText(opening);
 
         //-- Set distance according to user --
-        val restaurantLocation = setLocation(restaurant.geometry!!.location!!.lat!!,restaurant.geometry!!.location!!.lng!! )
-        UserHelper.getUser(FirebaseAuth.getInstance().currentUser!!.uid).addOnSuccessListener { documentSnapshot ->
-            val currentUser = documentSnapshot.toObject<User>(User::class.java)
-            val userLocation = setLocation(currentUser?.userLocationLatitude!!.toDouble(), currentUser.userLocationLongitude!!.toDouble())
-            holder.distance.text = distanceToUser(restaurantLocation, userLocation)
-        }
+        Location restaurantLocation = setLocation(restaurant.getGeometry().getLocation().getLat() , restaurant.getGeometry().getLocation().getLng());
+        UserHelper.getUser(FirebaseAuth.getInstance().getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                User currentUser = documentSnapshot.toObject(User.class);
+                Location userLocation = setLocation(Double.valueOf(currentUser.getUserLocationLatitude()), Double.valueOf(currentUser.getUserLocationLongitude()));
+                holder.distance.setText(distanceToUser(restaurantLocation, userLocation));
+            }
+        });
 
 
         //-- Set restaurant's photo --
-        if (restaurant.photos != null) {
-            val reference: String? = restaurant.photos!![0].photoReference
-            val url: String = context.getString(R.string.photos_list_view, reference, BuildConfig.api_key_google)
-            holder.photo.loadRestaurantPhoto(url, null, getProgressDrawableSpinner(context))
+        if (restaurant.getPhotos() != null) {
+            String reference = restaurant.getPhotos().get(0).getPhotoReference();
+            String url = mContext.getString(R.string.photos_list_view, reference, BuildConfig.api_key_google);
+            loadRestaurantPhoto(holder.photo, url, null, getProgressDrawableSpinner(mContext));
         } else {
-            holder.photo.loadRestaurantPhoto(null, R.drawable.no_image_available_64, getProgressDrawableSpinner(context))
+            loadRestaurantPhoto(holder.photo, null, R.drawable.no_image_available_64, getProgressDrawableSpinner(mContext));
         }
 
-        if(restaurant.rating != null) {
-            val rating = setRating(restaurant.rating!!.toDouble())
-            setStarVisibility(rating, holder)
-            holder.noRating.visibility = View.INVISIBLE
+        if(restaurant.getRating() != null) {
+            int rating = setRating(Double.valueOf(restaurant.getRating()));
+            setStarVisibility(rating, holder);
+            holder.noRating.setVisibility(View.INVISIBLE);
         }else{
-            holder.noRating.visibility = View.VISIBLE
+            holder.noRating.setVisibility(View.VISIBLE);
         }
 
     }
@@ -84,32 +116,45 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
     /**
      * View Holder
      */
-    inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ListViewHolder extends RecyclerView.ViewHolder{
 
-        var nameRestaurant: TextView = itemView.findViewById(R.id.item_name_restaurant)
-        var styleAndAddress: TextView = itemView.findViewById(R.id.item_address)
-        var openingHours: TextView = itemView.findViewById(R.id.item_open_hours)
-        var distance: TextView = itemView.findViewById(R.id.item_distance)
-        var photo: ImageView = itemView.findViewById(R.id.item_photo)
-        var starOne: ImageView = itemView.findViewById(R.id.star_one)
-        var starTwo: ImageView = itemView.findViewById(R.id.star_two)
-        var starThree: ImageView = itemView.findViewById(R.id.star_three)
-        var noRating: TextView = itemView.findViewById(R.id.star_null)
+        TextView nameRestaurant;
+        TextView styleAndAddress;
+        TextView openingHours;
+        TextView distance;
+        ImageView photo;
+        ImageView starOne;
+        ImageView starTwo;
+        ImageView starThree;
+        TextView noRating;
 
 
-        init {
-            itemView.setOnClickListener { startLunchActivity() }
+        ListViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            nameRestaurant = itemView.findViewById(R.id.item_name_restaurant);
+            styleAndAddress = itemView.findViewById(R.id.item_address);
+            openingHours = itemView.findViewById(R.id.item_open_hours);
+            distance = itemView.findViewById(R.id.item_distance);
+            photo = itemView.findViewById(R.id.item_photo);
+            starOne = itemView.findViewById(R.id.star_one);
+            starThree = itemView.findViewById(R.id.star_three);
+            starTwo  = itemView.findViewById(R.id.star_two);
+            noRating = itemView.findViewById(R.id.star_null);
+
+            itemView.setOnClickListener(view -> startLunchActivity());
+
         }
 
 
         /**
          * Start LunchActivity to show details on the selected restaurant, according to place_id
          */
-        private fun startLunchActivity() {
-            val idRestaurant: String? = list[adapterPosition].result!!.placeId
-            val intent = Intent(context, LunchActivity::class.java)
-            intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, idRestaurant)
-            context.startActivity(intent)
+        private void startLunchActivity() {
+            String idRestaurant = mList.get(getAdapterPosition()).getResult().getPlaceId();
+            Intent intent = new Intent(mContext, LunchActivity.class);
+            intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, idRestaurant);
+            mContext.startActivity(intent);
         }
     }
 
@@ -117,35 +162,32 @@ class ListViewAdapter(val list: List<DetailsRequest>, private val context: Conte
     /**
      * Set the visibility of the stars for rating
      */
-    private fun setStarVisibility(rating: Int, holder: ListViewHolder) {
-        when (rating) {
-            1 -> {
-                holder.starOne.visibility = View.VISIBLE
-                holder.starTwo.visibility = View.GONE
-                holder.starThree.visibility = View.GONE
+    private void setStarVisibility(int rating, ListViewHolder holder) {
+
+           if(rating == 1){
+                holder.starOne.setVisibility(View.VISIBLE);
+                holder.starTwo.setVisibility(View.GONE);
+                holder.starThree.setVisibility(View.GONE);
+            }else if(rating == 2) {
+                holder.starOne.setVisibility(View.VISIBLE);
+                holder.starTwo.setVisibility(View.VISIBLE);
+                holder.starThree.setVisibility(View.GONE);
+            }else if(rating == 3) {
+                holder.starOne.setVisibility(View.VISIBLE);
+                holder.starTwo.setVisibility(View.VISIBLE);
+                holder.starThree.setVisibility(View.VISIBLE);
+            }else {
+                holder.starOne.setVisibility(View.GONE);
+                holder.starTwo.setVisibility(View.GONE);
+                holder.starThree.setVisibility(View.GONE);
             }
-            2 -> {
-                holder.starOne.visibility = View.VISIBLE
-                holder.starTwo.visibility = View.VISIBLE
-                holder.starThree.visibility = View.GONE
-            }
-            3 -> {
-                holder.starOne.visibility = View.VISIBLE
-                holder.starTwo.visibility = View.VISIBLE
-                holder.starThree.visibility = View.VISIBLE
-            }
-            else -> {
-                holder.starOne.visibility = View.GONE
-                holder.starTwo.visibility = View.GONE
-                holder.starThree.visibility = View.GONE
-            }
-        }
+
     }
 
-    private fun setLocation(latitude:Double, longitude:Double): Location{
-        val location = Location("")
-        location.latitude = latitude
-        location.longitude = longitude
-        return location
+    private Location setLocation(Double latitude, Double longitude){
+        Location location = new Location("");
+        location.setLatitude(latitude);
+        location.setLongitude(longitude);
+        return location;
     }
 }

@@ -68,7 +68,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     //-------------------------------------//
     //-- BOTTOM NAVIGATION VIEW LISTENER --//
     //-------------------------------------//
-    private BottomNavigationView.OnNavigationItemSelectedListener onBottomNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private final BottomNavigationView.OnNavigationItemSelectedListener onBottomNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             switch (menuItem.getItemId()) {
@@ -140,6 +140,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (menuItem.getItemId()) {
             case R.id.action_settings: {
                 startActivity(new Intent(this, SettingsActivity.class));
+                break;
             }
             case R.id.action_lunch: {
                 if (sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, null) != null) {
@@ -147,16 +148,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     Intent intent = new Intent(this, LunchActivity.class);
                     intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, restaurant);
                     startActivity(intent);
+                    break;
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
                     builder.setMessage(getString(R.string.drawer_no_restaurant_selected))
                             .setNegativeButton("Ok", (dialog, which) -> dialog.dismiss())
                             .create().show();
+                    break;
                 }
             }
 
             case R.id.action_logout: {
                 signOut();
+                break;
             }
 
         }

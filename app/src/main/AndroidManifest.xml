@@ -71,10 +71,6 @@
             android:value="@string/facebook_application_id"
             tools:replace="android:value" />
 
-        <!-- Notification service -->
-        <receiver android:name=".utils.NotificationService"
-            android:exported="true"/>
-
     </application>
 
 

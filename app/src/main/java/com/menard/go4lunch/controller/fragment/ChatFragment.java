@@ -1,6 +1,5 @@
 package com.menard.go4lunch.controller.fragment;
 
-import android.app.DownloadManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;

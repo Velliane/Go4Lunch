@@ -32,7 +32,7 @@
     <string name="display_name">Identifiant</string>
     <string name="actual_display_name">Identifiant actuel</string>
     <string name="change">Valider</string>
-    <string name="time_picker">%1$i:%2$i</string>
+    <string name="time_picker">%1$s:%2$s</string>
 
     <!-- Bottom Navigation View -->
     <string name="bottom_navigation_menu_mapview">Carte</string>
@@ -48,15 +48,28 @@
     <string name="unselected">Sélection annulée</string>
     <string name="no_website">Pas de site internet disponible</string>
     <string name="no_phone">Aucun numéro de téléphone n\'a été renseigné</string>
+    <string name="is_joining">%1$s mange ici</string>
 
     <!-- Restaurant -->
     <string name="restaurant_open">Ouvert</string>
     <string name="restaurant_closed">Fermé</string>
     <string name="restaurant_no_opening_available">Aucun horaire n\'a été renseigné</string>
+    <string name="name">Nom</string>
+    <string name="address">Adresse</string>
+    <string name="opening_hours">horaires</string>
+    <string name="distance">120m</string>
+    <string name="number">0</string>
+    <string name="no_rating">No rating</string>
 
     <!-- Error -->
     <string name="error_no_internet">Une erreur est survenue, merci de vérifier votre connection internet et de recharger.</string>
     <string name="error_firestore">Une erreur est survenue,veuillez vérifier votre connection internet réessayer.</string>
 
+    <!-- Content description -->
+    <string name="logo">Le logo de l\'application</string>
+    <string name="star_like">Une étoile</string>
+    <string name="image_for_workmates">Image représentant les collègues</string>
+    <!-- Hint -->
+    <string name="restaurant">restaurant</string>
 
 </resources>

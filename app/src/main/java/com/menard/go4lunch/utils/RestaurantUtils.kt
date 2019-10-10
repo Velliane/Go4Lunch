@@ -9,7 +9,6 @@ import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.User
 import com.menard.go4lunch.model.detailsrequest.Period
-import com.menard.go4lunch.model.detailsrequest.ResultDetails
 import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList

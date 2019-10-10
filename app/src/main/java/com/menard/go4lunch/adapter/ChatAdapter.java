@@ -33,7 +33,7 @@ import static com.menard.go4lunch.utils.PhotoUtilsKt.loadImageProfile;
 
 public class ChatAdapter extends FirestoreRecyclerAdapter<Message, ChatAdapter.ChatViewHolder> {
 
-    private Context mContext;
+    private final Context mContext;
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
@@ -103,9 +103,9 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<Message, ChatAdapter.C
 
     class ChatViewHolder extends RecyclerView.ViewHolder {
 
-        private CircleImageView userPhoto;
-        private TextView message;
-        private TextView date;
+        private final CircleImageView userPhoto;
+        private final TextView message;
+        private final TextView date;
 
         ChatViewHolder(@NonNull View itemView) {
             super(itemView);

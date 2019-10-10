@@ -26,9 +26,6 @@ class ResultDetails (
     @SerializedName("rating")
     @Expose
     var rating: Double? = null,
-    @SerializedName("types")
-    @Expose
-    var types: List<String>? = null,
     @SerializedName("website")
     @Expose
     var website: String? = null,

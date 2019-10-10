@@ -45,10 +45,6 @@ public class ListViewFragment extends BaseFragment {
      * FusedLocation
      */
     private FusedLocationProviderClient fusedLocationProviderClient;
-    /**
-     * Places Client
-     */
-    private PlacesClient placesClient;
 
     public static ListViewFragment newInstance() {
         return new ListViewFragment();
@@ -68,7 +64,6 @@ public class ListViewFragment extends BaseFragment {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         //-- Google Places SDK initialization --
         Places.initialize(requireActivity(), BuildConfig.api_key_google);
-        placesClient = Places.createClient(requireActivity());
 
         //-- Layout manager --
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());

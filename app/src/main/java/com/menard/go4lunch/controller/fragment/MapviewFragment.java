@@ -53,10 +53,17 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @androidx.annotation.Nullable ViewGroup container, @androidx.annotation.Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.listview_fragment, container, false);
+        View view = inflater.inflate(R.layout.mapview_fragment, container, false);
 
+        try {
+            MapsInitializer.initialize(requireActivity());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mapView = view.findViewById(R.id.mapview);
         mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+
         progressBar = view.findViewById(R.id.map_view_progress);
         errorTextView = view.findViewById(R.id.map_view_error_message);
 
@@ -65,12 +72,6 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
             //-- Google Places SDK initialization --
             Places.initialize(requireActivity(), BuildConfig.api_key_google);
-        }
-        mapView.getMapAsync(this);
-        try {
-            MapsInitializer.initialize(requireActivity());
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return view;
@@ -108,6 +109,7 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
                 String longitude = String.valueOf(lastLocation.longitude);
 
                 UserHelper.updateLocation(getCurrentUser().getUid(), latitude, longitude);
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 14F));
                 getResult(latitude + "," + longitude);
 
             }},null);

@@ -30,13 +30,12 @@ import static com.menard.go4lunch.utils.PhotoUtilsKt.loadImageProfile;
 
 public class WorkmatesAdapter extends FirestoreRecyclerAdapter<User, WorkmatesAdapter.WorkmatesViewHolder> {
 
-    private Context mContext;
-    private boolean mAllUser;
+    private final Context mContext;
+    private final boolean mAllUser;
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
      * FirestoreRecyclerOptions} for configuration options.
-     *
      * @param options
      */
     public WorkmatesAdapter(Context context, @NonNull FirestoreRecyclerOptions<User> options, boolean allUser) {
@@ -48,14 +47,16 @@ public class WorkmatesAdapter extends FirestoreRecyclerAdapter<User, WorkmatesAd
     @Override
     protected void onBindViewHolder(@NonNull WorkmatesViewHolder holder, int i, @NonNull User user) {
         //-- Hide item if it's current user's information --
-        if (user.getUserId() == FirebaseAuth.getInstance().getCurrentUser().getUid()) {
+        if (user.getUserId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             RecyclerView.LayoutParams param = (RecyclerView.LayoutParams) holder.container.getLayoutParams();
             param.height = 0;
+            holder.itemView.setLayoutParams(param);
 
             //-- Show the other users's information --
         } else {
             RecyclerView.LayoutParams param = (RecyclerView.LayoutParams) holder.container.getLayoutParams();
             param.height = RecyclerView.LayoutParams.WRAP_CONTENT;
+            holder.itemView.setLayoutParams(param);
             //-- Profile's photo --
             if (user.getUserPhoto() != null) {
                 loadImageProfile(holder.userPhoto, user.getUserPhoto(), null, getProgressDrawableSpinner(mContext));
@@ -77,9 +78,8 @@ public class WorkmatesAdapter extends FirestoreRecyclerAdapter<User, WorkmatesAd
                     holder.userInfos.setText(restaurantChoosed);
                 }
             } else {
-                holder.userInfos.setText(user.getUserName() + " is joining");
+                holder.userInfos.setText(mContext.getString(R.string.is_joining, user.getUserName()));
             }
-
 
         }
     }
@@ -95,11 +95,11 @@ public class WorkmatesAdapter extends FirestoreRecyclerAdapter<User, WorkmatesAd
 
     class WorkmatesViewHolder extends RecyclerView.ViewHolder {
 
-        CircleImageView userPhoto;
-        TextView userInfos;
-        ConstraintLayout container;
+        private final CircleImageView userPhoto;
+        private final TextView userInfos;
+        private final ConstraintLayout container;
 
-        public WorkmatesViewHolder(@NonNull View itemView) {
+        WorkmatesViewHolder(@NonNull View itemView) {
             super(itemView);
             userPhoto = itemView.findViewById(R.id.image_profile);
             userInfos = itemView.findViewById(R.id.workmates_infos);

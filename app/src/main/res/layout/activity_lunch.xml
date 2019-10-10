@@ -37,7 +37,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <TextView
                 android:id="@+id/infos_name"
@@ -54,7 +55,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/one_star_18"
-                android:visibility="invisible"/>
+                android:visibility="invisible"
+                android:contentDescription="@string/star_like" />
         </LinearLayout>
 
         <TextView
@@ -65,7 +67,8 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:textSize="10sp"
-            android:text="@string/address" />
+            android:text="@string/address"
+            tools:ignore="SmallSp" />
 
 
     </LinearLayout>

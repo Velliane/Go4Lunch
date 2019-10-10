@@ -1,5 +1,6 @@
 package com.menard.go4lunch
 
+import com.menard.go4lunch.model.autocomplete.Autocomplete
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.detailsrequest.ResultDetails
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
@@ -9,6 +10,9 @@ import io.reactivex.Observable
 import retrofit2.mock.BehaviorDelegate
 
 class MockGooglePlacesAPI(private val delegate: BehaviorDelegate<GooglePlacesAPI>) : GooglePlacesAPI {
+    override fun getAutocompleteSearch(input: String, location: String, radius: String, key: String): Observable<Autocomplete> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
 
     override fun getNearbySearch(location: String, radius: String, type: String, key: String): Observable<NearbySearch> {

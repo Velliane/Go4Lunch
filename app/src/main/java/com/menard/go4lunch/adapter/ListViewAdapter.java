@@ -37,8 +37,8 @@ import static com.menard.go4lunch.utils.RestaurantUtilsKt.setRating;
 
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListViewHolder>{
 
-    private Context mContext;
-    private List<DetailsRequest> mList;
+    private final Context mContext;
+    private final List<DetailsRequest> mList;
     public ListViewAdapter(List<DetailsRequest> list, Context context) {
         mContext = context;
         mList = list;
@@ -118,15 +118,15 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
      */
     class ListViewHolder extends RecyclerView.ViewHolder{
 
-        TextView nameRestaurant;
-        TextView styleAndAddress;
-        TextView openingHours;
-        TextView distance;
-        ImageView photo;
-        ImageView starOne;
-        ImageView starTwo;
-        ImageView starThree;
-        TextView noRating;
+        private final TextView nameRestaurant;
+        private final TextView styleAndAddress;
+        private final TextView openingHours;
+        private final TextView distance;
+        private final ImageView photo;
+        private final ImageView starOne;
+        private final ImageView starTwo;
+        private final ImageView starThree;
+        private final TextView noRating;
 
 
         ListViewHolder(@NonNull View itemView) {

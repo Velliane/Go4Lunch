@@ -12,23 +12,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.menard.go4lunch.BuildConfig;
 import com.menard.go4lunch.R;
 import com.menard.go4lunch.api.UserHelper;
 import com.menard.go4lunch.controller.activity.LunchActivity;
 import com.menard.go4lunch.model.User;
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest;
+import com.menard.go4lunch.model.detailsrequest.OpeningHours;
 import com.menard.go4lunch.model.detailsrequest.ResultDetails;
-import com.menard.go4lunch.utils.*;
+import com.menard.go4lunch.utils.Constants;
+
+import org.threeten.bp.DayOfWeek;
 
 import java.util.List;
 
+import static com.menard.go4lunch.utils.DateUtilsKt.getNumberOfDay;
 import static com.menard.go4lunch.utils.PhotoUtilsKt.getProgressDrawableSpinner;
 import static com.menard.go4lunch.utils.PhotoUtilsKt.loadRestaurantPhoto;
 import static com.menard.go4lunch.utils.RestaurantUtilsKt.distanceToUser;
+import static com.menard.go4lunch.utils.RestaurantUtilsKt.getNumberOfWorkmates;
+import static com.menard.go4lunch.utils.RestaurantUtilsKt.getOpeningHours;
 import static com.menard.go4lunch.utils.RestaurantUtilsKt.setRating;
 
 /**
@@ -39,10 +43,19 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
 
     private final Context mContext;
     private final List<DetailsRequest> mList;
-    public ListViewAdapter(List<DetailsRequest> list, Context context) {
+    private final DayOfWeek mDay;
+    public ListViewAdapter(List<DetailsRequest> list, Context context, DayOfWeek day) {
         mContext = context;
         mList = list;
+        mDay = day;
     }
+
+    public void updateData(List<DetailsRequest> list){
+        mList.clear();
+        mList.addAll(list);
+        notifyDataSetChanged();
+    }
+
 
 
     @NonNull
@@ -64,34 +77,36 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         DetailsRequest detailResult = mList.get(position);
         ResultDetails restaurant = detailResult.getResult();
-
+        assert restaurant != null;
         holder.nameRestaurant.setText(restaurant.getName());
         holder.styleAndAddress.setText(restaurant.getFormattedAddress());
 
         //-- Set opening hours --
         String opening;
-        if (restaurant.getOpeningHours() != null) {
-            if (restaurant.getOpeningHours().getOpenNow()) {
-               opening = "Open";
+        int day = getNumberOfDay(mDay);
+        OpeningHours openingHours = restaurant.getOpeningHours();
+        if (openingHours != null) {
+            List<String> list = restaurant.getOpeningHours().getWeekdayText();
+            if (openingHours.getOpenNow()) {
+               opening = mContext.getString(R.string.restaurant_open) + getOpeningHours(day, list, mContext);
             } else {
-                opening = "Close";
+                opening = mContext.getString(R.string.restaurant_closed)+ getOpeningHours(day, list, mContext);
             }
         } else {
-            opening = "No opening hours available";
+            opening = mContext.getString(R.string.restaurant_no_opening_available);
         }
         holder.openingHours.setText(opening);
 
         //-- Set distance according to user --
         Location restaurantLocation = setLocation(restaurant.getGeometry().getLocation().getLat() , restaurant.getGeometry().getLocation().getLng());
-        UserHelper.getUser(FirebaseAuth.getInstance().getCurrentUser().getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                User currentUser = documentSnapshot.toObject(User.class);
-                Location userLocation = setLocation(Double.valueOf(currentUser.getUserLocationLatitude()), Double.valueOf(currentUser.getUserLocationLongitude()));
-                holder.distance.setText(distanceToUser(restaurantLocation, userLocation));
-            }
+        UserHelper.getUser(FirebaseAuth.getInstance().getCurrentUser().getUid()).addOnSuccessListener(documentSnapshot -> {
+            User currentUser = documentSnapshot.toObject(User.class);
+            assert currentUser != null;
+            Location userLocation = setLocation(Double.valueOf(currentUser.getUserLocationLatitude()), Double.valueOf(currentUser.getUserLocationLongitude()));
+            holder.distance.setText(distanceToUser(restaurantLocation, userLocation));
         });
 
+        getNumberOfWorkmates(restaurant.getName(), holder.number);
 
         //-- Set restaurant's photo --
         if (restaurant.getPhotos() != null) {
@@ -103,13 +118,12 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         }
 
         if(restaurant.getRating() != null) {
-            int rating = setRating(Double.valueOf(restaurant.getRating()));
+            int rating = setRating(restaurant.getRating());
             setStarVisibility(rating, holder);
             holder.noRating.setVisibility(View.INVISIBLE);
         }else{
             holder.noRating.setVisibility(View.VISIBLE);
         }
-
     }
 
 
@@ -127,6 +141,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         private final ImageView starTwo;
         private final ImageView starThree;
         private final TextView noRating;
+        private final TextView number;
 
 
         ListViewHolder(@NonNull View itemView) {
@@ -141,11 +156,10 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             starThree = itemView.findViewById(R.id.star_three);
             starTwo  = itemView.findViewById(R.id.star_two);
             noRating = itemView.findViewById(R.id.star_null);
+            number = itemView.findViewById(R.id.person_number);
 
             itemView.setOnClickListener(view -> startLunchActivity());
-
         }
-
 
         /**
          * Start LunchActivity to show details on the selected restaurant, according to place_id
@@ -157,7 +171,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
             mContext.startActivity(intent);
         }
     }
-
 
     /**
      * Set the visibility of the stars for rating
@@ -181,7 +194,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
                 holder.starTwo.setVisibility(View.GONE);
                 holder.starThree.setVisibility(View.GONE);
             }
-
     }
 
     private Location setLocation(Double latitude, Double longitude){

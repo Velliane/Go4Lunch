@@ -5,8 +5,9 @@
     <item
         android:id="@+id/menu_activity_main_search"
         android:icon="@drawable/baseline_search_white_36"
-        app:showAsAction="ifRoom"
-        android:title="Recherche">
+        app:showAsAction="ifRoom|collapseActionView"
+        android:title="@string/search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView">
     </item>
 
 </menu>

@@ -1,15 +1,16 @@
 package com.menard.go4lunch.utils
 
+import android.content.Context
 import android.location.Location
+import android.widget.TextView
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.User
-import com.menard.go4lunch.model.detailsrequest.Period
-import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -37,69 +38,48 @@ fun setRating(rating: Double): Int {
  * Orange if no workmate have selected it
  * Green if at list one have selected it
  */
-fun setMarker(placeId: String, opening:String, googleMap:GoogleMap, latLng:LatLng, name:String){
-    var number= 0
+fun setMarker(number: Int, placeId: String, opening: String, googleMap: GoogleMap, latLng: LatLng, name: String): Marker {
+
+    val marker: Marker
+    if (number == 0) {
+        val markerOptions = MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(name).snippet(opening)
+        marker = googleMap.addMarker(markerOptions)
+        marker.tag = placeId
+        return marker
+    } else {
+        val markerOptions = MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_selected)).title(name).snippet("$opening $number workmates")
+        marker = googleMap.addMarker(markerOptions)
+        marker.tag = placeId
+        return marker
+    }
+
+}
+
+
+fun getNumberOfWorkmates(name: String, textView: TextView) {
+    var number = 0
     UserHelper.getUsersCollection().get().addOnSuccessListener { result ->
         for (userId in result) {
             val user = userId.toObject(User::class.java)
             if ("${user.userRestaurantName}" == name) {
                 number++
             }
-        }
-        if (number == 0){
-            googleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_restaurant)).title(name).snippet(opening)).tag = placeId
-        }else{
-            googleMap.addMarker(MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_selected)).title(name).snippet("$opening $number workmates")).tag = placeId
+            textView.text = (number.toString())
         }
     }
-
 }
 
-fun getListOfWorkmates(placeId: String): String {
-    val list: ArrayList<String> = ArrayList()
-    val stringBuilder = StringBuilder()
-    UserHelper.getUsersCollection().get().addOnSuccessListener { result ->
-        for(userId in result){
-            val user = userId.toObject(User::class.java)
-            if (user.userRestaurantId == placeId) {
-                list.add(user.userName)
-                stringBuilder.append(user.userName+",")
-            }
-        }
-    }
-
-    return stringBuilder.toString()
-}
 
 /**
  * Get hours of closing according to the number of day
  */
-fun getClosingTimeOfDay(isOpen: Boolean, today: Int, periods: List<Period>, hours: String): String {
-    val closingTime = StringBuilder()
-    // Iterate in list of Period
-    for (period in periods) {
-
-        // If closed
-        if (!isOpen) {
-            if(period.open?.day == today) {
-                val time = period.open!!.time!!.toInt()
-                if(time > hours.toInt()) {
-                    val date = "today"
-                    val timeParsed = parsePeriodHoursToHours(period.open!!.time!!)
-                    closingTime.append("Closed, will open $date at $timeParsed")
-                }
-            }
-            // If open
-        } else {
-            if(period.close!!.day == today) {
-                val time = period.close!!.time!!.toInt()
-                if(time > hours.toInt()) {
-                    val timeParsed = parsePeriodHoursToHours(period.close!!.time!!)
-                    closingTime.append("Open, will close at $timeParsed")
-                }
-            }
-        }
+fun getOpeningHours(day: Int, list: List<String>, context: Context): String {
+    val hours = list[day].substringAfter(":")
+    return if (hours.contains("Closed") || hours.contains("Fermé")) {
+        context.getString(R.string.restaurant_closed_all_day)
+    } else {
+        hours
     }
-    return closingTime.toString()
+
 }
 

@@ -30,9 +30,11 @@
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:padding="10dp"
+            android:inputType="textPersonName"
             app:layout_constraintTop_toBottomOf="@+id/settings_title_display_name"
             app:layout_constraintStart_toStartOf="parent"
-            android:hint="@string/actual_display_name"/>
+            android:hint="@string/actual_display_name"
+            android:importantForAutofill="no" />
 
         <Button
             android:id="@+id/activity_settings_button"
@@ -55,7 +57,7 @@
             android:textAlignment="center"
             android:textColor="@color/colorPrimaryDark"
             android:padding="15dp"
-            android:text="Notifications"
+            android:text="@string/notifications"
             app:layout_constraintTop_toBottomOf="@+id/activity_settings_display_name"/>
 
         <TextView
@@ -66,33 +68,42 @@
             android:textSize="20sp"
             app:layout_constraintTop_toBottomOf="@id/settings_title_notifications"
             app:layout_constraintStart_toStartOf="parent"
-            android:text="Activate notifications:"/>
+            android:text="@string/activate_notifications"/>
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/settings_notifications_yes"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
             android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
             android:layout_marginBottom="5dp"
+            android:textColor="@color/colorAccent"
+            app:layout_constraintStart_toEndOf="@id/settings_notification_text"
             app:layout_constraintEnd_toStartOf="@id/settings_notifications_no"
             app:layout_constraintTop_toBottomOf="@id/settings_title_notifications"
-            android:text="YES"/>
+            android:background="@color/current_user_message_background"
+            android:layout_marginEnd="5dp"
+            android:text="@string/yes"/>
 
         <Button
             android:id="@+id/settings_notifications_no"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:layout_marginEnd="5dp"
+            android:textColor="@color/colorAccent"
             app:layout_constraintTop_toBottomOf="@id/settings_title_notifications"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text="NO"/>
+            app:layout_constraintStart_toEndOf="@id/settings_notifications_yes"
+            android:background="@color/navigation_drawer_background"
+            android:text="@string/no"/>
 
         <TextView
             android:id="@+id/settings_set_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set time:"
+            android:text="@string/set_time"
             android:layout_marginStart="15dp"
             android:layout_marginTop="20dp"
             android:textSize="20sp"
@@ -103,7 +114,7 @@
             android:id="@+id/settings_time_picker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="15h00"
+            android:text="@string/_15h00"
             android:layout_marginTop="5dp"
             app:layout_constraintTop_toBottomOf="@id/settings_notifications_no"
             app:layout_constraintLeft_toRightOf="@+id/settings_set_time"

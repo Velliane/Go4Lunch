@@ -14,10 +14,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.location.*;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.menard.go4lunch.BuildConfig;
 import com.menard.go4lunch.R;
 import com.menard.go4lunch.adapter.ListViewAdapter;
@@ -26,6 +30,9 @@ import com.menard.go4lunch.model.detailsrequest.DetailsRequest;
 import com.menard.go4lunch.utils.Constants;
 import com.menard.go4lunch.utils.GooglePlacesStreams;
 
+import org.threeten.bp.LocalDateTime;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
@@ -46,6 +53,10 @@ public class ListViewFragment extends BaseFragment {
      */
     private FusedLocationProviderClient fusedLocationProviderClient;
 
+    String query;
+
+    ListViewAdapter listViewAdapter;
+
     public static ListViewFragment newInstance() {
         return new ListViewFragment();
     }
@@ -64,7 +75,12 @@ public class ListViewFragment extends BaseFragment {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         //-- Google Places SDK initialization --
         Places.initialize(requireActivity(), BuildConfig.api_key_google);
+        AndroidThreeTen.init(requireContext());
 
+        Bundle bundle = this.getArguments();
+        if(bundle != null) {
+            query = bundle.getString("Query");
+        }
         //-- Layout manager --
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -92,14 +108,25 @@ public class ListViewFragment extends BaseFragment {
 
     private void getResultWithRXJAVA(String location) {
         CompositeDisposable disable = new CompositeDisposable();
-        disable.add(GooglePlacesStreams.getDetailsOfSelectedRestaurant(location, "10000", "restaurant", Constants.FIELD_FOR_DETAILS, BuildConfig.api_key_google).subscribe(
+        disable.add(GooglePlacesStreams.getDetailsOfSelectedRestaurant(location, Constants.FIELD_FOR_RADIUS, Constants.FIELD_FOR_TYPE, Constants.FIELD_FOR_DETAILS, BuildConfig.api_key_google).subscribe(
                 this::handleResponse, this::handleError));
     }
 
     private void handleResponse(List<DetailsRequest> detailsRequestList) {
         progressBar.setVisibility(View.GONE);
-        ListViewAdapter listViewAdapter = new ListViewAdapter(detailsRequestList, requireActivity());
-        recyclerView.setAdapter(listViewAdapter);
+        listViewAdapter = new ListViewAdapter(detailsRequestList, requireActivity(), LocalDateTime.now().getDayOfWeek());
+        if(query == null) {
+            recyclerView.setAdapter(listViewAdapter);
+        }else {
+            List<DetailsRequest> newList = new ArrayList<>();
+            for(DetailsRequest detailsRequest : detailsRequestList){
+                if(detailsRequest.getResult().getName().toLowerCase().contains(query.toLowerCase())){
+                    newList.add(detailsRequest);
+                }
+            }
+            listViewAdapter.updateData(newList);
+            recyclerView.setAdapter(listViewAdapter);
+        }
 
     }
 

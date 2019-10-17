@@ -58,13 +58,13 @@ fun setNotificationsTime(today: LocalDateTime, hour: Int, minute:Int, second:Int
  */
 fun getNumberOfDay(dayOfWeek: DayOfWeek): Int{
     return when(dayOfWeek){
-        DayOfWeek.SUNDAY -> 0
-        DayOfWeek.MONDAY -> 1
-        DayOfWeek.TUESDAY -> 2
-        DayOfWeek.WEDNESDAY -> 3
-        DayOfWeek.THURSDAY -> 4
-        DayOfWeek.FRIDAY -> 5
-        DayOfWeek.SATURDAY -> 6
+        DayOfWeek.SUNDAY -> 6
+        DayOfWeek.MONDAY -> 0
+        DayOfWeek.TUESDAY -> 1
+        DayOfWeek.WEDNESDAY -> 2
+        DayOfWeek.THURSDAY -> 3
+        DayOfWeek.FRIDAY -> 4
+        DayOfWeek.SATURDAY -> 5
     }
 }
 

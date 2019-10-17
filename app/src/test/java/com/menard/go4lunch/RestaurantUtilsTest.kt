@@ -1,83 +1,71 @@
 package com.menard.go4lunch
 
-import android.app.Application
-import com.jakewharton.threetenabp.AndroidThreeTen
-import com.menard.go4lunch.model.detailsrequest.Close
-import com.menard.go4lunch.model.detailsrequest.DetailsRequest
-import com.menard.go4lunch.model.detailsrequest.Open
-import com.menard.go4lunch.model.detailsrequest.Period
-import com.menard.go4lunch.utils.getClosingTimeOfDay
-import com.menard.go4lunch.utils.getNumberOfDay
+import android.content.Context
+import android.location.Location
+import com.menard.go4lunch.utils.distanceToUser
+import com.menard.go4lunch.utils.getOpeningHours
+import com.menard.go4lunch.utils.setRating
 import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.threeten.bp.DayOfWeek
+import org.robolectric.RuntimeEnvironment
 
 @RunWith(RobolectricTestRunner::class)
 class RestaurantUtilsTest {
 
+    private lateinit var context: Context
+
 
     @Before
     fun init(){
-        AndroidThreeTen.init(Application())
+        context = RuntimeEnvironment.application.applicationContext
     }
 
     @Test
-    fun testClosedWillOpenAt9h(){
-        val isOpen = false
-        val today = getNumberOfDay(DayOfWeek.MONDAY)
-        val time = "0700"
-
-        val detailsRequest = DetailsRequest()
-        val open = Open(1, "0900")
-        val close = Close(1, "1800")
-        val period = Period(close, open)
-        val periods = ArrayList<Period>()
-        periods.add(period)
-        detailsRequest.result?.openingHours?.periods = periods
-
-        assertEquals("Closed, will open today at 09:00", getClosingTimeOfDay(isOpen, today, periods, time))
+    fun testSetRating(){
+        assertEquals(0, setRating(0.0))
+        assertEquals(1, setRating(1.7))
+        assertEquals(2, setRating(3.2))
+        assertEquals(3, setRating(4.8))
     }
 
     @Test
-    fun testOpenWillCloseAt18h(){
-        val isOpen = true
-        val today = getNumberOfDay(DayOfWeek.MONDAY)
-        val time = "1500"
+    fun testCloseDistanceToUser(){
+        val userLocation = Location("")
+        userLocation.latitude = 46.6286761
+        userLocation.longitude = 5.2374655
+        val location = Location("")
+        location.latitude = 46.629843
+        location.longitude = 5.226084
 
-        val detailsRequest = DetailsRequest()
-        val open = Open(1, "0900")
-        val close = Close(1, "1800")
-        val period = Period(close, open)
-        val periods = ArrayList<Period>()
-        periods.add(period)
-        detailsRequest.result?.openingHours?.periods = periods
-
-        assertEquals("Open, will close at 18:00", getClosingTimeOfDay(isOpen, today, periods, time))
+        assertEquals( "881m", distanceToUser(location, userLocation))
     }
 
     @Test
-    fun testCloseWillOpenChooseMostCloserOpeningTime(){
-        val isOpen = false
-        val today = getNumberOfDay(DayOfWeek.MONDAY)
-        val time = "1000"
+    fun testFarDistanceToUser(){
+        val userLocation = Location("")
+        userLocation.latitude = 46.6286761
+        userLocation.longitude = 5.2374655
+        val location = Location("")
+        location.latitude = 46.6301028
+        location.longitude = 5.223020300000001
 
-        val detailsRequest = DetailsRequest()
-        //-- First period --
-        val open = Open(1, "0900")
-        val close = Close(1, "1200")
-        val period = Period(close, open)
-        //-- Second period --
-        val open2 = Open(1, "1400")
-        val close2 = Close(1, "1900")
-        val period2 = Period(close2, open2)
-        val periods = ArrayList<Period>()
-        periods.add(period)
-        periods.add(period2)
-        detailsRequest.result?.openingHours?.periods = periods
-
-        assertEquals("Closed, will open today at 14:00", getClosingTimeOfDay(isOpen, today, periods, time))
+        assertEquals( "1,12km", distanceToUser(location, userLocation))
     }
+
+    @Test
+    fun testGetOpeningHours(){
+        val list = ArrayList<String>()
+        val monday = "Monday:9:00 AM - 18:00 PM"
+        val tuesday = "Tuesday:8:30 AM - 12:00 AM, 14:00 PM - 17:30 PM"
+        val friday = "Friday:closed"
+        list.add(monday)
+        list.add(tuesday)
+        list.add(friday)
+
+        assertEquals("9:00 AM - 18:00 PM", getOpeningHours(0, list, context))
+    }
+
 }

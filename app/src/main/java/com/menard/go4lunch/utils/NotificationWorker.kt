@@ -13,32 +13,35 @@ import com.menard.go4lunch.R
 import com.google.firebase.auth.FirebaseAuth
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.controller.activity.LunchActivity
+import com.menard.go4lunch.model.User
+import java.lang.StringBuilder
 import java.util.concurrent.TimeUnit
 
 open class NotificationWorker(context: Context, parameters: WorkerParameters) : Worker(context, parameters) {
 
     companion object {
         const val NOTIFICATION_ID = 10
+        private const val TAG_NOTIFICATION = "EATING_TIME"
 
 
         @JvmStatic
         fun scheduleReminder(data: Data, time: Long) {
             val notificationWork = OneTimeWorkRequest.Builder(NotificationWorker::class.java)
+                    .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                     .setInitialDelay(time, TimeUnit.MINUTES)
-                    .addTag("EATING_TIME")
+                    .addTag(TAG_NOTIFICATION)
                     .setInputData(data).build()
 
             val instance = WorkManager.getInstance()
-            instance.enqueueUniqueWork("EATING_TIME", ExistingWorkPolicy.REPLACE,notificationWork)
+            instance.enqueueUniqueWork(TAG_NOTIFICATION, ExistingWorkPolicy.REPLACE, notificationWork)
         }
 
         @JvmStatic
-         fun cancelReminder() {
+        fun cancelReminder() {
             val instance = WorkManager.getInstance()
             instance.cancelAllWork()
         }
     }
-
 
 
     override fun doWork(): Result {
@@ -47,32 +50,42 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
         val user = inputData.getString(Constants.DATA_USER)
         val restaurantId = inputData.getString(Constants.DATA_RESTAURANT_ID)
         val restaurantName = inputData.getString(Constants.DATA_RESTAURANT_NAME)
-        val restaurantVicinity= inputData.getString(Constants.DATA_RESTAURANT_ADDRESS)
-        val listWorker = inputData.getString(Constants.DATA_LIST_WORKMATES)
+        val restaurantVicinity = inputData.getString(Constants.DATA_RESTAURANT_ADDRESS)
 
-        sendNotification(user,restaurantId!!, restaurantName, restaurantVicinity, listWorker)
+        sendNotification(user, restaurantId!!, restaurantName, restaurantVicinity)
 
         return Result.success()
-     }
+    }
 
-    private fun sendNotification(user: String?, restaurantId: String,  restaurantName: String?, restaurantVicinity: String?, list: String?){
+
+
+    private fun sendNotification(user: String?, restaurantId: String, restaurantName: String?, restaurantVicinity: String?) {
         val intent = Intent(applicationContext, LunchActivity::class.java)
-        intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER,restaurantId)
+        intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, restaurantId)
 
-        val pendingIntent = PendingIntent.getActivity(applicationContext,0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
 
-        // Channel
-        val channelId = "id"
         // Notification object
-        val text = if(list == ""){
-            "Hello $user, the restaurant you choose is $restaurantName at $restaurantVicinity."
-        }else{
-            "Hello $user, the restaurant you choose is $restaurantName with $list at $restaurantVicinity."
+        val stringBuilder = StringBuilder()
+        UserHelper.getUsersCollection().get().addOnSuccessListener { result ->
+            for (userId in result) {
+                val users = userId.toObject(User::class.java)
+                if (users.userRestaurantId == restaurantId) {
+                    stringBuilder.append(users.userName + ",")
+                }
+            }
         }
+
+        val text = if (stringBuilder.toString() == "") {
+            applicationContext.getString(R.string.notification_alone, user, restaurantName, restaurantVicinity)
+        } else {
+            applicationContext.getString(R.string.notification_with_workmates, user, restaurantName, stringBuilder.toString(), restaurantVicinity)
+        }
+        val channelId = "id"
         val notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
-                .setContentTitle("Time to eat !")
+                .setContentTitle(applicationContext.getString(R.string.notification_title))
                 .setAutoCancel(true)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentIntent(pendingIntent)
@@ -80,8 +93,8 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
                 .setStyle(NotificationCompat.BigTextStyle().bigText(text))
 
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val channelName = "Message provenant de Go4Lunch"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelName = applicationContext.getString(R.string.channel)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(channelId, channelName, importance)
             notificationManager.createNotificationChannel(channel)

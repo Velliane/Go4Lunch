@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Data;
+
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,21 +34,24 @@ import com.menard.go4lunch.api.UserHelper;
 import com.menard.go4lunch.model.User;
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest;
 import com.menard.go4lunch.model.detailsrequest.ResultDetails;
-import com.menard.go4lunch.utils.*;
-import io.reactivex.disposables.CompositeDisposable;
+import com.menard.go4lunch.utils.Constants;
+import com.menard.go4lunch.utils.GooglePlacesStreams;
+import com.menard.go4lunch.utils.NotificationWorker;
+
 import org.threeten.bp.LocalDateTime;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
+import io.reactivex.disposables.CompositeDisposable;
 import saschpe.android.customtabs.CustomTabsHelper;
 import saschpe.android.customtabs.WebViewFallback;
 
+import static com.menard.go4lunch.utils.DateUtilsKt.setNotificationsTime;
 import static com.menard.go4lunch.utils.PhotoUtilsKt.getProgressDrawableSpinner;
 import static com.menard.go4lunch.utils.PhotoUtilsKt.loadRestaurantPhoto;
-import static com.menard.go4lunch.utils.RestaurantUtilsKt.getListOfWorkmates;
-import static com.menard.go4lunch.utils.DateUtilsKt.setNotificationsTime;
 
 public class LunchActivity extends BaseActivity implements View.OnClickListener{
 
@@ -101,6 +105,7 @@ public class LunchActivity extends BaseActivity implements View.OnClickListener{
         listWorkmates = findViewById(R.id.activity_lunch_list_workmates);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         listWorkmates.setLayoutManager(layoutManager);
+
     }
 
     //-- REQUEST FOR THE DETAILS --//
@@ -120,6 +125,7 @@ public class LunchActivity extends BaseActivity implements View.OnClickListener{
     private void handleResponse(DetailsRequest detailsRequest) {
         ResultDetails result = detailsRequest.getResult();
 
+        assert result != null;
         nameRestaurant.setText(result.getName());
         addressRestaurant.setText(result.getFormattedAddress());
 
@@ -127,13 +133,15 @@ public class LunchActivity extends BaseActivity implements View.OnClickListener{
         if (result.getPhotos() != null) {
             String reference = result.getPhotos().get(0).getPhotoReference();
             String url = this.getString(R.string.photos_lunch_activity, reference, BuildConfig.api_key_google);
+            //Glide.with(this).setDefaultRequestOptions(new RequestOptions().centerCrop().placeholder(getProgressDrawableSpinner(this))).load(url).into(photo);
             loadRestaurantPhoto(photo, url, null, getProgressDrawableSpinner(this));
         } else {
+            //Glide.with(this).setDefaultRequestOptions(new RequestOptions().centerCrop().placeholder(getProgressDrawableSpinner(this))).load(R.drawable.no_image_available_64).into(photo);
             loadRestaurantPhoto(photo,null, R.drawable.no_image_available_64, getProgressDrawableSpinner(this));
         }
 
         //-- Check if restaurant is already selected and update FloatingButton --
-        if (sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, "").equals(idRestaurant)) {
+        if (Objects.requireNonNull(sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, "")).equals(idRestaurant)) {
             Glide.with(this).load(R.drawable.selected_24).into(selectingButton);
         } else {
             Glide.with(this).load(R.drawable.select_24).into(selectingButton);
@@ -145,20 +153,21 @@ public class LunchActivity extends BaseActivity implements View.OnClickListener{
         like.setTag(result.getPlaceId());
 
         //-- Get List of workmates --
-        Query query = UserHelper.getUserAccordingToRestaurant(result.getPlaceId());
+        Query query = UserHelper.getUserAccordingToRestaurant(Objects.requireNonNull(result.getPlaceId()));
         FirestoreRecyclerOptions<User> list = new FirestoreRecyclerOptions.Builder<User>().setQuery(query, User.class)
                 .setLifecycleOwner(this).build();
         WorkmatesAdapter workmatesAdapter = new WorkmatesAdapter(this, list,false);
         listWorkmates.setAdapter(workmatesAdapter);
 
         setFavorites();
+
     }
 
     /**
      * Handle error
      */
     private void handleError(Throwable error) {
-        Log.d(ContentValues.TAG, error.getLocalizedMessage());
+        Log.d(ContentValues.TAG, "error");
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
         builder.setMessage("An error occurs, please check your network connection and retry")
                 .setNegativeButton("Ok",(dialog, which) ->
@@ -212,20 +221,21 @@ public class LunchActivity extends BaseActivity implements View.OnClickListener{
      * Save the restaurant selected in Shared Preferences or delete it
      */
     private void updateSharedPreferencesAndFirestore() {
-        if (!sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, null).equals(idRestaurant)) {
+        if (sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, null) != (idRestaurant)) {
             selected();
             //-- Activate Notification --
-            Data data = new Data.Builder()
-                    .putString(Constants.DATA_RESTAURANT_ID, idRestaurant)
-                    .putString(Constants.DATA_USER, getCurrentUser().getDisplayName())
-                    .putString(Constants.DATA_RESTAURANT_NAME, nameRestaurant.getText().toString())
-                    .putString(Constants.DATA_RESTAURANT_ADDRESS, addressRestaurant.getText().toString())
-                    .putString(Constants.DATA_LIST_WORKMATES, getListOfWorkmates(idRestaurant)).build();
-            //-- Check if hours of notifications have been choosed by user, else set default 12:00 --
-            int hours = sharedPreferences.getInt(Constants.PREF_NOTIFICATIONS_HOURS, 12);
-            int minute = sharedPreferences.getInt(Constants.PREF_NOTIFICATIONS_MINUTES, 0);
-            NotificationWorker.scheduleReminder(data, setNotificationsTime(LocalDateTime.now(), hours,minute,0));
-
+            if(sharedPreferences.getBoolean(Constants.PREF_ENABLED_NOTIFICATIONS, true)) {
+                Data data = new Data.Builder()
+                        .putString(Constants.DATA_RESTAURANT_ID, idRestaurant)
+                        .putString(Constants.DATA_USER, getCurrentUser().getDisplayName())
+                        .putString(Constants.DATA_RESTAURANT_NAME, nameRestaurant.getText().toString())
+                        .putString(Constants.DATA_RESTAURANT_ADDRESS, addressRestaurant.getText().toString())
+                        .build();
+                //-- Check if hours of notifications have been choosed by user, else set default 12:00 --
+                int hours = sharedPreferences.getInt(Constants.PREF_NOTIFICATIONS_HOURS, 12);
+                int minute = sharedPreferences.getInt(Constants.PREF_NOTIFICATIONS_MINUTES, 0);
+                NotificationWorker.scheduleReminder(data, setNotificationsTime(LocalDateTime.now(), hours, minute, 0));
+            }
         } else {
             unselected();
             //-- Cancel Notification --
@@ -248,7 +258,7 @@ public class LunchActivity extends BaseActivity implements View.OnClickListener{
      * When the restaurant is unselected
      */
     private void unselected(){
-        UserHelper.updateRestaurant(getCurrentUser().getUid(), null, null).addOnFailureListener(onFailureListener());
+        UserHelper.updateRestaurant(getCurrentUser().getUid(), "", "").addOnFailureListener(onFailureListener());
         sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, null).apply();
         //-- Update FloatingButton --
         Glide.with(this).load(R.drawable.select_24).into(selectingButton);
@@ -268,9 +278,11 @@ public class LunchActivity extends BaseActivity implements View.OnClickListener{
             if(!queryDocumentSnapshots.isEmpty()){
                 List docs = queryDocumentSnapshots.getDocuments();
 
-                while (docs.iterator().hasNext()){
-                    DocumentSnapshot doc = (DocumentSnapshot) docs.iterator().next();
-                    if(doc.get("placeId") == like.getTag()){
+                for (Object obj : docs) {
+                    DocumentSnapshot doc = (DocumentSnapshot) obj;
+                    String id = doc.getString("placeId");
+                    assert id != null;
+                    if (id.equals(like.getTag())) {
                         stars.setVisibility(View.VISIBLE);
                     }
                 }

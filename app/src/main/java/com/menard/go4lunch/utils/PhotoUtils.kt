@@ -1,6 +1,7 @@
 package com.menard.go4lunch.utils
 
 import android.content.Context
+import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.Nullable
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
@@ -24,12 +25,15 @@ fun getProgressDrawableSpinner(context: Context): CircularProgressDrawable{
  * Load the profile's image of user
  */
 fun CircleImageView.loadImageProfile(@Nullable url: String?, @Nullable int:Int?, progressDrawable: CircularProgressDrawable){
-    val options = RequestOptions().placeholder(progressDrawable)
-    if(url != null) {
-        Glide.with(this.context).setDefaultRequestOptions(options).load(url).into(this)
-    }else{
-        Glide.with(this.context).setDefaultRequestOptions(options).load(int).into(this)
-    }
+    post {val options = RequestOptions().placeholder(progressDrawable)
+        Log.d("URL", url)
+        Log.d("URL", int.toString())
+        if(url != null) {
+            Glide.with(this.context).setDefaultRequestOptions(options).load(url).into(this)
+        }else{
+            Glide.with(this.context).setDefaultRequestOptions(options).load(int).into(this)
+        }  }
+
 }
 
 /**

@@ -57,7 +57,13 @@
     <string name="display_name">Display Name</string>
     <string name="actual_display_name">Actual display name</string>
     <string name="change">Validate</string>
-    <string name="time_picker">%1$s:%2$s</string>
+    <string name="time_picker">%1$d:%2$d</string>
+    <string name="activate_notifications">Activate notifications:</string>
+    <string name="notifications">Notifications</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="set_time">Set time:</string>
+    <string name="_15h00">12h00</string>
 
     <!-- Photos Api -->
     <string name="photos_list_view" translatable="false">https://maps.googleapis.com/maps/api/place/photo?maxheight=200&amp;photoreference=%1$s&amp;key=%2$s</string>
@@ -80,6 +86,7 @@
     <!-- Restaurant -->
     <string name="restaurant_open">Open</string>
     <string name="restaurant_closed">Closed</string>
+    <string name="restaurant_closed_all_day">\u0020 for the day</string>
     <string name="restaurant_no_opening_available">No opening hours available</string>
     <string name="opening_hours">opening hours</string>
     <string name="distance">120m</string>
@@ -98,6 +105,23 @@
 
     <!-- Hint -->
     <string name="restaurant">restaurant</string>
+
+    <!-- Autocomplete -->
+    <string name="no_result" translatable="false">No result</string>
+    <string name="search">Search</string>
+
+    <!-- Notifications -->
+    <string name="notification_alone">Hello %1$s, the restaurant you choose is %2$s, at %3$s.</string>
+    <string name="notification_with_workmates">Hello %1$s, the restaurant you choose is %2$s, with %3$s, at %4$s.</string>
+    <string name="notification_title">Time to eat !</string>
+    <string name="channel">Message from Go4Lunch</string>
+
+
+    <!-- Chat -->
+    <string name="write_a_message">Write a message</string>
+    <string name="send">SEND</string>
+    <string name="example_of_message">Example of message</string>
+    <string name="date">Date</string>
 
 
 </resources>

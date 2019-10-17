@@ -8,8 +8,6 @@ class Constants{
         const val REQUEST_CODE_UPDATE_LOCATION = 4
         //-- Request code for call phone --
         const val REQUEST_CODE_CALL_PHONE = 3
-        //-- Request code for autocomplete --
-        const val REQUEST_CODE_AUTOCOMPLETE = 1
 
 
         //-- Collection --
@@ -19,6 +17,8 @@ class Constants{
 
         //-- Request --
         const val FIELD_FOR_DETAILS = "place_id,geometry,formatted_address,name,rating,permanently_closed,photo,type,formatted_phone_number,opening_hours,website"
+        const val FIELD_FOR_RADIUS = "7000"
+        const val FIELD_FOR_TYPE = "restaurant"
 
         //-- Extra for Intent --
         const val EXTRA_RESTAURANT_IDENTIFIER = "EXTRA_RESTAURANT_IDENTIFIER"
@@ -34,8 +34,10 @@ class Constants{
         const val DATA_USER = "DATA_USER_ID"
         const val DATA_RESTAURANT_NAME = "DATA_RESTAURANT_NAME"
         const val DATA_RESTAURANT_ADDRESS = "DATA_RESTAURANT_ADDRESS"
-        const val DATA_LIST_WORKMATES = "DATA_LIST_WORKMATES"
         const val DATA_RESTAURANT_ID = "DATA_RESTAURANT_ID"
+
+        //-- Search --
+        const val SEARCH_QUERY = "SEARCH_QUERY"
 
     }
 }

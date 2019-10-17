@@ -32,7 +32,13 @@
     <string name="display_name">Identifiant</string>
     <string name="actual_display_name">Identifiant actuel</string>
     <string name="change">Valider</string>
-    <string name="time_picker">%1$s:%2$s</string>
+    <string name="time_picker">%1$d:%2$d</string>
+    <string name="activate_notifications">Activer les notifications:</string>
+    <string name="notifications">Notifications</string>
+    <string name="yes">OUI</string>
+    <string name="no">NON</string>
+    <string name="set_time">Définir l\'heure:</string>
+    <string name="_15h00">12h00</string>
 
     <!-- Bottom Navigation View -->
     <string name="bottom_navigation_menu_mapview">Carte</string>
@@ -53,6 +59,7 @@
     <!-- Restaurant -->
     <string name="restaurant_open">Ouvert</string>
     <string name="restaurant_closed">Fermé</string>
+    <string name="restaurant_closed_all_day">\u0020 toute la journée</string>
     <string name="restaurant_no_opening_available">Aucun horaire n\'a été renseigné</string>
     <string name="name">Nom</string>
     <string name="address">Adresse</string>
@@ -71,5 +78,22 @@
     <string name="image_for_workmates">Image représentant les collègues</string>
     <!-- Hint -->
     <string name="restaurant">restaurant</string>
+
+    <!-- Notifications -->
+    <string name="notification_alone">Bonjour %1$s, le restaurant que tu as choisi est %2$s, à %3$s.</string>
+    <string name="notification_with_workmates">Bonjour %1$s, le restaurant que tu as choisi %2$s, avec %3$s, à %4$s.</string>
+    <string name="notification_title">Il est l\'heure de manger !</string>
+    <string name="channel">Message provenant de Go4Lunch</string>
+
+    <!-- Autocomplete -->
+    <string name="search">Recherche</string>
+
+    <!-- Chat -->
+    <string name="write_a_message">Ecrire un message</string>
+    <string name="send">ENVOYER</string>
+    <string name="example_of_message">Message</string>
+    <string name="date">Date</string>
+
+
 
 </resources>

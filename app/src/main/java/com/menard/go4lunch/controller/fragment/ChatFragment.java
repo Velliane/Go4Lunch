@@ -55,8 +55,20 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
-        ChatAdapter workmatesAdapter = new ChatAdapter(requireActivity(),list);
-        recyclerView.setAdapter(workmatesAdapter);
+        ChatAdapter chatAdapter = new ChatAdapter(requireActivity(), list);
+        recyclerView.setAdapter(chatAdapter);
+
+        chatAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                int numberOfMessage = chatAdapter.getItemCount();
+                int lastPosition = layoutManager.findLastVisibleItemPosition();
+                if(lastPosition == -1 || (positionStart >= (numberOfMessage -1) && lastPosition == (positionStart -1))){
+                    recyclerView.scrollToPosition(positionStart);
+                }
+            }
+        });
 
         return view;
 

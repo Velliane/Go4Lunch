@@ -12,32 +12,44 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.location.*;
-import com.google.android.gms.maps.*;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.libraries.places.api.Places;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.menard.go4lunch.BuildConfig;
 import com.menard.go4lunch.R;
 import com.menard.go4lunch.api.UserHelper;
 import com.menard.go4lunch.controller.activity.LunchActivity;
+import com.menard.go4lunch.model.User;
 import com.menard.go4lunch.model.nearbysearch.NearbySearch;
 import com.menard.go4lunch.model.nearbysearch.Result;
 import com.menard.go4lunch.utils.Constants;
 import com.menard.go4lunch.utils.GooglePlacesStreams;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.disposables.CompositeDisposable;
 
 import static com.menard.go4lunch.utils.RestaurantUtilsKt.setMarker;
 
-public class MapviewFragment extends BaseFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraMoveListener {
+public class MapviewFragment extends BaseFragment implements  OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraMoveListener {
 
-
-    public static MapviewFragment newInstance() {
-        return new MapviewFragment();
-    }
-
+    /** List of Marker */
+    private List<Marker> listMarker;
+    /** Listener */
+    private Listener mListener;
     /** Map View */
     private MapView mapView;
     /** Google Map */
@@ -48,6 +60,12 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
     private ProgressBar progressBar;
     /** Error message */
     private TextView errorTextView;
+    /** Query */
+    private String query;
+
+    public static MapviewFragment newInstance() {
+        return new MapviewFragment();
+    }
 
 
     @Nullable
@@ -64,6 +82,8 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
+
+        listMarker = new ArrayList<>();
         progressBar = view.findViewById(R.id.map_view_progress);
         errorTextView = view.findViewById(R.id.map_view_error_message);
 
@@ -74,8 +94,14 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
             Places.initialize(requireActivity(), BuildConfig.api_key_google);
         }
 
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            query = bundle.getString("Query");
+        }
+
         return view;
     }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -89,12 +115,11 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
         }
         mGoogleMap.setOnMarkerClickListener(this);
         mGoogleMap.setOnInfoWindowClickListener(this);
-        mGoogleMap.setOnCameraMoveListener (this);
+        mGoogleMap.setOnCameraMoveListener(this);
     }
 
-    //-------------------------------------//
+
     //-- UPDATE MAP WITH USER'S LOCATION --//
-    //-------------------------------------//
     /**
      * Update Map with new location of the user
      */
@@ -108,29 +133,30 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
                 String latitude = String.valueOf(lastLocation.latitude);
                 String longitude = String.valueOf(lastLocation.longitude);
 
-                UserHelper.updateLocation(getCurrentUser().getUid(), latitude, longitude);
+                UserHelper.updateLocation(getCurrentUser().getUid(), latitude, longitude); //save user location in Firebase
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(lastLocation, 14F));
                 getResult(latitude + "," + longitude);
 
-            }},null);
+            }
+        }, null);
     }
 
     @Override
     public void onCameraMove() {
-        LatLng centerMap = mGoogleMap.getCameraPosition().target;
+        LatLng centerMap = mGoogleMap.getCameraPosition().target; //set location as center of the map
         getResult(centerMap.latitude + "," + centerMap.longitude);
 
     }
-    //------------------------------//
+
+
     //-- REQUEST ON NEARBY SEARCH --//
-    //------------------------------//
     /**
      * Get result of NearbySearch
      * @param location the user's location
      */
     private void getResult(String location) {
-        CompositeDisposable disable= new CompositeDisposable();
-        disable.add(GooglePlacesStreams.getListRestaurant(location, "6000", "restaurant", BuildConfig.api_key_google).subscribe(
+        CompositeDisposable disable = new CompositeDisposable();
+        disable.add(GooglePlacesStreams.getListRestaurant(location, Constants.FIELD_FOR_RADIUS, Constants.FIELD_FOR_TYPE, BuildConfig.api_key_google).subscribe(
                 this::handleResponse, this::handleError));
     }
 
@@ -140,52 +166,90 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
     private void handleResponse(NearbySearch nearbySearch) {
         progressBar.setVisibility(View.GONE);
         List<Result> listResults = nearbySearch.getResults();
-
-        for (int i = 0; i <listResults.size(); i++) {
-            LatLng latLng = new LatLng(listResults.get(i).getGeometry().getLocation().getLat(), listResults.get(i).getGeometry().getLocation().getLng());
-            String opening;
-            if (listResults.get(i).getOpeningHours() != null) {
-                if (listResults.get(i).getOpeningHours().getOpenNow()) {
-                    opening = getString(R.string.restaurant_open);
-                } else {
-                    opening = getString(R.string.restaurant_closed);
-                }
-            } else {
-                opening = getString(R.string.restaurant_no_opening_available);
-            }
-            setMarker(listResults.get(i).getPlaceId(), opening, mGoogleMap, latLng, listResults.get(i).getName());
+        for(Result result: listResults){
+            setGoogleMap(result);
         }
+
+        //-- Set marker's visibility according to query search --
+        mListener = list -> {
+            mGoogleMap.getUiSettings().setAllGesturesEnabled(false);
+            if (query != null) {
+                for (Marker marker : list) {
+                    if (!marker.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                        marker.setVisible(false);
+                    } else {
+                        marker.setVisible(true);
+                    }
+                }
+            }else{
+                for(Marker marker : list){
+                    marker.setVisible(true);
+                }
+            }
+            mGoogleMap.getUiSettings().setAllGesturesEnabled(true);
+        };
     }
+
+    /**
+     * Create marker for each result of NearbySearch
+     * and add them to list of markers
+     * @param result result
+     */
+    private void setGoogleMap(Result result) {
+        LatLng latLng = new LatLng(result.getGeometry().getLocation().getLat(), result.getGeometry().getLocation().getLng());
+        //-- Check if restaurant is currently open or closed --
+        String opening;
+        if (result.getOpeningHours() != null) {
+            if (result.getOpeningHours().getOpenNow()) {
+                opening = getString(R.string.restaurant_open);
+            } else {
+                opening = getString(R.string.restaurant_closed);
+            }
+        } else {
+            opening = getString(R.string.restaurant_no_opening_available);
+        }
+        //-- Check if restaurant is selected by a user --
+        String name = result.getName();
+        UserHelper.getUsersCollection().get().addOnSuccessListener(queryDocumentSnapshots -> {
+            int number = 0; //the number of user who have selected the restaurant
+            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                User user = document.toObject(User.class);
+                String id = user.getUserRestaurantName();
+                if (id.equals(name)) {
+                    number++;
+                }
+            }
+            //-- Create marker and add it to list --
+            Marker marker = setMarker(number, result.getPlaceId(), opening, mGoogleMap, latLng, name);
+            listMarker.add(marker);
+            mListener.getListOfMarker(listMarker);
+        });
+
+    }
+
 
     private void handleError(Throwable error) {
-        Log.d("TAG", error.getLocalizedMessage());
-        mapView.setVisibility(View.GONE);
+        Log.d("TAG", error.getMessage());
         progressBar.setVisibility(View.GONE);
-        errorTextView.setVisibility(View.GONE);
+        errorTextView.setVisibility(View.VISIBLE);
     }
 
-    //---------------------------------//
     //-- ACTION WHEN CLICK ON MARKER --//
-    //---------------------------------//
     @Override
     public boolean onMarkerClick(Marker marker) {
         //-- Return false to centered and open the marker's info window
         return false;
     }
 
-    //--------------------------------------//
     //-- ACTION WHEN CLICK IN INFO WINDOW --//
-    //--------------------------------------//
     @Override
     public void onInfoWindowClick(Marker marker) {
         Intent intent = new Intent(requireActivity(), LunchActivity.class);
-        intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, marker.getTag().toString());
+        intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, Objects.requireNonNull(marker.getTag()).toString());
         startActivity(intent);
     }
 
-    //------------------------//
     //-- FRAGMENT LIFECYCLE --//
-    //------------------------//
 
     @Override
     public void onResume() {
@@ -220,5 +284,7 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
 }
 
 
-
+interface Listener {
+    void getListOfMarker(List<Marker> list);
+}
 

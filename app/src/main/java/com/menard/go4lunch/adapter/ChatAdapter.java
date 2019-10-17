@@ -100,6 +100,10 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<Message, ChatAdapter.C
 
     }
 
+    @Override
+    public void onDataChanged() {
+        super.onDataChanged();
+    }
 
     class ChatViewHolder extends RecyclerView.ViewHolder {
 
@@ -112,6 +116,7 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<Message, ChatAdapter.C
             userPhoto = itemView.findViewById(R.id.image_profile);
             message = itemView.findViewById(R.id.chat_item_message);
             date = itemView.findViewById(R.id.chat_item_date);
+
         }
     }
 

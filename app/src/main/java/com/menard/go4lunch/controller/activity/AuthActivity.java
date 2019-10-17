@@ -82,7 +82,7 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener{
             if(resultCode == Activity.RESULT_OK){
                 showSnackBar(layout, getString(R.string.connection_succeed));
                 //-- Add new user to firestore
-                UserHelper.createUser(getCurrentUser().getUid(), getCurrentUser().getDisplayName(), getCurrentUser().getPhotoUrl().toString(), null, null, null, null).addOnFailureListener(onFailureListener());
+                UserHelper.createUser(getCurrentUser().getUid(), getCurrentUser().getDisplayName(), getCurrentUser().getPhotoUrl().toString(), "", "", null, null).addOnFailureListener(onFailureListener());
                 startMainActivity();
             }else{
                     if(response == null){

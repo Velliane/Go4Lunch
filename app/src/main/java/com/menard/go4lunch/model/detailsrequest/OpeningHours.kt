@@ -13,6 +13,6 @@ class OpeningHours (
     var periods: List<Period>? = null,
     @SerializedName("weekday_text")
     @Expose
-    var weekdayText: List<String>? = null
+    var weekdayText: List<String>
 
     )

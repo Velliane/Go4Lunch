@@ -10,6 +10,7 @@ class UserHelper {
 
     companion object {
 
+        @JvmStatic
         fun getUsersCollection(): CollectionReference {
             return FirebaseFirestore.getInstance().collection(Constants.COLLECTION_USERS)
         }

@@ -45,6 +45,10 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
      * Shared Preferences
      */
     private SharedPreferences sharedPreferences;
+    /** Button Enable Notification */
+    private Button enableNotification;
+    /** Button Disable Notification */
+    private Button disableNotification;
 
 
     @Override
@@ -66,10 +70,26 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         displayNameEdit = findViewById(R.id.activity_settings_display_name);
         timePicker = findViewById(R.id.settings_time_picker);
         timePicker.setOnClickListener(this);
+        enableNotification = findViewById(R.id.settings_notifications_yes);
+        enableNotification.setOnClickListener(this);
+        disableNotification = findViewById(R.id.settings_notifications_no);
+        disableNotification.setOnClickListener(this);
+
+        if(sharedPreferences.getBoolean(Constants.PREF_ENABLED_NOTIFICATIONS, true)){
+            setEnableNotification();
+        }else{
+            setDisableNotification();
+        }
+        //-- Set time --
+        int hour = sharedPreferences.getInt(Constants.PREF_NOTIFICATIONS_HOURS, 12);
+        int minute = sharedPreferences.getInt(Constants.PREF_NOTIFICATIONS_MINUTES, 0);
+        timePicker.setText(getString(R.string.time_picker, hour, minute));
+
 
         //-- Find display name on Firestore --
         UserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(documentSnapshot -> {
             User currentUser = documentSnapshot.toObject(User.class);
+            assert currentUser != null;
             String displayName = currentUser.getUserName();
             displayNameEdit.setText(displayName);
         });
@@ -97,6 +117,18 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         }
         if (v == timePicker) {
             showTimePicker();
+        }
+        if(v == enableNotification){
+            if(!sharedPreferences.getBoolean(Constants.PREF_ENABLED_NOTIFICATIONS, true)){
+                sharedPreferences.edit().putBoolean(Constants.PREF_ENABLED_NOTIFICATIONS, true).apply();
+                setEnableNotification();
+            }
+        }
+        if(v == disableNotification){
+            if(sharedPreferences.getBoolean(Constants.PREF_ENABLED_NOTIFICATIONS, true)){
+                sharedPreferences.edit().putBoolean(Constants.PREF_ENABLED_NOTIFICATIONS, false).apply();
+                setDisableNotification();
+            }
         }
     }
 
@@ -128,6 +160,16 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         getCurrentUser().delete();
         //-- Start AuthActivity --
         startActivity(new Intent(this, AuthActivity.class));
+    }
+
+    private void setEnableNotification(){
+        enableNotification.setBackgroundColor(this.getResources().getColor(R.color.current_user_message_background));
+        disableNotification.setBackgroundColor(this.getResources().getColor(R.color.navigation_drawer_background));
+    }
+
+    private void setDisableNotification(){
+        enableNotification.setBackgroundColor(this.getResources().getColor(R.color.navigation_drawer_background));
+        disableNotification.setBackgroundColor(this.getResources().getColor(R.color.current_user_message_background));
     }
 
 }

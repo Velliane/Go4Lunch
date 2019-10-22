@@ -44,12 +44,8 @@ import io.reactivex.disposables.CompositeDisposable;
 
 import static com.menard.go4lunch.utils.RestaurantUtilsKt.setMarker;
 
-public class MapviewFragment extends BaseFragment implements  OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraMoveListener {
+public class MapviewFragment extends BaseFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener{
 
-    /** List of Marker */
-    private List<Marker> listMarker;
-    /** Listener */
-    private Listener mListener;
     /** Map View */
     private MapView mapView;
     /** Google Map */
@@ -60,8 +56,6 @@ public class MapviewFragment extends BaseFragment implements  OnMapReadyCallback
     private ProgressBar progressBar;
     /** Error message */
     private TextView errorTextView;
-    /** Query */
-    private String query;
 
     public static MapviewFragment newInstance() {
         return new MapviewFragment();
@@ -83,7 +77,6 @@ public class MapviewFragment extends BaseFragment implements  OnMapReadyCallback
         mapView.getMapAsync(this);
 
 
-        listMarker = new ArrayList<>();
         progressBar = view.findViewById(R.id.map_view_progress);
         errorTextView = view.findViewById(R.id.map_view_error_message);
 
@@ -92,11 +85,6 @@ public class MapviewFragment extends BaseFragment implements  OnMapReadyCallback
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity());
             //-- Google Places SDK initialization --
             Places.initialize(requireActivity(), BuildConfig.api_key_google);
-        }
-
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            query = bundle.getString("Query");
         }
 
         return view;
@@ -115,7 +103,6 @@ public class MapviewFragment extends BaseFragment implements  OnMapReadyCallback
         }
         mGoogleMap.setOnMarkerClickListener(this);
         mGoogleMap.setOnInfoWindowClickListener(this);
-        mGoogleMap.setOnCameraMoveListener(this);
     }
 
 
@@ -141,14 +128,6 @@ public class MapviewFragment extends BaseFragment implements  OnMapReadyCallback
         }, null);
     }
 
-    @Override
-    public void onCameraMove() {
-        LatLng centerMap = mGoogleMap.getCameraPosition().target; //set location as center of the map
-        getResult(centerMap.latitude + "," + centerMap.longitude);
-
-    }
-
-
     //-- REQUEST ON NEARBY SEARCH --//
     /**
      * Get result of NearbySearch
@@ -166,28 +145,14 @@ public class MapviewFragment extends BaseFragment implements  OnMapReadyCallback
     private void handleResponse(NearbySearch nearbySearch) {
         progressBar.setVisibility(View.GONE);
         List<Result> listResults = nearbySearch.getResults();
-        for(Result result: listResults){
+        handleResult(listResults);
+
+    }
+
+    private void handleResult(List<Result> list){
+        for(Result result: list) {
             setGoogleMap(result);
         }
-
-        //-- Set marker's visibility according to query search --
-        mListener = list -> {
-            mGoogleMap.getUiSettings().setAllGesturesEnabled(false);
-            if (query != null) {
-                for (Marker marker : list) {
-                    if (!marker.getTitle().toLowerCase().contains(query.toLowerCase())) {
-                        marker.setVisible(false);
-                    } else {
-                        marker.setVisible(true);
-                    }
-                }
-            }else{
-                for(Marker marker : list){
-                    marker.setVisible(true);
-                }
-            }
-            mGoogleMap.getUiSettings().setAllGesturesEnabled(true);
-        };
     }
 
     /**
@@ -215,14 +180,12 @@ public class MapviewFragment extends BaseFragment implements  OnMapReadyCallback
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 User user = document.toObject(User.class);
                 String id = user.getUserRestaurantName();
-                if (id.equals(name)) {
+                if (id.equals(result.getName())) {
                     number++;
                 }
             }
-            //-- Create marker and add it to list --
-            Marker marker = setMarker(number, result.getPlaceId(), opening, mGoogleMap, latLng, name);
-            listMarker.add(marker);
-            mListener.getListOfMarker(listMarker);
+            setMarker(number, result.getPlaceId(), opening, mGoogleMap, latLng, name, this.requireContext());
+
         });
 
     }
@@ -281,10 +244,7 @@ public class MapviewFragment extends BaseFragment implements  OnMapReadyCallback
         super.onSaveInstanceState(outState);
     }
 
-}
 
 
-interface Listener {
-    void getListOfMarker(List<Marker> list);
 }
 

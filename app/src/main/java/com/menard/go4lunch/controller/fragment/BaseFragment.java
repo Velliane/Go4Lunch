@@ -27,7 +27,7 @@ public class BaseFragment extends Fragment{
     /**
      * Check permissions
      */
-    public Boolean checkPermissions(){
+    Boolean checkPermissions(){
         if (ActivityCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
@@ -38,7 +38,7 @@ public class BaseFragment extends Fragment{
 
 
     /**
-     * Result after checking the permissions
+     * Result after request permissions
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -59,14 +59,14 @@ public class BaseFragment extends Fragment{
     /**
      * Get new location
      */
-    public LatLng onLocationChanged(Location location){
+    LatLng onLocationChanged(Location location){
         return new LatLng(location.getLatitude(), location.getLongitude());
     }
 
     //--------------------------//
     //-- SET LOCATION REQUEST --//
     //--------------------------//
-    public LocationRequest setLocationRequest(){
+    LocationRequest setLocationRequest(){
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);
         locationRequest.setFastestInterval(10000);

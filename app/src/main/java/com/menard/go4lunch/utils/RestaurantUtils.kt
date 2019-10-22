@@ -38,7 +38,7 @@ fun setRating(rating: Double): Int {
  * Orange if no workmate have selected it
  * Green if at list one have selected it
  */
-fun setMarker(number: Int, placeId: String, opening: String, googleMap: GoogleMap, latLng: LatLng, name: String): Marker {
+fun setMarker(number: Int, placeId: String, opening: String, googleMap: GoogleMap, latLng: LatLng, name: String, context: Context): Marker {
 
     val marker: Marker
     if (number == 0) {
@@ -47,7 +47,7 @@ fun setMarker(number: Int, placeId: String, opening: String, googleMap: GoogleMa
         marker.tag = placeId
         return marker
     } else {
-        val markerOptions = MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_selected)).title(name).snippet("$opening $number workmates")
+        val markerOptions = MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_selected)).title(name).snippet(context.getString(R.string.selected_restaurant, opening, number))
         marker = googleMap.addMarker(markerOptions)
         marker.tag = placeId
         return marker

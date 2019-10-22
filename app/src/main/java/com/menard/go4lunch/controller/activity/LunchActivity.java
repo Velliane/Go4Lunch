@@ -66,13 +66,14 @@ public class LunchActivity extends BaseActivity implements View.OnClickListener{
     private TextView nameRestaurant;
     private TextView addressRestaurant;
     private ImageView photo;
+    private ImageView stars;
     /** Recycler view */
     private RecyclerView listWorkmates;
     /** Place_id */
     private String idRestaurant;
     /** Shared Preferences */
     private SharedPreferences sharedPreferences;
-    private ImageView stars;
+
 
 
     @Override
@@ -167,12 +168,8 @@ public class LunchActivity extends BaseActivity implements View.OnClickListener{
      * Handle error
      */
     private void handleError(Throwable error) {
-        Log.d(ContentValues.TAG, "error");
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
-        builder.setMessage("An error occurs, please check your network connection and retry")
-                .setNegativeButton("Ok",(dialog, which) ->
-                    onResume())
-                .create().show();
+        String err = (error.getMessage()==null)? "getDetails failed":error.getMessage();
+        Log.d(ContentValues.TAG, err);
     }
 
     // -- CLICK ON THE CONTACT INFOS --//

@@ -31,8 +31,6 @@ import com.menard.go4lunch.utils.Constants;
 import com.menard.go4lunch.utils.GooglePlacesStreams;
 
 import org.threeten.bp.LocalDateTime;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
@@ -53,9 +51,6 @@ public class ListViewFragment extends BaseFragment {
      */
     private FusedLocationProviderClient fusedLocationProviderClient;
 
-    String query;
-
-    ListViewAdapter listViewAdapter;
 
     public static ListViewFragment newInstance() {
         return new ListViewFragment();
@@ -77,10 +72,6 @@ public class ListViewFragment extends BaseFragment {
         Places.initialize(requireActivity(), BuildConfig.api_key_google);
         AndroidThreeTen.init(requireContext());
 
-        Bundle bundle = this.getArguments();
-        if(bundle != null) {
-            query = bundle.getString("Query");
-        }
         //-- Layout manager --
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -114,24 +105,12 @@ public class ListViewFragment extends BaseFragment {
 
     private void handleResponse(List<DetailsRequest> detailsRequestList) {
         progressBar.setVisibility(View.GONE);
-        listViewAdapter = new ListViewAdapter(detailsRequestList, requireActivity(), LocalDateTime.now().getDayOfWeek());
-        if(query == null) {
-            recyclerView.setAdapter(listViewAdapter);
-        }else {
-            List<DetailsRequest> newList = new ArrayList<>();
-            for(DetailsRequest detailsRequest : detailsRequestList){
-                if(detailsRequest.getResult().getName().toLowerCase().contains(query.toLowerCase())){
-                    newList.add(detailsRequest);
-                }
-            }
-            listViewAdapter.updateData(newList);
-            recyclerView.setAdapter(listViewAdapter);
-        }
-
+        ListViewAdapter listViewAdapter = new ListViewAdapter(detailsRequestList, requireActivity(), LocalDateTime.now().getDayOfWeek());
+        recyclerView.setAdapter(listViewAdapter);
     }
 
     private void handleError(Throwable error) {
-        Log.d("TAG", "Error");
+        Log.d("TAG", error.getMessage());
     }
 
 

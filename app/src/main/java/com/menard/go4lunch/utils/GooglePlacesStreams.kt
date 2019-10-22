@@ -1,6 +1,5 @@
 package com.menard.go4lunch.utils
 
-import com.menard.go4lunch.model.autocomplete.Autocomplete
 import com.menard.go4lunch.model.detailsrequest.DetailsRequest
 import com.menard.go4lunch.model.nearbysearch.NearbySearch
 import io.reactivex.Observable
@@ -32,14 +31,6 @@ class GooglePlacesStreams {
                     .timeout(10, TimeUnit.SECONDS)
         }
 
-//        fun getListPrediction(input: String, location: String, radius: String, apiKey: String): Observable<Autocomplete> {
-//            val retrofit = GooglePlacesAPI.retrofit.create(GooglePlacesAPI::class.java)
-//            return retrofit.getAutocompleteSearch(input, location, radius, apiKey)
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribeOn(Schedulers.io())
-//                    .timeout(10, TimeUnit.SECONDS)
-//        }
-
         //-- Get List of Details --
         @JvmStatic
         fun getDetailsOfSelectedRestaurant(location: String, radius: String, restaurant: String, fields: String, apiKey: String): Observable<List<DetailsRequest>> {
@@ -49,14 +40,6 @@ class GooglePlacesStreams {
                     .toList().toObservable()
         }
 
-//        //-- Autocomplete --
-//        fun getAutocomplete(input: String, location: String, radius: String, apiKey: String): Observable<List<DetailsRequest>> {
-//            return getListPrediction(input, location, radius, apiKey)
-//                    .concatMapIterable { result -> result.predictions }
-//                    .concatMap<DetailsRequest> { detail -> getDetails(id = detail.placeId!!, fields = input, apiKey = apiKey) }
-//                    .toList().toObservable()
-//
-//        }
     }
 
 

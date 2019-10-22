@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,14 +22,25 @@ import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.menard.go4lunch.BuildConfig;
 import com.menard.go4lunch.R;
+import com.menard.go4lunch.adapter.AutocompleteAdapter;
 import com.menard.go4lunch.api.UserHelper;
 import com.menard.go4lunch.controller.fragment.ChatFragment;
 import com.menard.go4lunch.controller.fragment.ListViewFragment;
@@ -38,46 +51,25 @@ import com.menard.go4lunch.utils.Constants;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener {
 
-    /** Toolbar */
+    /**
+     * Toolbar
+     */
     private Toolbar toolbar;
-    /** DrawerLayout */
+    /**
+     * DrawerLayout
+     */
     private DrawerLayout drawerLayout;
-    /** Shared Preferences */
+    /**
+     * Shared Preferences
+     */
     private SharedPreferences sharedPreferences;
     private BottomNavigationView bottomNavigationView;
-    private MapviewFragment mMapviewFragment;
-    private ListViewFragment mListViewFragment;
-
-
-    //-- BOTTOM NAVIGATION VIEW LISTENER --//
-    private final BottomNavigationView.OnNavigationItemSelectedListener onBottomNavigationItemSelectedListener = menuItem -> {
-        switch (menuItem.getItemId()) {
-            case R.id.action_mapview: {
-                mMapviewFragment = MapviewFragment.newInstance();
-                addFragment(mMapviewFragment);
-                return true;
-            }
-            case R.id.action_listview: {
-                mListViewFragment = ListViewFragment.newInstance();
-                addFragment(mListViewFragment);
-                return true;
-            }
-            case R.id.action_workmates: {
-                WorkmatesFragment fragment = WorkmatesFragment.newInstance();
-                addFragment(fragment);
-                return true;
-            }
-            case R.id.action_chat: {
-                ChatFragment fragment = ChatFragment.newInstance();
-                addFragment(fragment);
-                return true;
-            }
-        }
-        return false;
-    };
-
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private AutocompleteAdapter autocompleteAdapter;
+    private PlacesClient placesClient;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,11 +80,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         //-- Bottom Navigation View --
         bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(onBottomNavigationItemSelectedListener);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
         //-- Toolbar --
         toolbar = findViewById(R.id.activity_main_toolbar);
+        toolbar.setTitle(getString(R.string.main_activity_title));
+
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         setSupportActionBar(toolbar);
         Places.initialize(getApplicationContext(), BuildConfig.api_key_google);
+        placesClient = Places.createClient(this);
+        mRecyclerView = findViewById(R.id.autocomplete_recycler_view);
 
         //-- Configuration --
         configureDrawerLayout();
@@ -103,13 +101,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     //-- DRAWER --//
+
     /**
      * Drawer Navigation View
+     *
      * @return boolean
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
+            //-- Drawer layout --
             case R.id.action_settings: {
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
@@ -129,12 +130,33 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     break;
                 }
             }
-
             case R.id.action_logout: {
                 signOut();
                 break;
             }
-
+            //-- Bottom navigation view --
+            case R.id.action_mapview: {
+                MapviewFragment mapviewFragment = MapviewFragment.newInstance();
+                addFragment(mapviewFragment);
+                return true;
+            }
+            case R.id.action_listview: {
+                ListViewFragment listViewFragment = ListViewFragment.newInstance();
+                addFragment(listViewFragment);
+                return true;
+            }
+            case R.id.action_workmates: {
+                toolbar.setTitle(getString(R.string.workmates_fragment_title));
+                WorkmatesFragment fragment = WorkmatesFragment.newInstance();
+                addFragment(fragment);
+                return true;
+            }
+            case R.id.action_chat: {
+                toolbar.setTitle(getString(R.string.chat_fragment_title));
+                ChatFragment fragment = ChatFragment.newInstance();
+                addFragment(fragment);
+                return true;
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
@@ -142,6 +164,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     //-- AUTOCOMPLETE --//
+
     /**
      * When click on Search Button of the Toolbar
      */
@@ -150,7 +173,43 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (bottomNavigationView.getSelectedItemId() == R.id.action_mapview || bottomNavigationView.getSelectedItemId() == R.id.action_listview) {
+            if(!newText.equals("")) {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                LocationRequest locationRequest = setLocationRequest();
+                if (checkPermissions()) {
+
+                    mFusedLocationProviderClient.requestLocationUpdates(locationRequest, new LocationCallback() {
+                        @Override
+                        public void onLocationResult(LocationResult locationResult) {
+                            LatLng lastLocation = onLocationChanged(locationResult.getLastLocation());
+                            LatLng bounds = new LatLng(lastLocation.latitude, lastLocation.longitude);
+
+                            autocompleteAdapter = new AutocompleteAdapter(getApplicationContext(), placesClient, bounds);
+                            autocompleteAdapter.getFilter().filter(newText.toLowerCase());
+                            mRecyclerView.setAdapter(autocompleteAdapter);
+                            autocompleteAdapter.notifyDataSetChanged();
+
+                        }
+                    }, null);
+                }
+            }
+            return true;
+
+        }
+        return true;
+    }
+
     //-- FRAGMENT --//
+
     /**
      * Add fragment to Main Activity
      */
@@ -183,8 +242,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             User currentUser = documentSnapshot.toObject(User.class);
             String displayName = currentUser.getUserName();
             name.setText(displayName);
+
         }).addOnFailureListener(
-            onFailureListener()
+                onFailureListener()
         );
         email.setText(getCurrentUser().getEmail());
         if (getCurrentUser().getPhotoUrl() != null) {
@@ -193,7 +253,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.toolbar_menu, menu);
         //-- Get search view --
@@ -201,36 +261,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
 
         //-- Add listener to search view --
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if(bottomNavigationView.getSelectedItemId() == R.id.action_mapview){
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constants.SEARCH_QUERY, newText);
-                    getSupportFragmentManager().beginTransaction().detach(mMapviewFragment).commit();
-                    mMapviewFragment.setArguments(bundle);
-                    getSupportFragmentManager().beginTransaction().attach(mMapviewFragment).commit();
-                    return true;
-
-                }else if(bottomNavigationView.getSelectedItemId() == R.id.action_listview){
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constants.SEARCH_QUERY, newText);
-                    getSupportFragmentManager().beginTransaction().detach(mListViewFragment).commit();
-                    mListViewFragment.setArguments(bundle);
-                    getSupportFragmentManager().beginTransaction().attach(mListViewFragment).commit();
-                    //getSupportFragmentManager().beginTransaction().replace(R.id.listview_container, mListViewFragment).commit();
-                    return true;
-                }else {
-                    return false;
-                }
-            }
-        });
-        return true;
+        searchView.setOnQueryTextListener(this);
+           return true;
     }
 
     @Override
@@ -250,7 +282,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnCompleteListener(task -> startActivity(new Intent(MainActivity.this, AuthActivity.class)));
-        }
+    }
+
 }
 
 

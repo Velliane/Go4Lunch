@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:id="@+id/contact_phone"
@@ -20,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/phone_24"
-            android:contentDescription="A phone"
+            android:contentDescription="@string/a_phone"
             />
         <TextView
             android:layout_width="wrap_content"
@@ -45,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/star_24"
-            android:contentDescription="A star" />
+            android:contentDescription="@string/a_star" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/language_black_24"
-            android:contentDescription="A website" />
+            android:contentDescription="@string/a_website" />
 
         <TextView
             android:layout_width="wrap_content"

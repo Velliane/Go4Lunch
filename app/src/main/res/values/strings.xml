@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
 
+    <!-- Title -->
+    <string name="main_activity_title">I\'m Hungry</string>
+    <string name="workmates_fragment_title">Available workmates</string>
+    <string name="chat_fragment_title" translatable="false">Chat</string>
+
     <!-- Auth Activity -->
     <string name="connection_succeed">Connection succeed</string>
     <string name="authentication_canceled">Authentication canceled</string>
@@ -28,7 +33,7 @@
     <string name="open_navigation_drawer" translatable="false">Open navigation drawer</string>
     <string name="close_navigation_drawer" translatable="false">Close navigation drawer</string>
     <string name="header_title" translatable="false">Go4Lunch</string>
-    <string name="header_name" translatable="false">John SMITH is eating at Restaurant(French)</string>
+    <string name="header_name" translatable="false">John SMITH</string>
     <string name="header_email" translatable="false">jsmith.123@gmail.com</string>
     <string name="drawer_no_restaurant_selected">You don\'t have any restaurant selected for now</string>
 
@@ -57,7 +62,7 @@
     <string name="display_name">Display Name</string>
     <string name="actual_display_name">Actual display name</string>
     <string name="change">Validate</string>
-    <string name="time_picker">%1$d:%2$d</string>
+    <string name="time_picker">%1$d:%2$s</string>
     <string name="activate_notifications">Activate notifications:</string>
     <string name="notifications">Notifications</string>
     <string name="yes">YES</string>
@@ -92,6 +97,7 @@
     <string name="distance">120m</string>
     <string name="number">0</string>
     <string name="no_rating">No rating</string>
+    <string name="selected_restaurant">%1$s, %2$d workmate(s)</string>
 
 
     <!-- Error -->
@@ -102,6 +108,9 @@
     <string name="logo">The logo of the application</string>
     <string name="star_like">A star</string>
     <string name="image_for_workmates">Image for workmates</string>
+    <string name="a_phone">A phone</string>
+    <string name="a_star">A star</string>
+    <string name="a_website">A website</string>
 
     <!-- Hint -->
     <string name="restaurant">restaurant</string>
@@ -122,6 +131,7 @@
     <string name="send">SEND</string>
     <string name="example_of_message">Example of message</string>
     <string name="date">Date</string>
+
 
 
 </resources>

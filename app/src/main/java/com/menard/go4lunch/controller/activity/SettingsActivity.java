@@ -25,25 +25,15 @@ import java.util.*;
 
 public class SettingsActivity extends BaseActivity implements View.OnClickListener {
 
-    /**
-     * Button for Changing displayName
-     */
+    /** Button for Changing displayName */
     private Button buttonChangeName;
-    /**
-     * Button for deleting account
-     */
+    /** Button for deleting account */
     private Button buttonDeleteAccount;
-    /**
-     * EditText for new displayName
-     */
+    /** EditText for new displayName */
     private EditText displayNameEdit;
-    /**
-     * TimePickerDialog
-     */
+    /** TimePickerDialog */
     private TextView timePicker;
-    /**
-     * Shared Preferences
-     */
+    /** Shared Preferences */
     private SharedPreferences sharedPreferences;
     /** Button Enable Notification */
     private Button enableNotification;
@@ -83,7 +73,13 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         //-- Set time --
         int hour = sharedPreferences.getInt(Constants.PREF_NOTIFICATIONS_HOURS, 12);
         int minute = sharedPreferences.getInt(Constants.PREF_NOTIFICATIONS_MINUTES, 0);
-        timePicker.setText(getString(R.string.time_picker, hour, minute));
+        String minutes;
+        if(minute == 0){
+            minutes = "00";
+        }else {
+            minutes = String.valueOf(minute);
+        }
+        timePicker.setText(getString(R.string.time_picker, hour, minutes));
 
 
         //-- Find display name on Firestore --
@@ -141,7 +137,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         int hour = calendar.get(Calendar.HOUR);
         int minutes = calendar.get(Calendar.MINUTE);
         TimePickerDialog picker = new TimePickerDialog(this, R.style.MyDialogTheme, (view, hourOfDay, minute) -> {
-            timePicker.setText(getString(R.string.time_picker, hourOfDay, minute));
+            timePicker.setText(getString(R.string.time_picker, hourOfDay, String.valueOf(minute)));
             sharedPreferences.edit().putInt(Constants.PREF_NOTIFICATIONS_HOURS, hourOfDay).apply();
             sharedPreferences.edit().putInt(Constants.PREF_NOTIFICATIONS_MINUTES, minute).apply();
         }, hour, minutes, false);

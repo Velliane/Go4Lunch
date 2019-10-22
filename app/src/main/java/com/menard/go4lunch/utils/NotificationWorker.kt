@@ -76,32 +76,32 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
                     stringBuilder.append(users.userName + ",")
                 }
             }
+
+            val text = if (stringBuilder.toString() == "") {
+                applicationContext.getString(R.string.notification_alone, user, restaurantName, restaurantVicinity)
+            } else {
+                applicationContext.getString(R.string.notification_with_workmates, user, restaurantName, stringBuilder.toString(), restaurantVicinity)
+            }
+
+            val channelId = "id"
+            val notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
+                    .setContentTitle(applicationContext.getString(R.string.notification_title))
+                    .setAutoCancel(true)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setContentIntent(pendingIntent)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channelName = applicationContext.getString(R.string.channel)
+                val importance = NotificationManager.IMPORTANCE_DEFAULT
+                val channel = NotificationChannel(channelId, channelName, importance)
+                notificationManager.createNotificationChannel(channel)
+            }
+
+            // Show notification
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
         }
-
-        val text = if (stringBuilder.toString() == "") {
-            applicationContext.getString(R.string.notification_alone, user, restaurantName, restaurantVicinity)
-        } else {
-            applicationContext.getString(R.string.notification_with_workmates, user, restaurantName, stringBuilder.toString(), restaurantVicinity)
-        }
-        val channelId = "id"
-        val notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
-                .setContentTitle(applicationContext.getString(R.string.notification_title))
-                .setAutoCancel(true)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(text))
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelName = applicationContext.getString(R.string.channel)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(channelId, channelName, importance)
-            notificationManager.createNotificationChannel(channel)
-        }
-
-        // Show notification
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
 
         // Reset Restaurant in Firestore and in SharedPreferences
         UserHelper.updateRestaurant(FirebaseAuth.getInstance().currentUser!!.uid, null, null)

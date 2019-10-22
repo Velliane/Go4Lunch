@@ -17,10 +17,6 @@ interface GooglePlacesAPI {
     @GET("maps/api/place/details/json")
     fun getDetails(@Query("placeid")placeId: String, @Query ("fields") fields: String, @Query("key") key:String): Observable<DetailsRequest>
 
-//    @GET("maps/api/place/autocomplete/json?strictbounds&types=establishment")
-//    fun getAutocompleteSearch(@Query("input")input: String, @Query("location") location: String, @Query("radius") radius: String, @Query("key") key: String): Observable<Autocomplete>
-
-
  companion object {
      val retrofit: Retrofit = Retrofit.Builder()
              .baseUrl("https://maps.googleapis.com/")

@@ -20,8 +20,9 @@ import java.util.Arrays;
 import static com.firebase.ui.auth.AuthUI.getInstance;
 import static com.menard.go4lunch.utils.Constants.REQUEST_CODE_SIGN_IN;
 
-//-----------------------------------------------------------------------------//
-//-- The Activity manage the auth
+/**
+ * The AuthActivity
+ */
 
 public class AuthActivity extends BaseActivity implements View.OnClickListener{
 

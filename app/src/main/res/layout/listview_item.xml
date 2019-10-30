@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:maxLength="40"
-        android:maxLines="1"
+        android:maxLines="2"
         android:text="@string/address"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"

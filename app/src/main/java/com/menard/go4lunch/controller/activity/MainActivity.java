@@ -38,6 +38,7 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseUser;
 import com.menard.go4lunch.BuildConfig;
 import com.menard.go4lunch.R;
 import com.menard.go4lunch.adapter.AutocompleteAdapter;
@@ -53,23 +54,23 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener {
 
-    /**
-     * Toolbar
-     */
-    private Toolbar toolbar;
-    /**
-     * DrawerLayout
-     */
+    /** View */
     private DrawerLayout drawerLayout;
-    /**
-     * Shared Preferences
-     */
-    private SharedPreferences sharedPreferences;
     private BottomNavigationView bottomNavigationView;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private AutocompleteAdapter autocompleteAdapter;
-    private PlacesClient placesClient;
     private RecyclerView mRecyclerView;
+    private Toolbar toolbar;
+    private SearchView searchView;
+    /** Shared Preferences */
+    private SharedPreferences sharedPreferences;
+    /** Autocomplete Adapter */
+    private AutocompleteAdapter autocompleteAdapter;
+
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private PlacesClient placesClient;
+
+    /** Current user */
+    private FirebaseUser currentUser;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,34 +78,24 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setContentView(R.layout.activity_main);
 
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
-
-        //-- Bottom Navigation View --
-        bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        //-- Toolbar --
-        toolbar = findViewById(R.id.activity_main_toolbar);
-        toolbar.setTitle(getString(R.string.main_activity_title));
-
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        setSupportActionBar(toolbar);
         Places.initialize(getApplicationContext(), BuildConfig.api_key_google);
         placesClient = Places.createClient(this);
-        mRecyclerView = findViewById(R.id.autocomplete_recycler_view);
+        currentUser = getCurrentUser();
 
         //-- Configuration --
+        configureToolbar();
+        configureRecyclerView();
+        configureBottomNavigationView();
         configureDrawerLayout();
         configureNavigationView();
-        //-- Set default selected tab --
-        bottomNavigationView.setSelectedItemId(R.id.action_mapview);
     }
 
 
     //-- DRAWER --//
-
     /**
      * Drawer Navigation View
-     *
      * @return boolean
      */
     @Override
@@ -118,9 +109,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             case R.id.action_lunch: {
                 if (sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, null) != null) {
                     String restaurant = sharedPreferences.getString(Constants.PREF_RESTAURANT_SELECTED, null);
-                    Intent intent = new Intent(this, LunchActivity.class);
-                    intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, restaurant);
-                    startActivity(intent);
+                    startLunchActivity(restaurant);
                     break;
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialogTheme);
@@ -162,6 +151,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
+    private void startLunchActivity(String restaurant){
+        Intent intent = new Intent(this, LunchActivity.class);
+        intent.putExtra(Constants.EXTRA_RESTAURANT_IDENTIFIER, restaurant);
+        startActivity(intent);
+    }
 
     //-- AUTOCOMPLETE --//
 
@@ -183,24 +177,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (bottomNavigationView.getSelectedItemId() == R.id.action_mapview || bottomNavigationView.getSelectedItemId() == R.id.action_listview) {
             if(!newText.equals("")) {
                 mRecyclerView.setVisibility(View.VISIBLE);
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                LocationRequest locationRequest = setLocationRequest();
-                if (checkPermissions()) {
-
-                    mFusedLocationProviderClient.requestLocationUpdates(locationRequest, new LocationCallback() {
-                        @Override
-                        public void onLocationResult(LocationResult locationResult) {
-                            LatLng lastLocation = onLocationChanged(locationResult.getLastLocation());
-                            LatLng bounds = new LatLng(lastLocation.latitude, lastLocation.longitude);
-
-                            autocompleteAdapter = new AutocompleteAdapter(getApplicationContext(), placesClient, bounds);
-                            autocompleteAdapter.getFilter().filter(newText.toLowerCase());
-                            mRecyclerView.setAdapter(autocompleteAdapter);
-                            autocompleteAdapter.notifyDataSetChanged();
-
-                        }
-                    }, null);
-                }
+                addQueryToAutocompleteAdapter(newText);
+            }else {
+                mRecyclerView.setVisibility(View.GONE);
             }
             return true;
 
@@ -208,8 +187,31 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
-    //-- FRAGMENT --//
+    /**
+     * Pass data (query) to autocomplete adapter
+     * @param newText query
+     */
+    private void addQueryToAutocompleteAdapter(String newText){
+        LocationRequest locationRequest = setLocationRequest();
+        if (checkPermissions()) {
 
+            mFusedLocationProviderClient.requestLocationUpdates(locationRequest, new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    LatLng lastLocation = onLocationChanged(locationResult.getLastLocation());
+                    LatLng bounds = new LatLng(lastLocation.latitude, lastLocation.longitude);
+
+                    autocompleteAdapter = new AutocompleteAdapter(getApplicationContext(), placesClient, bounds);
+                    autocompleteAdapter.getFilter().filter(newText.toLowerCase());
+                    mRecyclerView.setAdapter(autocompleteAdapter);
+                    autocompleteAdapter.notifyDataSetChanged();
+
+                }
+            }, null);
+        }
+    }
+
+    //-- FRAGMENT --//
     /**
      * Add fragment to Main Activity
      */
@@ -220,6 +222,23 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     //-- CONFIGURATION --//
+    private void configureToolbar(){
+        toolbar = findViewById(R.id.activity_main_toolbar);
+        toolbar.setTitle(getString(R.string.main_activity_title));
+        setSupportActionBar(toolbar);
+    }
+
+    private void configureRecyclerView(){
+        mRecyclerView = findViewById(R.id.autocomplete_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+    }
+
+    private void configureBottomNavigationView(){
+        bottomNavigationView = findViewById(R.id.activity_main_bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.action_mapview);
+    }
+
     private void configureDrawerLayout() {
         drawerLayout = findViewById(R.id.activity_main_drawer_layout);
         ActionBarDrawerToggle toogle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_navigation_drawer, R.string.close_navigation_drawer);
@@ -238,17 +257,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         TextView email = view.findViewById(R.id.header_email);
         CircleImageView photo = view.findViewById(R.id.image_profile);
 
-        UserHelper.getUser(getCurrentUser().getUid()).addOnSuccessListener(documentSnapshot -> {
-            User currentUser = documentSnapshot.toObject(User.class);
-            String displayName = currentUser.getUserName();
+        UserHelper.getUser(currentUser.getUid()).addOnSuccessListener(documentSnapshot -> {
+            User user = documentSnapshot.toObject(User.class);
+            String displayName = user.getUserName();
             name.setText(displayName);
 
         }).addOnFailureListener(
                 onFailureListener()
         );
-        email.setText(getCurrentUser().getEmail());
-        if (getCurrentUser().getPhotoUrl() != null) {
-            Glide.with(this).load(getCurrentUser().getPhotoUrl()).into(photo);
+        email.setText(currentUser.getEmail());
+        if (currentUser.getPhotoUrl() != null) {
+            Glide.with(this).load(currentUser.getPhotoUrl()).into(photo);
         }
     }
 
@@ -258,7 +277,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         menuInflater.inflate(R.menu.toolbar_menu, menu);
         //-- Get search view --
         MenuItem searchMenu = menu.findItem(R.id.menu_activity_main_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
 
         //-- Add listener to search view --
         searchView.setOnQueryTextListener(this);
@@ -269,13 +288,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
+        }else if(!searchView.isIconified()){
+            searchView.setIconified(true);
+            mRecyclerView.setVisibility(View.GONE);
+        }else{
+            super.onBackPressed();
+
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     //-- SIGN OUT --//
     private void signOut() {

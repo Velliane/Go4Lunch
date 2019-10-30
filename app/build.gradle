@@ -100,6 +100,7 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
+    testImplementation fileTree(dir: 'C:\\Users\\emman\\Desktop\\Formation Développeur ANDROID\\powermock-mockito2-junit-2.0.2', include: ['*.aar', '*.jar'], exclude: [])
 
 
 }

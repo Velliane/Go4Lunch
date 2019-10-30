@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -184,9 +183,18 @@ public class LunchActivity extends BaseActivity implements View.OnClickListener{
             }
         }
         if(v == like){
-            UserHelper.addFavorites(getCurrentUser().getUid(), like.getTag().toString()).addOnFailureListener(onFailureListener());
-            stars.setVisibility(View.VISIBLE);
-        }
+            if(stars.getVisibility() == View.VISIBLE){
+
+                            UserHelper.deleteFavorites(getCurrentUser().getUid(), like.getTag().toString());
+                            stars.setVisibility(View.INVISIBLE);
+                        }else {
+                            UserHelper.addFavorites(getCurrentUser().getUid(), like.getTag().toString()).addOnFailureListener(onFailureListener());
+                            stars.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+
+
         if(v == website){
             if(website.getTag() != null){
                 openCustomTabs();

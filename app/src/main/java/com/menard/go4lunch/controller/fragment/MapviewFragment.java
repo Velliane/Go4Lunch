@@ -44,7 +44,7 @@ import io.reactivex.disposables.CompositeDisposable;
 
 import static com.menard.go4lunch.utils.RestaurantUtilsKt.setMarker;
 
-public class MapviewFragment extends BaseFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener{
+public class MapviewFragment extends BaseFragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraIdleListener {
 
     /** Map View */
     private MapView mapView;
@@ -103,8 +103,14 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
         }
         mGoogleMap.setOnMarkerClickListener(this);
         mGoogleMap.setOnInfoWindowClickListener(this);
+        mGoogleMap.setOnCameraIdleListener(this);
     }
 
+
+    @Override
+    public void onCameraIdle() {
+
+    }
 
     //-- UPDATE MAP WITH USER'S LOCATION --//
     /**

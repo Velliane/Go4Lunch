@@ -29,6 +29,11 @@ class UserHelper {
             return getUsersCollection().document(userId).collection(Constants.COLLECTION_FAVORITES_RESTAURANTS).document(placeId).set(favorite)
         }
 
+        @JvmStatic
+        fun deleteFavorites(userId: String, placeId: String):Task<Void>{
+            return getUsersCollection().document(userId).collection(Constants.COLLECTION_FAVORITES_RESTAURANTS).document(placeId).delete()
+        }
+
         //-- GET --
         @JvmStatic
         fun getUser(userId: String): Task<DocumentSnapshot> {

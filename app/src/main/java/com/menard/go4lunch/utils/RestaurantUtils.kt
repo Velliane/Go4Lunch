@@ -12,8 +12,10 @@ import com.menard.go4lunch.R
 import com.menard.go4lunch.api.UserHelper
 import com.menard.go4lunch.model.User
 import java.util.*
-import kotlin.collections.ArrayList
 
+/**
+ * Calculate the distance between the restaurant and the user
+ */
 fun distanceToUser(restaurantLocation: Location, userLocation: Location): String {
     val realDistance = userLocation.distanceTo(restaurantLocation)
 
@@ -24,6 +26,9 @@ fun distanceToUser(restaurantLocation: Location, userLocation: Location): String
     }
 }
 
+/**
+ * Define the number of stars to show according to the rating
+ */
 fun setRating(rating: Double): Int {
     return when {
         rating > 4.5 -> 3
@@ -55,7 +60,9 @@ fun setMarker(number: Int, placeId: String, opening: String, googleMap: GoogleMa
 
 }
 
-
+/**
+ * Get the number of workmates, user included, who have selected the restaurant
+ */
 fun getNumberOfWorkmates(name: String, textView: TextView) {
     var number = 0
     UserHelper.getUsersCollection().get().addOnSuccessListener { result ->

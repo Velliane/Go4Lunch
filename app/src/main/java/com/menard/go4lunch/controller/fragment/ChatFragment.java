@@ -47,6 +47,7 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
 
         AndroidThreeTen.init(requireActivity());
 
+        //-- Get chat's messages from Firestore --
         Query query = ChatHelper.getAllMessageForChat();
         FirestoreRecyclerOptions<Message> list = new FirestoreRecyclerOptions.Builder<Message>().setQuery(query, Message.class)
                 .setLifecycleOwner(this).build();
@@ -58,6 +59,7 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
         ChatAdapter chatAdapter = new ChatAdapter(requireActivity(), list);
         recyclerView.setAdapter(chatAdapter);
 
+        //-- Automatically show last entry --
         chatAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {

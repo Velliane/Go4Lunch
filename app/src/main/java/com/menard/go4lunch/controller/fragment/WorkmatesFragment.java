@@ -31,6 +31,7 @@ public class WorkmatesFragment extends BaseFragment{
         RecyclerView recyclerView = view.findViewById(R.id.list_workmates);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.HORIZONTAL));
 
+        //-- Get list of users from Firestore --
         Query query = UserHelper.getAllUser();
         FirestoreRecyclerOptions<User> list = new FirestoreRecyclerOptions.Builder<User>().setQuery(query, User.class)
                 .setLifecycleOwner(this).build();

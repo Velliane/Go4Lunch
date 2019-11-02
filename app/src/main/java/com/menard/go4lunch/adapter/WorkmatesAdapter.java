@@ -39,8 +39,7 @@ public class WorkmatesAdapter extends FirestoreRecyclerAdapter<User, WorkmatesAd
     private final boolean mAllUser;
 
     /**
-     * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
-     * FirestoreRecyclerOptions} for configuration options.
+     * Create a new RecyclerView adapter that listens to a Firestore Query.
      * @param options options
      */
     public WorkmatesAdapter(Context context, @NonNull FirestoreRecyclerOptions<User> options, boolean allUser) {

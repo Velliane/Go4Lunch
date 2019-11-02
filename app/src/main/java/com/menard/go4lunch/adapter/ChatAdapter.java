@@ -39,7 +39,7 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<Message, ChatAdapter.C
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
      * FirestoreRecyclerOptions} for configuration options.
      *
-     * @param options
+     * @param options FirestoreRecyclerOptions
      */
     public ChatAdapter(Context context, @NonNull FirestoreRecyclerOptions<Message> options) {
         super(options);
@@ -98,11 +98,6 @@ public class ChatAdapter extends FirestoreRecyclerAdapter<Message, ChatAdapter.C
             }
         });
 
-    }
-
-    @Override
-    public void onDataChanged() {
-        super.onDataChanged();
     }
 
     class ChatViewHolder extends RecyclerView.ViewHolder {

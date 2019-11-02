@@ -7,6 +7,10 @@ import com.google.firebase.firestore.Query
 import com.menard.go4lunch.model.Message
 import com.menard.go4lunch.utils.Constants
 
+/**
+ * Contains the CRUD request for the Collection 'chat' of Firestore
+ */
+
 class ChatHelper {
 
     companion object{

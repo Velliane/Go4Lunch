@@ -53,6 +53,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
 
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
 
+        // -- Views --
         buttonChangeName = findViewById(R.id.activity_settings_button);
         buttonChangeName.setOnClickListener(this);
         buttonDeleteAccount = findViewById(R.id.activity_settings_button_delete);
@@ -65,6 +66,7 @@ public class SettingsActivity extends BaseActivity implements View.OnClickListen
         disableNotification = findViewById(R.id.settings_notifications_no);
         disableNotification.setOnClickListener(this);
 
+        //-- Set button YES/NO clicked according to shared preferences --
         if(sharedPreferences.getBoolean(Constants.PREF_ENABLED_NOTIFICATIONS, true)){
             setEnableNotification();
         }else{

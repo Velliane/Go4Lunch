@@ -6,6 +6,10 @@ import com.menard.go4lunch.model.Restaurant
 import com.menard.go4lunch.utils.Constants
 import com.menard.go4lunch.model.User
 
+/**
+ * Contains the CRUD request for the Collection 'users' of Firestore
+ */
+
 class UserHelper {
 
     companion object {

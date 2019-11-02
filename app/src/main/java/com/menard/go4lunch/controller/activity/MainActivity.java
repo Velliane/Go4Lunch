@@ -8,8 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -64,10 +61,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private SharedPreferences sharedPreferences;
     /** Autocomplete Adapter */
     private AutocompleteAdapter autocompleteAdapter;
-
+    /** Location */
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private PlacesClient placesClient;
-
     /** Current user */
     private FirebaseUser currentUser;
 
@@ -158,7 +154,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     //-- AUTOCOMPLETE --//
-
     /**
      * When click on Search Button of the Toolbar
      */

@@ -10,9 +10,6 @@ public class Result {
     @SerializedName("geometry")
     @Expose
     private Geometry geometry;
-    @SerializedName("icon")
-    @Expose
-    private String icon;
     @SerializedName("id")
     @Expose
     private String id;
@@ -28,21 +25,9 @@ public class Result {
     @SerializedName("place_id")
     @Expose
     private String placeId;
-    @SerializedName("plus_code")
-    @Expose
-    private PlusCode plusCode;
-    @SerializedName("price_level")
-    @Expose
-    private Integer priceLevel;
     @SerializedName("rating")
     @Expose
     private Double rating;
-    @SerializedName("reference")
-    @Expose
-    private String reference;
-    @SerializedName("scope")
-    @Expose
-    private String scope;
     @SerializedName("types")
     @Expose
     private List<String> types = null;
@@ -55,18 +40,6 @@ public class Result {
 
     public Geometry getGeometry() {
         return geometry;
-    }
-
-    public void setGeometry(Geometry geometry) {
-        this.geometry = geometry;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
     }
 
     public String getId() {
@@ -109,44 +82,12 @@ public class Result {
         this.placeId = placeId;
     }
 
-    public PlusCode getPlusCode() {
-        return plusCode;
-    }
-
-    public void setPlusCode(PlusCode plusCode) {
-        this.plusCode = plusCode;
-    }
-
-    public Integer getPriceLevel() {
-        return priceLevel;
-    }
-
-    public void setPriceLevel(Integer priceLevel) {
-        this.priceLevel = priceLevel;
-    }
-
     public Double getRating() {
         return rating;
     }
 
     public void setRating(Double rating) {
         this.rating = rating;
-    }
-
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
     }
 
     public List<String> getTypes() {
@@ -173,4 +114,7 @@ public class Result {
         this.vicinity = vicinity;
     }
 
+    public void setGeometry(Geometry geometry) {
+        this.geometry = geometry;
+    }
 }

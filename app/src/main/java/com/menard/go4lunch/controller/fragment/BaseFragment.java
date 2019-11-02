@@ -17,13 +17,12 @@ public class BaseFragment extends Fragment{
 
 
 
-    public FirebaseUser getCurrentUser(){
+    FirebaseUser getCurrentUser(){
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    //-----------------------------------------//
+
     //-- CHECK PERMISSIONS FOR FINE LOCATION --//
-    //-----------------------------------------//
     /**
      * Check permissions
      */
@@ -51,11 +50,7 @@ public class BaseFragment extends Fragment{
         }
     }
 
-
-
-    //------------------------------//
     //-- GET NEW LOCATION OF USER --//
-    //------------------------------//
     /**
      * Get new location
      */
@@ -63,9 +58,7 @@ public class BaseFragment extends Fragment{
         return new LatLng(location.getLatitude(), location.getLongitude());
     }
 
-    //--------------------------//
     //-- SET LOCATION REQUEST --//
-    //--------------------------//
     LocationRequest setLocationRequest(){
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);

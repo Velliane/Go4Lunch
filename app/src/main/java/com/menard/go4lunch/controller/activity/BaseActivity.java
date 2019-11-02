@@ -22,11 +22,11 @@ import com.menard.go4lunch.utils.Constants;
 public class BaseActivity extends AppCompatActivity{
 
 
-    public FirebaseUser getCurrentUser(){
+    FirebaseUser getCurrentUser(){
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    public OnFailureListener onFailureListener() {
+    OnFailureListener onFailureListener() {
         return e -> {
             Log.d("Error", e.getLocalizedMessage());
             AlertDialog.Builder builder = new AlertDialog.Builder(BaseActivity.this, R.style.MyDialogTheme);
@@ -37,13 +37,11 @@ public class BaseActivity extends AppCompatActivity{
         };
     }
 
-    public void showSnackBar(LinearLayout linearLayout,String message){
+    void showSnackBar(LinearLayout linearLayout, String message){
         Snackbar.make(linearLayout, message, Snackbar.LENGTH_SHORT).show();
     }
 
-    //-----------------------------------------//
     //-- CHECK PERMISSIONS FOR FINE LOCATION --//
-    //-----------------------------------------//
     /**
      * Check permissions
      */
@@ -72,10 +70,7 @@ public class BaseActivity extends AppCompatActivity{
     }
 
 
-
-    //------------------------------//
     //-- GET NEW LOCATION OF USER --//
-    //------------------------------//
     /**
      * Get new location
      */
@@ -83,9 +78,8 @@ public class BaseActivity extends AppCompatActivity{
         return new LatLng(location.getLatitude(), location.getLongitude());
     }
 
-    //--------------------------//
+
     //-- SET LOCATION REQUEST --//
-    //--------------------------//
     LocationRequest setLocationRequest(){
         LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);

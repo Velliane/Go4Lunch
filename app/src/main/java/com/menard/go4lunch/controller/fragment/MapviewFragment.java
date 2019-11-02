@@ -36,7 +36,6 @@ import com.menard.go4lunch.model.nearbysearch.Result;
 import com.menard.go4lunch.utils.Constants;
 import com.menard.go4lunch.utils.GooglePlacesStreams;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 

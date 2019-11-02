@@ -44,6 +44,7 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
     private final Context mContext;
     private final List<DetailsRequest> mList;
     private final DayOfWeek mDay;
+
     public ListViewAdapter(List<DetailsRequest> list, Context context, DayOfWeek day) {
         mContext = context;
         mList = list;

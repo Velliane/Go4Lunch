@@ -38,17 +38,11 @@ import io.reactivex.disposables.CompositeDisposable;
 public class ListViewFragment extends BaseFragment {
 
 
-    /**
-     * RecyclerView
-     */
+    /** RecyclerView */
     private RecyclerView recyclerView;
-    /**
-     * Progress Bar
-     */
+    /** Progress Bar */
     private ProgressBar progressBar;
-    /**
-     * FusedLocation
-     */
+    /** FusedLocation */
     private FusedLocationProviderClient fusedLocationProviderClient;
 
 

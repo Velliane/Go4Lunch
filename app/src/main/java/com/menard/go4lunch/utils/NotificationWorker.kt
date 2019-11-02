@@ -20,16 +20,18 @@ import java.util.concurrent.TimeUnit
 open class NotificationWorker(context: Context, parameters: WorkerParameters) : Worker(context, parameters) {
 
     companion object {
+
         const val NOTIFICATION_ID = 10
         private const val TAG_NOTIFICATION = "EATING_TIME"
 
-
+        /**
+         * Plan a notification
+         */
         @JvmStatic
         fun scheduleReminder(data: Data, time: Long) {
             val notificationWork = OneTimeWorkRequest.Builder(NotificationWorker::class.java)
                     .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                     .setInitialDelay(time, TimeUnit.MINUTES)
-                    //.setInitialDelay(45, TimeUnit.SECONDS)
                     .addTag(TAG_NOTIFICATION)
                     .setInputData(data).build()
 
@@ -37,6 +39,9 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
             instance.enqueueUniqueWork(TAG_NOTIFICATION, ExistingWorkPolicy.REPLACE, notificationWork)
         }
 
+        /**
+         * Cancel a notification
+         */
         @JvmStatic
         fun cancelReminder() {
             val instance = WorkManager.getInstance()
@@ -68,7 +73,7 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
 
-        // Notification object
+        //-- Notification object --
         val stringBuilder = StringBuilder()
         UserHelper.getUsersCollection().get().addOnSuccessListener { result ->
             for (userId in result) {
@@ -102,11 +107,11 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
                 notificationManager.createNotificationChannel(channel)
             }
 
-            // Show notification
+            //-- Show notification --
             notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
         }
 
-        // Reset Restaurant in Firestore and in SharedPreferences
+        //-- Reset Restaurant in Firestore and in SharedPreferences --
         UserHelper.updateRestaurant(FirebaseAuth.getInstance().currentUser!!.uid, null, null)
         val sharedPreferences = applicationContext.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
         sharedPreferences.edit().putString(Constants.PREF_RESTAURANT_SELECTED, null).apply()

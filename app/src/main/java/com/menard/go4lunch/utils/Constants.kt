@@ -1,12 +1,13 @@
 package com.menard.go4lunch.utils
 
 class Constants{
+
     companion object{
         //-- Request code for sign in --
         const val REQUEST_CODE_SIGN_IN = 240
         //-- Request code for permission for fine location --
         const val REQUEST_CODE_UPDATE_LOCATION = 4
-        //-- Request code for call phone --
+        //-- Request code for permission for phone call --
         const val REQUEST_CODE_CALL_PHONE = 3
 
 
@@ -30,14 +31,11 @@ class Constants{
         const val PREF_NOTIFICATIONS_MINUTES = "PREF_NOTIFICATIONS_MINUTES"
         const val PREF_ENABLED_NOTIFICATIONS = "PREF_ENABLED_NOTIFICATIONS"
 
-        //-- Data --
+        //-- Data for notifications --
         const val DATA_USER = "DATA_USER_ID"
         const val DATA_RESTAURANT_NAME = "DATA_RESTAURANT_NAME"
         const val DATA_RESTAURANT_ADDRESS = "DATA_RESTAURANT_ADDRESS"
         const val DATA_RESTAURANT_ID = "DATA_RESTAURANT_ID"
-
-        //-- Search --
-        const val SEARCH_QUERY = "SEARCH_QUERY"
 
     }
 }

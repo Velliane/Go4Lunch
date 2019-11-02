@@ -38,13 +38,17 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * Adapter for the RecyclerView that's show the Autocomplete result,
+ * implements Filterable to filter result of Autocomplete request according to the query
+ */
 
 public class AutocompleteAdapter extends RecyclerView.Adapter<AutocompleteAdapter.PredictionHolder> implements Filterable {
 
-    private Context mContext;
+    final private Context mContext;
     private ArrayList<PlaceAutocomplete> mList = new ArrayList<>();
-    private PlacesClient mPlacesClient;
-    private LatLng bounds;
+    final private PlacesClient mPlacesClient;
+    final private LatLng bounds;
 
     public AutocompleteAdapter(Context context, PlacesClient placesClient, LatLng latLng) {
         mContext = context;
@@ -98,14 +102,21 @@ public class AutocompleteAdapter extends RecyclerView.Adapter<AutocompleteAdapte
         };
     }
 
+    /**
+     * Get list of result according to query
+     * @param query the query
+     * @return the list of restaurant
+     */
     private ArrayList<PlaceAutocomplete> getResult(CharSequence query){
         ArrayList<PlaceAutocomplete> list = new ArrayList<>();
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
+        //-- Create an object LatLngBounds to set a RectangularBounds for LocationRestriction --
         LatLng north = SphericalUtil.computeOffset(bounds, 7000, 225.0);
         LatLng south = SphericalUtil.computeOffset(bounds, 7000, 45.0);
         LatLngBounds latLngBounds = LatLngBounds.builder().include(north).include(south).build();
 
+        //-- Create Autocomplete request --
         FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
                 .setSessionToken(token)
                 .setLocationRestriction(RectangularBounds.newInstance(latLngBounds))
@@ -127,8 +138,11 @@ public class AutocompleteAdapter extends RecyclerView.Adapter<AutocompleteAdapte
                 for(AutocompletePrediction prediction : response.getAutocompletePredictions()){
                     List<Place.Type> types = prediction.getPlaceTypes();
                     for(Place.Type type: types) {
-                        if(type == Place.Type.RESTAURANT)
-                        list.add(new PlaceAutocomplete(prediction.getPlaceId(), prediction.getPrimaryText(new StyleSpan(Typeface.BOLD)).toString(), prediction.getSecondaryText(new StyleSpan(Typeface.NORMAL)).toString()));
+                        //-- Filter result to get only Restaurants --
+                        if(type == Place.Type.RESTAURANT) {
+                            //-- Add restaurant to list --
+                            list.add(new PlaceAutocomplete(prediction.getPlaceId(), prediction.getPrimaryText(new StyleSpan(Typeface.BOLD)).toString(), prediction.getSecondaryText(new StyleSpan(Typeface.NORMAL)).toString()));
+                        }
                     }
                 }
             }
@@ -141,8 +155,8 @@ public class AutocompleteAdapter extends RecyclerView.Adapter<AutocompleteAdapte
 
     class PredictionHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView name;
-        private TextView address;
+        final private TextView name;
+        final private TextView address;
 
         PredictionHolder(@NonNull View itemView) {
             super(itemView);

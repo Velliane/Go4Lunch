@@ -32,8 +32,8 @@ fun CircleImageView.loadImageProfile(@Nullable url: String?, @Nullable int:Int?,
             Glide.with(this.context).setDefaultRequestOptions(options).load(url).into(this)
         }else{
             Glide.with(this.context).setDefaultRequestOptions(options).load(int).into(this)
-        }  }
-
+        }
+    }
 }
 
 /**

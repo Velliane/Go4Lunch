@@ -29,6 +29,7 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
             val notificationWork = OneTimeWorkRequest.Builder(NotificationWorker::class.java)
                     .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
                     .setInitialDelay(time, TimeUnit.MINUTES)
+                    //.setInitialDelay(45, TimeUnit.SECONDS)
                     .addTag(TAG_NOTIFICATION)
                     .setInputData(data).build()
 
@@ -72,8 +73,10 @@ open class NotificationWorker(context: Context, parameters: WorkerParameters) : 
         UserHelper.getUsersCollection().get().addOnSuccessListener { result ->
             for (userId in result) {
                 val users = userId.toObject(User::class.java)
-                if (users.userRestaurantId == restaurantId) {
-                    stringBuilder.append(users.userName + ",")
+                if(users.userId != FirebaseAuth.getInstance().currentUser!!.uid) {
+                    if (users.userRestaurantId == restaurantId) {
+                        stringBuilder.append(users.userName + ",")
+                    }
                 }
             }
 

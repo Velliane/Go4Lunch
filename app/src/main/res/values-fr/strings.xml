@@ -90,7 +90,7 @@
 
     <!-- Notifications -->
     <string name="notification_alone">Bonjour %1$s, le restaurant que tu as choisi est %2$s, à %3$s.</string>
-    <string name="notification_with_workmates">Bonjour %1$s, le restaurant que tu as choisi %2$s, avec %3$s, à %4$s.</string>
+    <string name="notification_with_workmates">Bonjour %1$s, le restaurant que tu as choisi est %2$s, avec %3$s à %4$s.</string>
     <string name="notification_title">Il est l\'heure de manger !</string>
     <string name="channel">Message provenant de Go4Lunch</string>
 

@@ -186,8 +186,10 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
             for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                 User user = document.toObject(User.class);
                 String id = user.getUserRestaurantName();
-                if (id.equals(result.getName())) {
-                    number++;
+                if(id != null) {
+                    if (id.equals(result.getName())) {
+                        number++;
+                    }
                 }
             }
             setMarker(number, result.getPlaceId(), opening, mGoogleMap, latLng, name, this.requireContext());

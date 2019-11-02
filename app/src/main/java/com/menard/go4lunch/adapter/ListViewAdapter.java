@@ -50,14 +50,6 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.ListVi
         mDay = day;
     }
 
-    public void updateData(List<DetailsRequest> list){
-        mList.clear();
-        mList.addAll(list);
-        notifyDataSetChanged();
-    }
-
-
-
     @NonNull
     @Override
     public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

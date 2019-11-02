@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
-
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 28
@@ -48,8 +47,8 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-firestore:4.3.1'
     // Firebase
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
-    implementation 'com.google.firebase:firebase-auth:19.0.0'
-    implementation 'com.google.firebase:firebase-core:17.2.0'
+    implementation 'com.google.firebase:firebase-auth:19.1.0'
+    implementation 'com.google.firebase:firebase-core:17.2.1'
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -92,7 +91,6 @@ dependencies {
     implementation 'com.android.support:customtabs:28.0.0'
 
     implementation 'com.github.mukeshsolanki:Google-Places-AutoComplete-EditText:0.0.6'
-
     testImplementation('org.threeten:threetenbp:1.3.8') {
         exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
     }
@@ -100,6 +98,8 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
+    testImplementation "org.mockito:mockito-core:2.13.0"
+    androidTestImplementation "org.mockito:mockito-android:2.13.0"
     testImplementation fileTree(dir: 'C:\\Users\\emman\\Desktop\\Formation Développeur ANDROID\\powermock-mockito2-junit-2.0.2', include: ['*.aar', '*.jar'], exclude: [])
 
 

@@ -69,7 +69,9 @@ public class ListViewFragment extends BaseFragment {
         //-- Layout manager --
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         recyclerView.setLayoutManager(layoutManager);
-        listOfRestaurant();
+        if(checkPermissions()) {
+            listOfRestaurant();
+        }
 
         return view;
     }

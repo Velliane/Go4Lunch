@@ -108,7 +108,8 @@ public class MapviewFragment extends BaseFragment implements OnMapReadyCallback,
 
     @Override
     public void onCameraIdle() {
-
+        LatLng centerMap = mGoogleMap.getCameraPosition().target;
+        getResult(centerMap.latitude + "," + centerMap.longitude);
     }
 
     //-- UPDATE MAP WITH USER'S LOCATION --//

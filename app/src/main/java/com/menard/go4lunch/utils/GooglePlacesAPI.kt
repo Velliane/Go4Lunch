@@ -11,7 +11,7 @@ import retrofit2.http.Query
 
 interface GooglePlacesAPI {
 
-    @GET("maps/api/place/nearbysearch/json")
+    @GET("maps/api/place/nearysearch/json")
     fun getNearbySearch(@Query("location") location: String, @Query("radius") radius: String, @Query("type") type: String, @Query("key") key: String): Observable<NearbySearch>
 
     @GET("maps/api/place/details/json")
